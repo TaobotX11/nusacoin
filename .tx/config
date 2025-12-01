@@ -1,0 +1,7 @@
+[main]
+host = https://www.transifex.com
+
+[nusacoin.qt-translation-019x]
+file_filter = src/qt/locale/nusacoin_<lang>.ts
+source_file = src/qt/locale/nusacoin_en.ts
+source_lang = en
