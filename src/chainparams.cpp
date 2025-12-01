@@ -51,8 +51,8 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
  */
 static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
-    const char* pszTimestamp = "Detik 26/Aug/2019 Gegara Ditipu Bitcoin, Pria Ini Balas Curi Rp 160 Juta dan Aniaya Korban";
-    const CScript genesisOutputScript = CScript() << ParseHex("040184710fa689ad5023690c80f3a49c8f13f8d45b8c857fbcbc8bc4a8e4d3eb4b10f4d4604fa08dce601aaf0f470216fe1b51850b4acf21b179c45070ac7b03a9") << OP_CHECKSIG;
+    const char* pszTimestamp = "Hari ini 01/Dec/2025, NUSA Lahir dari Kepercayaan, Transparansi dan Kebersamaan Rakyat.";
+    const CScript genesisOutputScript = CScript() << ParseHex("04e3ea4e87f7459041e30fd0529fe8af3e181cc1eac1c728788bf32acd518c0ed83832c81182cf0fc7b7b16b22665ba0c2c2d9c209b030a3ce2c622f868c6314ea") << OP_CHECKSIG;
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
 
@@ -96,7 +96,7 @@ public:
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 32-bit integer with any alignment.
          */
-        pchMessageStart[0] = 0x4E;//4E555341
+        pchMessageStart[0] = 0x4E; // 4E555341
         pchMessageStart[1] = 0x55;
         pchMessageStart[2] = 0x53;
         pchMessageStart[3] = 0x41;
@@ -245,10 +245,10 @@ public:
         consensus.BIP16Exception = uint256();
         consensus.BIP34Height = 1; // BIP34 activated on regtest (Used in functional tests)
         consensus.BIP34Hash = uint256();
-        consensus.BIP65Height = 1; // BIP65 activated on regtest (Used in functional tests)
-        consensus.BIP66Height = 1; // BIP66 activated on regtest (Used in functional tests)
+        consensus.BIP65Height = 1;  // BIP65 activated on regtest (Used in functional tests)
+        consensus.BIP66Height = 1;  // BIP66 activated on regtest (Used in functional tests)
         consensus.CSVHeight = 1;    // CSV activated on regtest (Used in rpc activation tests)
-        consensus.SegwitHeight = 0;   // SEGWIT is always activated on regtest unless overridden
+        consensus.SegwitHeight = 0; // SEGWIT is always activated on regtest unless overridden
         consensus.MinBIP9WarningHeight = 0;
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
