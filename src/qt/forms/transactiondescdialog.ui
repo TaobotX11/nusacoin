@@ -22,6 +22,9 @@
      <property name="readOnly">
       <bool>true</bool>
      </property>
+     <property name="styleSheet">
+             <string notr="true">QTextEdit {selection-background-color: #018f01; selection-color:white;} QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}</string>
+        </property>
     </widget>
    </item>
    <item>
@@ -32,6 +35,9 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Close</set>
      </property>
+     <property name="styleSheet">
+             <string notr="true">QPushButton {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton:hover {background-color: #02d902;color: #ffffff}</string>
+    </property>
     </widget>
    </item>
   </layout>

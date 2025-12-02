@@ -1,4 +1,6 @@
-<TS language="id_ID" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="id_ID">
 <context>
     <name>AddressBookPage</name>
     <message>
@@ -70,9 +72,9 @@
         <translation>Berikut ialah alamat-alamat Nusacoin Anda yang digunakan untuk mengirimkan pembayaran. Selalu periksa jumlah dan alamat penerima sebelum mengirimkan koin.</translation>
     </message>
     <message>
-        <source>These are your Nusacoin addresses for receiving payments. Use the 'Create new receiving address' button in the receive tab to create new addresses.
-Signing is only possible with addresses of the type 'legacy'.</source>
-        <translation>Berikut adalah alamat Nusacoin Anda untuk menerima pembayaran. Tekan tombol 'buat alamat terima baru' di menu 'Menerima' untuk membuat alamat baru. Penandatanganan hanya dimungkinkan dengan alamat jenis 'legacy' (Awalan C)</translation>
+        <source>These are your Nusacoin addresses for receiving payments. Use the &apos;Create new receiving address&apos; button in the receive tab to create new addresses.
+Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
+        <translation>Berikut adalah alamat Nusacoin Anda untuk menerima pembayaran. Tekan tombol &apos;buat alamat terima baru&apos; di menu &apos;Menerima&apos; untuk membuat alamat baru. Penandatanganan hanya dimungkinkan dengan alamat jenis &apos;legacy&apos; (Awalan C)</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -247,10 +249,6 @@ Signing is only possible with addresses of the type 'legacy'.</source>
     <message>
         <source>Your wallet is now encrypted. </source>
         <translation>Dompet Anda sudah dienkripsi</translation>
-    </message>
-    <message>
-        <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</source>
-        <translation>PENTING: Backup sebelumnya yang Anda buat dari file wallet Anda harus diganti dengan file wallet terenkripsi yang baru dibuat. Demi keamanan, backup file wallet sebelumnya yang tidak dienkripsi karena itu akan menjadi tidak berguna begitu Anda mulai menggunakan wallet terenkripsi yang baru.</translation>
     </message>
 </context>
 <context>
@@ -492,7 +490,9 @@ Signing is only possible with addresses of the type 'legacy'.</source>
     </message>
     <message numerus="yes">
         <source>%n active connection(s) to Nusacoin network</source>
-        <translation><numerusform>%n koneksi aktif ke jaringan Nusacoin</numerusform></translation>
+        <translation>
+            <numerusform>%n koneksi aktif ke jaringan Nusacoin</numerusform>
+        </translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -504,7 +504,9 @@ Signing is only possible with addresses of the type 'legacy'.</source>
     </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
-        <translation><numerusform>%n blok dari riwayat transaksi diproses.</numerusform></translation>
+        <translation>
+            <numerusform>%n blok dari riwayat transaksi diproses.</numerusform>
+        </translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -802,16 +804,16 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Ubah alamat pengirim</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid Nusacoin address.</source>
-        <translation>Alamat yang dimasukkan "%1" bukanlah alamat Nusacoin yang valid.</translation>
+        <source>The entered address &quot;%1&quot; is not a valid Nusacoin address.</source>
+        <translation>Alamat yang dimasukkan &quot;%1&quot; bukanlah alamat Nusacoin yang valid.</translation>
     </message>
     <message>
-        <source>Address "%1" already exists as a receiving address with label "%2" and so cannot be added as a sending address.</source>
-        <translation>Alamat "%1" sudah ada sebagai alamat penerimaan dengan label "%2" sehingga tidak bisa ditambah sebagai alamat pengiriman.</translation>
+        <source>Address &quot;%1&quot; already exists as a receiving address with label &quot;%2&quot; and so cannot be added as a sending address.</source>
+        <translation>Alamat &quot;%1&quot; sudah ada sebagai alamat penerimaan dengan label &quot;%2&quot; sehingga tidak bisa ditambah sebagai alamat pengiriman.</translation>
     </message>
     <message>
-        <source>The entered address "%1" is already in the address book with label "%2".</source>
-        <translation>Alamat "%1" yang dimasukkan sudah ada di dalam buku alamat dengan label "%2".</translation>
+        <source>The entered address &quot;%1&quot; is already in the address book with label &quot;%2&quot;.</source>
+        <translation>Alamat &quot;%1&quot; yang dimasukkan sudah ada di dalam buku alamat dengan label &quot;%2&quot;.</translation>
     </message>
     <message>
         <source>Could not unlock wallet.</source>
@@ -927,8 +929,8 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Dompet juga akan disimpan di direktori ini.</translation>
     </message>
     <message>
-        <source>Error: Specified data directory "%1" cannot be created.</source>
-        <translation>Kesalahan: Direktori data "%1" tidak dapat dibuat.</translation>
+        <source>Error: Specified data directory &quot;%1&quot; cannot be created.</source>
+        <translation>Kesalahan: Direktori data &quot;%1&quot; tidak dapat dibuat.</translation>
     </message>
     <message>
         <source>Error</source>
@@ -936,11 +938,15 @@ Signing is only possible with addresses of the type 'legacy'.</source>
     </message>
     <message numerus="yes">
         <source>%n GB of free space available</source>
-        <translation><numerusform>%n GB ruang kosong tersedia.</numerusform></translation>
+        <translation>
+            <numerusform>%n GB ruang kosong tersedia.</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>(of %n GB needed)</source>
-        <translation><numerusform>(dari %n GB yang dibutuhkan)</numerusform></translation>
+        <translation>
+            <numerusform>(dari %n GB yang dibutuhkan)</numerusform>
+        </translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -954,7 +960,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Formulir</translation>
     </message>
     <message>
-        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the nusacoin network, as detailed below.</source>
+        <source>Recent transactions may not yet be visible, and therefore your wallet&apos;s balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the nusacoin network, as detailed below.</source>
         <translation>Transaksi-transaksi terkini mungkin belum tampil pada dompet Anda dan oleh karenanya, saldo dompet Anda mungkin tidak akurat.
         Informasi ini akan akurat ketika dompet Anda tersinkronisasi dengan jaringan Nusacoin, seperti rincian berikut.</translation>
     </message>
@@ -1415,8 +1421,8 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Pengelolaan URI</translation>
     </message>
     <message>
-        <source>'nusacoin://' is not a valid URI. Use 'nusacoin:' instead.</source>
-        <translation>'nusacoin://' bukanlah alamat URI yang valid. Silakan gunakan 'nusacoin:'.</translation>
+        <source>&apos;nusacoin://&apos; is not a valid URI. Use &apos;nusacoin:&apos; instead.</source>
+        <translation>&apos;nusacoin://&apos; bukanlah alamat URI yang valid. Silakan gunakan &apos;nusacoin:&apos;.</translation>
     </message>
     <message>
         <source>Payment request fetch URL is invalid: %1</source>
@@ -1439,14 +1445,14 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Permintaan pembayaran ditolak</translation>
     </message>
     <message>
-        <source>Payment request network doesn't match client network.</source>
+        <source>Payment request network doesn&apos;t match client network.</source>
         <translation>Jaringan permintaan pembayaran tidak sesuai dengan jaringan klien.</translation>
     </message>
     <message>
         <source>Payment request expired.</source>
         <translation>Permintaan pembayaran telah kadaluarsa.</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>PeerTableModel</name>
     <message>
@@ -1485,7 +1491,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>Received</source>
         <translation>Diterima</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>QObject</name>
     <message>
@@ -1533,12 +1539,6 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>tidak diketahui</translation>
     </message>
 </context>
-<context>
-    <name>QObject::QObject</name>
-    </context>
-<context>
-    <name>QRImageWidget</name>
-    </context>
 <context>
     <name>RPCConsole</name>
     <message>
@@ -1745,7 +1745,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Buat alamat terima baru</translation>
     </message>
     <message>
-        <source>Native segwit addresses (aka Bech32 or BIP-173) reduce your transaction fees later on and offer better protection against typos, but old wallets don't support them. When unchecked, an address compatible with older wallets will be created instead.</source>
+        <source>Native segwit addresses (aka Bech32 or BIP-173) reduce your transaction fees later on and offer better protection against typos, but old wallets don&apos;t support them. When unchecked, an address compatible with older wallets will be created instead.</source>
         <translation>Alamat Native segwit (alias Bech32 atau BIP-173) dapat mengurangi biaya transaksi Anda dan menawarkan perlindungan yang lebih baik terhadap kesalahan ketik, tetapi dompet tipe lama tidak mendukung alamat jenis ini. Jika tidak dicentang, alamat yang kompatibel dengan dompet tipe lama akan dibuat.</translation>
     </message>
     <message>
@@ -1805,7 +1805,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Menghasilkan alamat yang kompatibel dengan dompet lama.</translation>
     </message>
     <message>
-        <source>Generates a native segwit address (BIP-173). Some old wallets don't support it.</source>
+        <source>Generates a native segwit address (BIP-173). Some old wallets don&apos;t support it.</source>
         <translation>Menghasilkan alamat segwit(BIP-173). Beberapa dompet lama tidak mendukungnya.</translation>
     </message>
 </context>
@@ -1859,7 +1859,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>Close</source>
         <translation>Tutup</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>RecentRequestsTableModel</name>
     <message>
@@ -1886,7 +1886,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>Requested</source>
         <translation>Jumlah</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>SendCoinsDialog</name>
     <message>
@@ -1918,7 +1918,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>%1 kepada %2</translation>
     </message>
     <message>
-        <source>%1 to '%2'</source>
+        <source>%1 to &apos;%2&apos;</source>
         <translation>%1 kepada %2</translation>
     </message>
     <message>
@@ -2002,7 +2002,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Aktifkan Replace-By-Fee</translation>
     </message>
     <message>
-        <source>With Replace-By-Fee (BIP-125) you can increase a transaction's fee after it is sent. Without this, a higher fee may be recommended to compensate for increased transaction delay risk.</source>
+        <source>With Replace-By-Fee (BIP-125) you can increase a transaction&apos;s fee after it is sent. Without this, a higher fee may be recommended to compensate for increased transaction delay risk.</source>
         <translation>Dengan Replace-By-Fee (BIP-125) Anda dapat meningkatkan biaya transaksi setelah dikirim. Tanpa ini, biaya yang lebih tinggi mungkin disarankan untuk mengkompensasi peningkatan risiko penundaan transaksi.</translation>
     </message>
     <message>
@@ -2046,8 +2046,8 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Konfirmasi kirim koin</translation>
     </message>
     <message>
-        <source>To review recipient list click "Show Details..."</source>
-        <translation>Untuk memeriksa kembali daftar penerima transaksi klik "Lihat Rincian..."</translation>
+        <source>To review recipient list click &quot;Show Details...&quot;</source>
+        <translation>Untuk memeriksa kembali daftar penerima transaksi klik &quot;Lihat Rincian...&quot;</translation>
     </message>
     <message>
         <source>Copy quantity</source>
@@ -2210,7 +2210,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>The amount to send in the selected unit</source>
         <translation>Jumlah yang akan dikirim dalam unit yang dipilih</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>SendConfirmationDialog</name>
     <message>
@@ -2272,8 +2272,8 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Masukan pesan yang ingin ditandai disini</translation>
     </message>
     <message>
-        <source>Click "Sign Message" to generate signature</source>
-        <translation>Klik "Tandai Pesan" untuk menghasilkan tanda tangan</translation>
+        <source>Click &quot;Sign Message&quot; to generate signature</source>
+        <translation>Klik &quot;Tandai Pesan&quot; untuk menghasilkan tanda tangan</translation>
     </message>
     <message>
         <source>The entered address is invalid.</source>
@@ -2359,7 +2359,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>Message verified.</source>
         <translation>Pesan terverifikasi.</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>SplashScreen</name>
     <message>
@@ -2434,7 +2434,9 @@ Signing is only possible with addresses of the type 'legacy'.</source>
     </message>
     <message numerus="yes">
         <source>matures in %n more block(s)</source>
-        <translation><numerusform>Matang dalam %n blok atau lebih</numerusform></translation>
+        <translation>
+            <numerusform>Matang dalam %n blok atau lebih</numerusform>
+        </translation>
     </message>
     <message>
         <source>not accepted</source>
@@ -2485,8 +2487,8 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Index Output</translation>
     </message>
     <message>
-        <source>Generated coins must mature %1 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to "not accepted" and it won't be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
-        <translation>Koin yang dihasilkan harus matang dalam %1 blok sebelum dapat digunakan/dibelanjakan. Saat Anda menemukan blok ini, blok tersebut disiarkan ke jaringan untuk ditambahkan ke rantai blok. Jika gagal masuk ke rantai, statusnya akan berubah menjadi "tidak diterima" dan tidak dapat dibelanjakan. Ini kadang-kadang dapat terjadi jika node lain menghasilkan blok selisih beberapa detik dari penemuan Anda.</translation>
+        <source>Generated coins must mature %1 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to &quot;not accepted&quot; and it won&apos;t be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
+        <translation>Koin yang dihasilkan harus matang dalam %1 blok sebelum dapat digunakan/dibelanjakan. Saat Anda menemukan blok ini, blok tersebut disiarkan ke jaringan untuk ditambahkan ke rantai blok. Jika gagal masuk ke rantai, statusnya akan berubah menjadi &quot;tidak diterima&quot; dan tidak dapat dibelanjakan. Ini kadang-kadang dapat terjadi jika node lain menghasilkan blok selisih beberapa detik dari penemuan Anda.</translation>
     </message>
     <message>
         <source>Transaction</source>
@@ -2504,7 +2506,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>false</source>
         <translation>salah</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>TransactionDescDialog</name>
     <message>
@@ -2519,7 +2521,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>C&amp;lose</source>
         <translation>Tutup</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>TransactionTableModel</name>
     <message>
@@ -2606,7 +2608,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>Amount removed from or added to balance.</source>
         <translation>Jumlah berkurang atau bertambah ke saldo.</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>TransactionView</name>
     <message>
@@ -2651,7 +2653,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
     </message>
     <message>
         <source>Increase transaction fee</source>
-        <translation>Tingkatkan Biaya Tranasaksi</translation>
+        <translation>Tingkatkan Biaya Transaksi</translation>
     </message>
     <message>
         <source>Comma separated file (*.csv)</source>
@@ -2685,14 +2687,14 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>to</source>
         <translation>ke</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>UnitDisplayStatusBarControl</name>
     <message>
         <source>Unit to show amounts in. Click to select another unit.</source>
         <translation>Satuan pada tampilan jumlah. Klik untuk memilih yang satuan lain.</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>WalletController</name>
     <message>
@@ -2725,9 +2727,6 @@ Signing is only possible with addresses of the type 'legacy'.</source>
     </message>
 </context>
 <context>
-    <name>WalletFrame</name>
-</context>
-<context>
     <name>WalletModel</name>
     <message>
         <source>Fee bump error</source>
@@ -2758,10 +2757,10 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Konfirmasi peningkatan biaya</translation>
     </message>
     <message>
-        <source>Can't sign transaction.</source>
+        <source>Can&apos;t sign transaction.</source>
         <translation>Tidak dapat menandatangani transaksi</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>WalletView</name>
     <message>
@@ -2772,7 +2771,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <source>The wallet data was successfully saved to %1.</source>
         <translation>Data dompet telah berhasil disimpan di %1.</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>nusacoin-core</name>
     <message>
@@ -2861,11 +2860,11 @@ Signing is only possible with addresses of the type 'legacy'.</source>
     </message>
     <message>
         <source>Zapping all transactions from wallet...</source>
-        <translation>Setiap transaksi dalam dompet sedang di-'Zap'...</translation>
+        <translation>Setiap transaksi dalam dompet sedang di-&apos;Zap&apos;...</translation>
     </message>
     <message>
-        <source>Unknown network specified in -onlynet: '%s'</source>
-        <translation>Jaringan tidak diketahui yang ditentukan dalam -onlynet: '%s'</translation>
+        <source>Unknown network specified in -onlynet: &apos;%s&apos;</source>
+        <translation>Jaringan tidak diketahui yang ditentukan dalam -onlynet: &apos;%s&apos;</translation>
     </message>
     <message>
         <source>Insufficient funds</source>
@@ -2892,7 +2891,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Memuat selesai</translation>
     </message>
     <message>
-        <source>Please check that your computer's date and time are correct! If your clock is wrong, %s will not work properly.</source>
+        <source>Please check that your computer&apos;s date and time are correct! If your clock is wrong, %s will not work properly.</source>
         <translation>Harap periksa apakah tanggal dan waktu komputer Anda sudah benar! Jika jam Anda salah, %s tidak akan bekerja dengan benar.</translation>
     </message>
     <message>
@@ -2904,7 +2903,7 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Sumber kode tersedia di %s.</translation>
     </message>
     <message>
-        <source>In case you have any additional questions please don't hesitate to contact our %s community %s</source>
+        <source>In case you have any additional questions please don&apos;t hesitate to contact our %s community %s</source>
         <translation>Jika ada pertanyaan lebih lanjut, hubungi komunitas edukasi crypto %s %s.</translation>
     </message>
     <message>
@@ -2912,8 +2911,8 @@ Signing is only possible with addresses of the type 'legacy'.</source>
         <translation>Ini adalah perangkat lunak percobaan.</translation>
     </message>
     <message>
-        <source>Invalid amount for -maxtxfee=&lt;amount&gt;: '%s' (must be at least the minrelay fee of %s to prevent stuck transactions)</source>
-        <translation>Jumlah tidak valid untuk -maxtxfee=&lt;amount&gt;: '%s' (minimal biaya setidaknya mencapai minimal biaya relay %s untuk mencegah transaksi macet)</translation>
+        <source>Invalid amount for -maxtxfee=&lt;amount&gt;: &apos;%s&apos; (must be at least the minrelay fee of %s to prevent stuck transactions)</source>
+        <translation>Jumlah tidak valid untuk -maxtxfee=&lt;amount&gt;: &apos;%s&apos; (minimal biaya setidaknya mencapai minimal biaya relay %s untuk mencegah transaksi macet)</translation>
     </message>
     <message>
         <source>The transaction amount is too small to send after the fee has been deducted</source>

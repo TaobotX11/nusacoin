@@ -401,6 +401,9 @@
       <property name="acceptDrops">
        <bool>false</bool>
       </property>
+      <property name="styleSheet">
+             <string notr="true">selection-background-color: #018f01; selection-color:white;</string>
+            </property>
      </widget>
     </item>
    </layout>

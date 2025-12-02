@@ -1036,7 +1036,7 @@ Note:  Since the fee is calculated on a per-byte basis, a fee of &quot;100 satos
                      <item>
                       <widget class="QComboBox" name="confTargetSelector">
                         <property name="styleSheet">
-                            <string notr="true">selection-background-color: #018f01; selection-color:white;"</string>
+                            <string notr="true">selection-background-color: #018f01; selection-color: white;</string>
                         </property>
                       </widget>
                      </item>

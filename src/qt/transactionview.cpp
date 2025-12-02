@@ -66,6 +66,7 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     } else {
         dateWidget->setFixedWidth(120);
     }
+    dateWidget->setStyleSheet("selection-background-color: #018f01; selection-color:white;");
     dateWidget->addItem(tr("All"), All);
     dateWidget->addItem(tr("Today"), Today);
     dateWidget->addItem(tr("This week"), ThisWeek);
@@ -81,7 +82,8 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     } else {
         typeWidget->setFixedWidth(120);
     }
-
+    
+    typeWidget->setStyleSheet("selection-background-color: #018f01; selection-color:white;");
     typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
     typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) |
                                         TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));

@@ -637,6 +637,9 @@
            <property name="toolTip">
             <string>The user interface language can be set here. This setting will take effect after restarting %1.</string>
            </property>
+           <property name="styleSheet">
+             <string notr="true">selection-background-color: #018f01; selection-color: white;</string>
+            </property>
           </widget>
          </item>
         </layout>
@@ -661,6 +664,9 @@
            <property name="toolTip">
             <string>Choose the default subdivision unit to show in the interface and when sending coins.</string>
            </property>
+           <property name="styleSheet">
+             <string notr="true">selection-background-color: #018f01; selection-color:white;</string>
+            </property>
           </widget>
          </item>
         </layout>

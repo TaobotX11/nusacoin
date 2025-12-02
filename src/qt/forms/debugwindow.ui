@@ -216,17 +216,17 @@
         </widget>
        </item>
        <item row="7" column="0">
-           <widget class="QLabel" name="labelNetwork">
-               <property name="font">
-                   <font>
-                       <weight>75</weight>
-                       <bold>true</bold>
-                   </font>
-               </property>
-               <property name="text">
-                   <string>Network</string>
-               </property>
-           </widget>
+            <widget class="QLabel" name="labelNetwork">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Network</string>
+         </property>
+        </widget>
        </item>
        <item row="8" column="0">
         <widget class="QLabel" name="label_8">
@@ -290,7 +290,7 @@
        <item row="11" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Current number of blocks</string>
+          <string>Current block height</string>
          </property>
         </widget>
        </item>
@@ -425,6 +425,8 @@
            <property name="text">
             <string>&amp;Open</string>
            </property>
+           <property name="styleSheet">
+             <string notr="true">QPushButton {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton:hover {background-color: #02d902;color: #ffffff}</string></property>
            <property name="autoDefault">
             <bool>false</bool>
            </property>
@@ -475,6 +477,9 @@
            <property name="sizeAdjustPolicy">
             <enum>QComboBox::AdjustToContents</enum>
            </property>
+           <property name="styleSheet">
+             <string notr="true">selection-background-color: #018f01; selection-color:white;</string>
+            </property>
            <item>
             <property name="text">
              <string>(none)</string>
@@ -503,11 +508,11 @@
              <height>24</height>
             </size>
            </property>
-           <property name="text">
-            <string/>
-           </property>
            <property name="toolTip">
             <string>Decrease font size</string>
+           </property>
+           <property name="text">
+            <string/>
            </property>
            <property name="icon">
             <iconset resource="../nusacoin.qrc">
@@ -604,6 +609,9 @@
          <property name="readOnly">
           <bool>true</bool>
          </property>
+         <property name="styleSheet">
+             <string notr="true">QTextEdit {selection-background-color: #018f01; selection-color:white;} QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}</string>
+        </property>
          <property name="tabKeyNavigation" stdset="0">
           <bool>false</bool>
          </property>
@@ -652,12 +660,15 @@
          </item>
          <item>
           <widget class="QLineEdit" name="lineEdit">
-           <property name="placeholderText">
-            <string/>
-           </property>
            <property name="enabled">
             <bool>false</bool>
            </property>
+           <property name="placeholderText">
+            <string/>
+           </property>
+           <property name="styleSheet">
+             <string notr="true">QLineEdit {selection-background-color: #018f01; selection-color:white;} QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}</string>
+        </property>
           </widget>
          </item>
         </layout>
@@ -723,6 +734,9 @@
              <property name="autoDefault">
               <bool>false</bool>
              </property>
+             <property name="styleSheet">
+             <string notr="true">QPushButton {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton:hover {background-color: #02d902;color: #ffffff}</string>
+    </property>
             </widget>
            </item>
           </layout>
@@ -1503,6 +1517,32 @@
                 </widget>
                </item>
                <item row="18" column="0">
+                <widget class="QLabel" name="peerMappedASLabel">
+                 <property name="toolTip">
+                  <string>The mapped Autonomous System used for diversifying peer selection.</string>
+                 </property>
+                 <property name="text">
+                  <string>Mapped AS</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="18" column="1">
+                <widget class="QLabel" name="peerMappedAS">
+                 <property name="cursor">
+                  <cursorShape>IBeamCursor</cursorShape>
+                 </property>
+                 <property name="text">
+                  <string>N/A</string>
+                 </property>
+                 <property name="textFormat">
+                  <enum>Qt::PlainText</enum>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="19" column="0">s
                 <spacer name="verticalSpacer_3">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
