@@ -191,10 +191,10 @@ public:
         m_assumed_blockchain_size = 30;
         m_assumed_chain_state_size = 2;
 
-        genesis = CreateGenesisBlock(1764547439, 29271886, 0x1d00ffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1764547439, 29271886, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        // assert(consensus.hashGenesisBlock == uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669"));
-        // assert(genesis.hashMerkleRoot == uint256S("0x660edadda7d259dff20e3d21fd57165417b0ce9bd2d40a28ae437638aa61fd9b"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669"));
+        assert(genesis.hashMerkleRoot == uint256S("0x660edadda7d259dff20e3d21fd57165417b0ce9bd2d40a28ae437638aa61fd9b"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
@@ -220,7 +220,7 @@ public:
 
         checkpointData = {
             {
-                {0, uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669")},
+                {546, uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669")},
             }};
 
         chainTxData = ChainTxData{

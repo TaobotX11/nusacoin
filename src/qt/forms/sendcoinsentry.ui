@@ -53,6 +53,9 @@
       </property>
       <item>
        <widget class="QValidatedLineEdit" name="payTo">
+        <property name="styleSheet">
+         <string notr="true">#payTo {background-color: rgb(255, 255, 255); color: #000000;selection-color: #ffffff;selection-background-color: #018f01}</string>
+        </property>
         <property name="toolTip">
          <string>The Nusacoin address to send the payment to</string>
         </property>
@@ -141,7 +144,13 @@
     </item>
     <item row="1" column="1">
      <widget class="QLineEdit" name="addAsLabel">
+      <property name="styleSheet">
+         <string notr="true">QLineEdit {background-color: rgb(255, 255, 255); color: #000000;selection-color: #ffffff;selection-background-color: #018f01}</string>
+        </property>
       <property name="toolTip">
+       <string>Enter a label for this address to add it to the list of used addresses</string>
+      </property>
+      <property name="placeholderText">
        <string>Enter a label for this address to add it to the list of used addresses</string>
       </property>
      </widget>
@@ -180,9 +189,6 @@
       </item>
       <item>
        <widget class="QPushButton" name="useAvailableBalanceButton">
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(10, 164, 227);color: #ffffff</string>
-        </property>
         <property name="text">
          <string>Use available balance</string>
         </property>
@@ -224,7 +230,7 @@
     <string>This is an unauthenticated payment request.</string>
    </property>
    <property name="autoFillBackground">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="frameShape">
     <enum>QFrame::NoFrame</enum>
@@ -302,16 +308,18 @@
       <property name="acceptDrops">
        <bool>false</bool>
       </property>
+      <property name="styleSheet">
+             <string notr="true">selection-background-color: #018f01; selection-color:white;</string>
+            </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QFrame" name="SendCoins_AuthenticatedPaymentRequest">
    <property name="toolTip">
     <string>This is an authenticated payment request.</string>
    </property>
    <property name="autoFillBackground">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="frameShape">
     <enum>QFrame::NoFrame</enum>
@@ -397,7 +405,6 @@
     </item>
    </layout>
   </widget>
- </widget>
  <customwidgets>
   <customwidget>
    <class>QValidatedLineEdit</class>

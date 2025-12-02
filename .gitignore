@@ -142,3 +142,4 @@ dist/
 cmake-build-debug
 .github/ISSUE_TEMPLATE.md
 .github/ISSUE_TEMPLATE.md
+contrib/install_db4.sh

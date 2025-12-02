@@ -61,7 +61,7 @@
      <item>
       <widget class="QPushButton" name="newAddress">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(10, 164, 227);color: #ffffff</string>
+        <string notr="true">background-color: rgb(1, 143, 1);color: #ffffff</string>
        </property>
        <property name="toolTip">
         <string>Create a new address</string>
@@ -81,7 +81,7 @@
      <item>
       <widget class="QPushButton" name="copyAddress">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(10, 164, 227);color: #ffffff</string>
+        <string notr="true">background-color: rgb(1, 143, 1);color: #ffffff</string>
        </property>
        <property name="toolTip">
         <string>Copy the currently selected address to the system clipboard</string>
@@ -101,7 +101,7 @@
      <item>
       <widget class="QPushButton" name="deleteAddress">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(10, 164, 227);color: #ffffff</string>
+        <string notr="true">background-color: rgb(1, 143, 1);color: #ffffff</string>
        </property>
        <property name="toolTip">
         <string>Delete the currently selected address from the list</string>
@@ -134,7 +134,7 @@
      <item>
       <widget class="QPushButton" name="exportButton">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(10, 164, 227);color: #ffffff</string>
+        <string notr="true">background-color: rgb(1, 143, 1);color: #ffffff</string>
        </property>
        <property name="toolTip">
         <string>Export the data in the current tab to a file</string>
@@ -154,7 +154,7 @@
      <item>
       <widget class="QPushButton" name="closeButton">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(10, 164, 227);color: #ffffff</string>
+        <string notr="true">background-color: rgb(1, 143, 1);color: #ffffff</string>
        </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">

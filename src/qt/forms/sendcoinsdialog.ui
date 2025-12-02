@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Send Coins</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: rgb(255, 255, 255);</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0,0">
    <property name="bottomMargin">
     <number>8</number>
@@ -106,9 +103,6 @@
           </property>
           <item>
            <widget class="QPushButton" name="pushButtonCoinControl">
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(10, 164, 227);</string>
-            </property>
             <property name="text">
              <string>Inputs...</string>
             </property>
@@ -536,6 +530,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="styleSheet">
+         <string notr="true">QValidatedLineEdit:enabled {background-color: rgb(255, 255, 255); color: #000000;selection-color: #ffffff;selection-background-color: #018f01}</string>
+        </property>
            </widget>
           </item>
           <item>
@@ -740,9 +737,6 @@
               </item>
               <item>
                <widget class="QPushButton" name="buttonChooseFee">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(10, 164, 227);color: #ffffff</string>
-                </property>
                 <property name="text">
                  <string>Choose...</string>
                 </property>
@@ -802,9 +796,6 @@
           </item>
           <item>
            <widget class="QPushButton" name="buttonMinimizeFee">
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(10, 164, 227);color: #ffffff</string>
-            </property>
             <property name="toolTip">
              <string>collapse fee-settings</string>
             </property>
@@ -1043,7 +1034,11 @@ Note:  Since the fee is calculated on a per-byte basis, a fee of &quot;100 satos
                       <number>0</number>
                      </property>
                      <item>
-                      <widget class="QComboBox" name="confTargetSelector"/>
+                      <widget class="QComboBox" name="confTargetSelector">
+                        <property name="styleSheet">
+                            <string notr="true">selection-background-color: #018f01; selection-color:white;"</string>
+                        </property>
+                      </widget>
                      </item>
                      <item>
                       <spacer name="horizontalSpacerConfTarget">
@@ -1116,9 +1111,6 @@ Note:  Since the fee is calculated on a per-byte basis, a fee of &quot;100 satos
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="sendButton">
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(10, 164, 227);</string>
-       </property>
        <property name="minimumSize">
         <size>
          <width>150</width>
@@ -1145,9 +1137,6 @@ Note:  Since the fee is calculated on a per-byte basis, a fee of &quot;100 satos
      </item>
      <item>
       <widget class="QPushButton" name="clearButton">
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(10, 164, 227);</string>
-       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1171,9 +1160,6 @@ Note:  Since the fee is calculated on a per-byte basis, a fee of &quot;100 satos
      </item>
      <item>
       <widget class="QPushButton" name="addButton">
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(10, 164, 227);</string>
-       </property>
        <property name="toolTip">
         <string>Send to multiple recipients at once</string>
        </property>
@@ -1208,7 +1194,7 @@ Note:  Since the fee is calculated on a per-byte basis, a fee of &quot;100 satos
         <number>3</number>
        </property>
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelBalanceName">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -1234,9 +1220,17 @@ Note:  Since the fee is calculated on a per-byte basis, a fee of &quot;100 satos
          <property name="text">
           <string notr="true">123.456 NUX</string>
          </property>
+         <property name="font">
+               <font>
+                <bold>true</bold>
+               </font>
+          </property>
          <property name="textInteractionFlags">
           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
          </property>
+         <property name="styleSheet">
+               <string notr="true">selection-background-color: rgb(1, 143, 1); selection-color:white;</string>
+              </property>
         </widget>
        </item>
       </layout>
