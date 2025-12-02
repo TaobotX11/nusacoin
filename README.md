@@ -3,64 +3,37 @@ As of 2022, development has now moved to the Taobot organization, under the Nusa
 
 
 What is Nusacoin?
-Nusacoin (CICX) is a highly secure, decentralized, distributed and time-tested global blockchain that was founded in early 2019 with a focus on cyber security, payments & secure communications technologies.
+Nusacoin (NUX) is a highly secure, decentralized, distributed and time-tested global blockchain that was founded in early 2025 with a focus on cyber security, payments & secure communications technologies.
 
 For more information, as well as an immediately useable, binary version of the Nusacoin Core software, see https://taobot.org
 
 Nusacoin Overview
 
-Launch Date: March 7th, 2019
+Launch Date: December 1st, 2025
 
 Blockchain Type: Public, Decentralized, UTXO based, X11-Algorithm
 
-Ticker Symbol: CICX
+Ticker Symbol: NUX
 
-Genesis Block Hash: "Detik 26/Aug/2019 Gegara Ditipu Bitcoin, Pria Ini Balas Curi Rp 160 Juta dan Aniaya Korban"
+Genesis Block Hash: "Hari ini 01/Dec/2025, NUSA Lahir dari Kepercayaan, Transparansi dan Kebersamaan Rakyat."
 
-Community Block Hash (71008) : <tt>a946c0334e33cb70c5f0c4dbabb791a7d50c06031b8ade954b23caa59b19fa0e</tt>
-
-<tt>
-Ya Lal Wathan diciptakan oleh KH. Abdul Wahab Chasbullah pada tahun 1916 saat mendirikan organisasi gerakan bernama Syubanul Wathan dan diijazahkan oleh (alm) KH. Maemon Zubair Tahun pada tahun 2012.
- 
-ياَ لَلْوَطَنْ ياَ لَلْوَطَن ياَ لَلْوَطَنْ
-Ya Lal Wathon Ya Lal Wathon Ya Lal Wathon
- 
-حُبُّ الْوَطَنْ مِنَ اْلإِيمَانْ
-Hubbul Wathon minal Iman
- 
-وَلاَتَكُنْ مِنَ الْحِرْماَنْ
-Wala Takum minal Hirman
- 
-اِنْهَضوُا أَهْلَ الْوَطَنْ
-Inhadlu Alal Wathon
- 
-اِندُونيْسِياَ بِلاَدى
-Indonesia Biladi
- 
-أَنْتَ عُنْواَنُ الْفَخَاماَ
-Anta ‘Unwanul Fakhoma
- 
- 
-كُلُّ مَنْ يَأْتِيْكَ يَوْماَ
-Kullu May Ya’tika Yauma
- 
-طَامِحاً يَلْقَ حِماَمًا
-Thomihay Yalqo Himama
-</tt>
+Community Block Hash (0) : <tt>0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669</tt>
 
 Max Total Supply: ~18 Million Nusacoins
 
-Current Supply: 8,974,200 CICX (June 2025)
+Current Supply: 50 NUX (Dec 2025)
 
-Block Reward Reduction: every 600,000 block
+Block Reward Reduction: every 300,000 block
 
-Current Block Reward: 8 CICX (June 2025)
+Halving Estimated : every 3.7 year
+
+Current Block Reward: 30 NUX (June 2025)
 
 Mining Algorithms: X11
 
 Block Interval: ~ 6 minutes
 
-Difficulty Retarget: Every 2016 Block
+Difficulty Retarget: Every 3360 Block (2 weeks)
 
 SegWit Support: Yes.
 
