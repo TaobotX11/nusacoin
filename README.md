@@ -1,5 +1,5 @@
 Development is now occurring on the Nusacoin-Core repo
-As of 2022, development has now moved to the Taobot organization, under the Nusacoin repo
+As of 2025, development has now moved to the Taobot organization, under the Nusacoin repo
 
 
 What is Nusacoin?
