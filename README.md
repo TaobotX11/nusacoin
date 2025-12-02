@@ -3,7 +3,7 @@ As of 2022, development has now moved to the Taobot organization, under the Nusa
 
 
 What is Nusacoin?
-Nusacoin (NUX) is a highly secure, decentralized, distributed and time-tested global blockchain that was founded in early 2025 with a focus on cyber security, payments & secure communications technologies.
+Nusacoin (NUX) is a highly secure, decentralized, distributed and time-tested global blockchain that was founded in early December 2025 with a focus on cyber security, payments & secure communications technologies.
 
 For more information, as well as an immediately useable, binary version of the Nusacoin Core software, see https://taobot.org
 

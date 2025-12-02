@@ -60,7 +60,7 @@ Represents the view to a single wallet.
 
 * UI elements like NusacoinAmountField, which inherit from QWidget.
 * `nusacoinstrings.cpp`: automatically generated
-* `nusacoinunits.(h/cpp)`: CICX / mCICX / etc handling
+* `nusacoinunits.(h/cpp)`: NUX / mNUX / etc handling
 * `callback.h`
 * `guiconstants.h`: UI colors, app name, etc
 * `guiutil.h`: several helper functions

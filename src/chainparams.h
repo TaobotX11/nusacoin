@@ -39,7 +39,7 @@ struct ChainTxData {
 
 /**
  * CChainParams defines various tweakable parameters of a given instance of the
- * Nusacoin system. There are three: the main network on which people trade goods
+ * Cicoin system. There are three: the main network on which people trade goods
  * and services, the public test network which gets reset from time to time and
  * a regression test mode which is intended for private networks only. It has
  * minimal difficulty to ensure that blocks can be found instantly.
@@ -68,6 +68,8 @@ public:
     bool RequireStandard() const { return fRequireStandard; }
     /** If this chain is exclusively used for testing */
     bool IsTestChain() const { return m_is_test_chain; }
+    /** If this chain allows time to be mocked */
+    bool IsMockableChain() const { return m_is_mockable_chain; }
     uint64_t PruneAfterHeight() const { return nPruneAfterHeight; }
     /** Minimum free space (in GB) needed for data directory */
     uint64_t AssumedBlockchainSize() const { return m_assumed_blockchain_size; }
@@ -102,6 +104,7 @@ protected:
     bool fDefaultConsistencyChecks;
     bool fRequireStandard;
     bool m_is_test_chain;
+    bool m_is_mockable_chain;
     CCheckpointData checkpointData;
     ChainTxData chainTxData;
 };

@@ -93,7 +93,7 @@ class WalletTest(NusacoinTestFramework):
         assert_equal(self.nodes[0].getbalance(minconf=0, include_watchonly=True), 100)
         assert_equal(self.nodes[1].getbalance(minconf=0, include_watchonly=True), 50)
 
-        # Send 40 CICX from 0 to 1 and 60 CICX from 1 to 0.
+        # Send 40 NUX from 0 to 1 and 60 NUX from 1 to 0.
         txs = create_transactions(self.nodes[0], self.nodes[1].getnewaddress(), 40, [Decimal('0.01')])
         self.nodes[0].sendrawtransaction(txs[0]['hex'])
         self.nodes[1].sendrawtransaction(txs[0]['hex'])  # sending on both nodes is faster than waiting for propagation
