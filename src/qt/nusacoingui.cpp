@@ -177,6 +177,8 @@ NusacoinGUI::NusacoinGUI(interfaces::Node& node, const PlatformStyle *_platformS
     if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
     {
         progressBar->setStyleSheet("QProgressBar { background-color: #e8e8e8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF8000, stop: 1 orange); border-radius: 7px; margin: 0px; }");
+    }else{
+        progressBar->setStyleSheet("QProgressBar { background-color: #ffffff; border-radius: 4px; text-align: center; color: #ffffff;font-weight: bold } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00ff00, stop: 1 #018f01); border-radius: 4px; margin: 0px; }");
     }
 
     statusBar()->addWidget(progressBarLabel);
@@ -520,6 +522,7 @@ void NusacoinGUI::createToolBars()
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
         toolbar->addAction(historyAction);
+        toolbar->setStyleSheet("QToolButton:checked {background-color: #daf5da; border: none;} QToolButton:hover {background-color: #daf5da;}");
         overviewAction->setChecked(true);
 
 #ifdef ENABLE_WALLET
@@ -529,6 +532,7 @@ void NusacoinGUI::createToolBars()
 
         m_wallet_selector = new QComboBox();
         m_wallet_selector->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+        m_wallet_selector->setStyleSheet("selection-background-color: #018f01; selection-color:white;");
         connect(m_wallet_selector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &NusacoinGUI::setCurrentWalletBySelectorIndex);
 
         m_wallet_selector_label = new QLabel();

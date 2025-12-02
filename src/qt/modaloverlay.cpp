@@ -126,6 +126,7 @@ void ModalOverlay::tipUpdate(int count, const QDateTime& blockDate, double nVeri
 
     // show the percentage done according to nVerificationProgress
     ui->percentageProgress->setText(QString::number(nVerificationProgress*100, 'f', 2)+"%");
+    ui->progressBar->setStyleSheet("QProgressBar { background-color: #ffffff; border-radius: 5px;} QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00ff00, stop: 1 #018f01); border-radius: 5px; margin: 0px; }");
     ui->progressBar->setValue(nVerificationProgress*100);
 
     if (!bestHeaderDate.isValid())
@@ -162,6 +163,8 @@ void ModalOverlay::showHide(bool hide, bool userRequested)
 {
     if ( (layerIsVisible && !hide) || (!layerIsVisible && hide) || (!hide && userClosed && !userRequested))
         return;
+
+    Q_EMIT triggered(hide);
 
     if (!isVisible() && !hide)
         setVisible(true);

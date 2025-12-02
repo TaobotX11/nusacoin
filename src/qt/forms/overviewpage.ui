@@ -17,7 +17,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(255, 255, 255);</string>
+   <string notr="true">background-color: rgb(222, 222, 222);border-radius: 5px;</string>
   </property>
   <layout class="QVBoxLayout" name="topLayout">
    <item>
@@ -26,7 +26,7 @@
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">QLabel { background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop:0 #F0D0A0, stop:1 #F8D488); color:#000000; }</string>
+      <string notr="true">QLabel { background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop:0 #F0D0A0, stop:1 #F8D488); color:#000000;border-radius: 0px;}</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -125,6 +125,13 @@
               <property name="styleSheet">
                <string notr="true">background-color: rgb(244, 244, 244);</string>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>55</weight>
+                <bold>true</bold>
+               </font>
+              </property>
               <property name="text">
                <string>Total:  </string>
               </property>
@@ -162,14 +169,13 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
+                <pointsize>11</pointsize>
+                <weight>60</weight>
                 <bold>true</bold>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(10, 164, 227);
-color: rgb(255, 255, 255);</string>
+               <string notr="true">background-color: rgb(1, 143, 1);color: rgb(255, 255, 255);</string>
               </property>
               <property name="text">
                <string>Available:  </string>
@@ -181,12 +187,6 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="2" column="1">
              <widget class="QLabel" name="labelUnconfirmed">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="cursor">
                <cursorShape>IBeamCursor</cursorShape>
               </property>
@@ -194,13 +194,16 @@ color: rgb(255, 255, 255);</string>
                <string>Total of transactions that have yet to be confirmed, and do not yet count toward the spendable balance</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 CICX</string>
+               <string notr="true">0.00000000 NUX</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">selection-background-color: rgb(1, 143, 1); selection-color:white;</string>
               </property>
              </widget>
             </item>
@@ -243,10 +246,17 @@ color: rgb(255, 255, 255);</string>
             <item row="2" column="0">
              <widget class="QLabel" name="labelPendingText">
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(244, 244, 244);</string>
+               <string notr="true">background-color: rgb(247, 247, 220);</string>
               </property>
               <property name="text">
                <string>Pending:  </string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>45</weight>
+                <bold>true</bold>
+               </font>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -256,7 +266,14 @@ color: rgb(255, 255, 255);</string>
             <item row="3" column="0">
              <widget class="QLabel" name="labelImmatureText">
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(244, 244, 244);</string>
+               <string notr="true">background-color: rgb(247, 236, 220);</string>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>45</weight>
+                <bold>true</bold>
+               </font>
               </property>
               <property name="text">
                <string>Immature:  </string>
@@ -268,20 +285,24 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="5" column="1">
              <widget class="QLabel" name="labelTotal">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="cursor">
                <cursorShape>IBeamCursor</cursorShape>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <weight>55</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="styleSheet">
+              <string notr="true">selection-background-color: rgb(1, 143, 1); selection-color:white;border-radius: 0px;</string>
               </property>
               <property name="toolTip">
                <string>Your current total balance</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 CICX</string>
+               <string notr="true">18 000 000.00000000 NUX</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -306,12 +327,6 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="2" column="2">
              <widget class="QLabel" name="labelWatchPending">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="cursor">
                <cursorShape>IBeamCursor</cursorShape>
               </property>
@@ -319,10 +334,13 @@ color: rgb(255, 255, 255);</string>
                <string>Unconfirmed transactions to watch-only addresses</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 CICX</string>
+               <string notr="true">0.00000000 NUX</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">selection-background-color: rgb(1, 143, 1); selection-color:white;</string>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -341,13 +359,6 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="1" column="2">
              <widget class="QLabel" name="labelWatchAvailable">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
               <property name="cursor">
                <cursorShape>IBeamCursor</cursorShape>
               </property>
@@ -355,10 +366,10 @@ color: rgb(255, 255, 255);</string>
                <string>Your current balance in watch-only addresses</string>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(10, 164, 227);</string>
+               <string notr="true">color: rgb(1, 143, 1);</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 CICX</string>
+               <string notr="true">18 000 000.00000000 NUX</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -370,12 +381,6 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="3" column="2">
              <widget class="QLabel" name="labelWatchImmature">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="cursor">
                <cursorShape>IBeamCursor</cursorShape>
               </property>
@@ -383,10 +388,13 @@ color: rgb(255, 255, 255);</string>
                <string>Mined balance in watch-only addresses that has not yet matured</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 CICX</string>
+               <string notr="true">0.00000000 NUX</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">selection-background-color: rgb(1, 143, 1); selection-color:white;border-radius: 0px;</string>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -395,13 +403,6 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="1" column="1">
              <widget class="QLabel" name="labelBalance">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
               <property name="cursor">
                <cursorShape>IBeamCursor</cursorShape>
               </property>
@@ -409,10 +410,10 @@ color: rgb(255, 255, 255);</string>
                <string>Your current spendable balance</string>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(10, 164, 227);</string>
+               <string notr="true">color: rgb(1, 143, 1); selection-background-color: rgb(1, 143, 1); selection-color:white;border-radius: 0px;</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 CICX</string>
+               <string notr="true">18 000 000.00000000 NUX </string>
               </property>
               <property name="textFormat">
                <enum>Qt::PlainText</enum>
@@ -427,12 +428,6 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="3" column="1">
              <widget class="QLabel" name="labelImmature">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="cursor">
                <cursorShape>IBeamCursor</cursorShape>
               </property>
@@ -440,13 +435,16 @@ color: rgb(255, 255, 255);</string>
                <string>Mined balance that has not yet matured</string>
               </property>
               <property name="text">
-               <string notr="true">0.000 000 00 CICX</string>
+               <string notr="true">0.00000000 NUX</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">selection-background-color: rgb(1, 143, 1); selection-color:white;</string>
               </property>
              </widget>
             </item>
@@ -462,20 +460,17 @@ color: rgb(255, 255, 255);</string>
             </item>
             <item row="5" column="2">
              <widget class="QLabel" name="labelWatchTotal">
-              <property name="font">
-               <font>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="cursor">
                <cursorShape>IBeamCursor</cursorShape>
               </property>
               <property name="toolTip">
                <string>Current total balance in watch-only addresses</string>
               </property>
+              <property name="styleSheet">
+               <string notr="true">color: rgb(1, 143, 1); selection-background-color: rgb(1, 143, 1); selection-color:white;border-radius: 0px;</string>
+              </property>
               <property name="text">
-               <string notr="true">0.000 000 00 CICX</string>
+                <string notr="true">18 000 000.00000000 NUX </string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

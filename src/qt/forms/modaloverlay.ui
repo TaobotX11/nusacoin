@@ -350,7 +350,10 @@ QLabel { color: rgb(40,40,40);  }</string>
             <widget class="QPushButton" name="closeButton">
              <property name="text">
               <string>Hide</string>
-             </property>
+                </property>
+                <property name="shortcut">
+                <string>Esc</string>
+                </property>
              <property name="focusPolicy">
               <enum>Qt::StrongFocus</enum>
              </property>
