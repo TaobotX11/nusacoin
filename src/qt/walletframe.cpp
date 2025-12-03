@@ -50,6 +50,7 @@ void WalletFrame::addWallet(WalletModel *walletModel)
     walletView->setClientModel(clientModel);
     walletView->setWalletModel(walletModel);
     walletView->showOutOfSyncWarning(bOutOfSync);
+    walletView->setPrivacy(gui->isPrivacyModeActivated());
 
     WalletView* current_wallet_view = currentWalletView();
     if (current_wallet_view) {
@@ -67,6 +68,7 @@ void WalletFrame::addWallet(WalletModel *walletModel)
     });
 
     connect(walletView, &WalletView::outOfSyncWarningClicked, this, &WalletFrame::outOfSyncWarningClicked);
+    connect(gui, &NusacoinGUI::setPrivacy, walletView, &WalletView::setPrivacy);
 }
 
 void WalletFrame::setCurrentWallet(WalletModel* wallet_model)

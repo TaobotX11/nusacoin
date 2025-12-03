@@ -16,7 +16,9 @@
 #include <qt/walletmodel.h>
 
 #include <QAbstractItemDelegate>
+#include <QApplication>
 #include <QPainter>
+#include <QStatusTipEvent>
 
 #define DECORATION_SIZE 54
 #define NUM_ITEMS 5
@@ -152,6 +154,23 @@ void OverviewPage::handleOutOfSyncWarningClicks()
     Q_EMIT outOfSyncWarningClicked();
 }
 
+void OverviewPage::setPrivacy(bool privacy)
+{
+    m_privacy = privacy;
+    if (m_balances.balance != -1) {
+        setBalance(m_balances);
+    }
+
+    ui->listTransactions->setVisible(!m_privacy);
+
+    const QString status_tip = m_privacy ? tr("Privacy mode activated for the Overview tab. To unmask the values, uncheck Settings->Mask values.") : "";
+    setStatusTip(status_tip);
+    QStatusTipEvent event(status_tip);
+    QApplication::sendEvent(this, &event);
+}
+
+
+
 OverviewPage::~OverviewPage()
 {
     delete ui;
@@ -161,21 +180,27 @@ void OverviewPage::setBalance(const interfaces::WalletBalances& balances)
 {
     int unit = walletModel->getOptionsModel()->getDisplayUnit();
     m_balances = balances;
-    if (walletModel->privateKeysDisabled()) {
-        ui->labelBalance->setText(NusacoinUnits::formatWithUnit(unit, balances.watch_only_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelUnconfirmed->setText(NusacoinUnits::formatWithUnit(unit, balances.unconfirmed_watch_only_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelImmature->setText(NusacoinUnits::formatWithUnit(unit, balances.immature_watch_only_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelTotal->setText(NusacoinUnits::formatWithUnit(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, false, NusacoinUnits::separatorAlways));
-    } else {
-        ui->labelBalance->setText(NusacoinUnits::formatWithUnit(unit, balances.balance, false, NusacoinUnits::separatorAlways));
-        ui->labelUnconfirmed->setText(NusacoinUnits::formatWithUnit(unit, balances.unconfirmed_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelImmature->setText(NusacoinUnits::formatWithUnit(unit, balances.immature_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelTotal->setText(NusacoinUnits::formatWithUnit(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelWatchAvailable->setText(NusacoinUnits::formatWithUnit(unit, balances.watch_only_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelWatchPending->setText(NusacoinUnits::formatWithUnit(unit, balances.unconfirmed_watch_only_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelWatchImmature->setText(NusacoinUnits::formatWithUnit(unit, balances.immature_watch_only_balance, false, NusacoinUnits::separatorAlways));
-        ui->labelWatchTotal->setText(NusacoinUnits::formatWithUnit(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, false, NusacoinUnits::separatorAlways));
-    }
+        if (walletModel->privateKeysDisabled()) {
+            ui->labelBalance->setText(NusacoinUnits::formatWithPrivacy(unit, balances.watch_only_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelUnconfirmed->setText(NusacoinUnits::formatWithPrivacy(unit, balances.unconfirmed_watch_only_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelImmature->setText(NusacoinUnits::formatWithPrivacy(unit, balances.immature_watch_only_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelTotal->setText(NusacoinUnits::formatWithPrivacy(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, NusacoinUnits::separatorAlways, m_privacy));
+        } else {
+            ui->labelBalance->setText(NusacoinUnits::formatWithPrivacy(unit, balances.balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelUnconfirmed->setText(NusacoinUnits::formatWithPrivacy(unit, balances.unconfirmed_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelImmature->setText(NusacoinUnits::formatWithPrivacy(unit, balances.immature_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelTotal->setText(NusacoinUnits::formatWithPrivacy(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelWatchAvailable->setText(NusacoinUnits::formatWithPrivacy(unit, balances.watch_only_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelWatchPending->setText(NusacoinUnits::formatWithPrivacy(unit, balances.unconfirmed_watch_only_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelWatchImmature->setText(NusacoinUnits::formatWithPrivacy(unit, balances.immature_watch_only_balance, NusacoinUnits::separatorAlways, m_privacy));
+            ui->labelWatchTotal->setText(NusacoinUnits::formatWithPrivacy(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, NusacoinUnits::separatorAlways, m_privacy));
+        }
+    // } else {
+    //     ui->labelBalance->setText(NusacoinUnits::formatWithPrivacy(unit, balances.balance, NusacoinUnits::separatorAlways, m_privacy));
+    //     ui->labelUnconfirmed->setText(NusacoinUnits::formatWithPrivacy(unit, balances.unconfirmed_balance, NusacoinUnits::separatorAlways, m_privacy));
+    //     ui->labelImmature->setText(NusacoinUnits::formatWithPrivacy(unit, balances.immature_balance, NusacoinUnits::separatorAlways, m_privacy));
+    //     ui->labelTotal->setText(NusacoinUnits::formatWithPrivacy(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, NusacoinUnits::separatorAlways, m_privacy));
+    // }
     // only show immature (newly mined) balance if it's non-zero, so as not to complicate things
     // for the non-mining users
     bool showImmature = balances.immature_balance != 0;

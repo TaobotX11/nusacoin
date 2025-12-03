@@ -6,6 +6,8 @@
 
 #include <QStringList>
 
+#include <cassert>
+
 NusacoinUnits::NusacoinUnits(QObject *parent):
         QAbstractListModel(parent),
         unitlist(availableUnits())
@@ -94,7 +96,7 @@ int NusacoinUnits::decimals(int unit)
     }
 }
 
-QString NusacoinUnits::format(int unit, const CAmount& nIn, bool fPlus, SeparatorStyle separators)
+QString NusacoinUnits::format(int unit, const CAmount& nIn, bool fPlus, SeparatorStyle separators, bool justify)
 {
     // Note: not using straight sprintf here because we do NOT want
     // localized number formatting.
@@ -106,6 +108,7 @@ QString NusacoinUnits::format(int unit, const CAmount& nIn, bool fPlus, Separato
     qint64 n_abs = (n > 0 ? n : -n);
     qint64 quotient = n_abs / coin;
     QString quotient_str = QString::number(quotient);
+    if (justify) quotient_str = quotient_str.rightJustified(16 - num_decimals, ' ');
 
     // Use SI-style thin space separators as these are locale independent and can't be
     // confused with the decimal marker.
@@ -148,6 +151,18 @@ QString NusacoinUnits::formatHtmlWithUnit(int unit, const CAmount& amount, bool 
     QString str(formatWithUnit(unit, amount, plussign, separators));
     str.replace(QChar(THIN_SP_CP), QString(THIN_SP_HTML));
     return QString("<span style='white-space: nowrap;'>%1</span>").arg(str);
+}
+
+QString NusacoinUnits::formatWithPrivacy(int unit, const CAmount& amount, SeparatorStyle separators, bool privacy)
+{
+    assert(amount >= 0);
+    QString value;
+    if (privacy) {
+        value = format(unit, 0, false, separators, true).replace('0', '#');
+    } else {
+        value = format(unit, amount, false, separators, true);
+    }
+    return value + QString(" ") + shortName(unit);
 }
 
 
