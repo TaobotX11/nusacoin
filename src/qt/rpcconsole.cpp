@@ -446,7 +446,10 @@ RPCConsole::RPCConsole(interfaces::Node& node, const PlatformStyle *_platformSty
     ui(new Ui::RPCConsole),
     platformStyle(_platformStyle)
 {
+    QString curStyleLbl = "* {selection-color: #ffffff;selection-background-color: #018f01} QLabel {selection-background-color: #018f01; selection-color:white;} QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}";
     ui->setupUi(this);
+    ui->tab_info->setStyleSheet(curStyleLbl);
+    ui->tab_peers->setStyleSheet(curStyleLbl);
     QSettings settings;
     if (!restoreGeometry(settings.value("RPCConsoleWindowGeometry").toByteArray())) {
         // Restore failed (perhaps missing setting), center the window
@@ -597,6 +600,7 @@ void RPCConsole::setClientModel(ClientModel *model)
         ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH);
         ui->peerWidget->setColumnWidth(PeerTableModel::Ping, PING_COLUMN_WIDTH);
         ui->peerWidget->horizontalHeader()->setStretchLastSection(true);
+        ui->peerWidget->setStyleSheet("selection-background-color: #018f01; selection-color:white;");
 
         // create peer table context menu actions
         QAction* disconnectAction = new QAction(tr("&Disconnect"), this);
@@ -607,11 +611,16 @@ void RPCConsole::setClientModel(ClientModel *model)
 
         // create peer table context menu
         peersTableContextMenu = new QMenu(this);
+        peersTableContextMenu->addAction(tr("&Copy address"), [this] {
+            GUIUtil::copyEntryData(ui->peerWidget, PeerTableModel::Address, Qt::DisplayRole);
+        });
+        peersTableContextMenu->addSeparator();
         peersTableContextMenu->addAction(disconnectAction);
         peersTableContextMenu->addAction(banAction1h);
         peersTableContextMenu->addAction(banAction24h);
         peersTableContextMenu->addAction(banAction7d);
         peersTableContextMenu->addAction(banAction365d);
+        peersTableContextMenu->setStyleSheet("QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}");
 
         connect(banAction1h, &QAction::triggered, [this] { banSelectedNode(60 * 60); });
         connect(banAction24h, &QAction::triggered, [this] { banSelectedNode(60 * 60 * 24); });
@@ -682,6 +691,7 @@ void RPCConsole::setClientModel(ClientModel *model)
         // possible from now on.
         ui->lineEdit->setEnabled(true);
         ui->lineEdit->setCompleter(autoCompleter);
+        autoCompleter->popup()->setStyleSheet("selection-background-color: #018f01; selection-color:white;");
         autoCompleter->popup()->installEventFilter(this);
         // Start thread to execute RPC commands.
         startExecutor();
