@@ -603,6 +603,7 @@ void NusacoinGUI::setClientModel(ClientModel *_clientModel)
             // initialize the disable state of the tray icon with the current value in the model.
             setTrayIconVisible(optionsModel->getHideTrayIcon());
         }
+        m_mask_values_action->setChecked(optionsModel->getMaskValue());
     } else {
         // Disable possibility to show main window via action
         toggleHideAction->setEnabled(false);

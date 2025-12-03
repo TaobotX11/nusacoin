@@ -51,6 +51,7 @@ public:
         DatabaseCache,          // int
         SpendZeroConfChange,    // bool
         Listen,                 // bool
+        MaskValues,
         OptionIDRowCount,
     };
 
@@ -67,6 +68,7 @@ public:
     bool getHideTrayIcon() const { return fHideTrayIcon; }
     bool getMinimizeToTray() const { return fMinimizeToTray; }
     bool getMinimizeOnClose() const { return fMinimizeOnClose; }
+    bool getMaskValue() const { return m_mask_values; }
     int getDisplayUnit() const { return nDisplayUnit; }
     QString getThirdPartyTxUrls() const { return strThirdPartyTxUrls; }
     bool getCoinControlFeatures() const { return fCoinControlFeatures; }
@@ -77,6 +79,7 @@ public:
 
     /* Restart flag helper */
     void setRestartRequired(bool fRequired);
+    void setMaskValue(bool fPrivacy);
     bool isRestartRequired() const;
 
     interfaces::Node& node() const { return m_node; }
@@ -91,6 +94,7 @@ private:
     int nDisplayUnit;
     QString strThirdPartyTxUrls;
     bool fCoinControlFeatures;
+    bool m_mask_values;
     /* settings that were overridden by command-line */
     QString strOverriddenByCommandLine;
 

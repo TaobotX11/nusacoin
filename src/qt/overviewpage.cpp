@@ -157,6 +157,7 @@ void OverviewPage::handleOutOfSyncWarningClicks()
 void OverviewPage::setPrivacy(bool privacy)
 {
     m_privacy = privacy;
+    walletModel->getOptionsModel()->setMaskValue(m_privacy);
     if (m_balances.balance != -1) {
         setBalance(m_balances);
     }

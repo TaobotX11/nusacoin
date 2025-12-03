@@ -153,6 +153,10 @@ void OptionsModel::Init(bool resetSettings)
         addOverriddenOption("-lang");
 
     language = settings.value("language").toString();
+
+    m_mask_values = settings.value("mask_values", false).toBool();
+
+
 }
 
 /** Helper function to copy contents from one QSettings to another.
@@ -313,6 +317,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return settings.value("nThreadsScriptVerif");
         case Listen:
             return settings.value("fListen");
+        case MaskValues:
+            return m_mask_values;
         default:
             return QVariant();
         }
@@ -461,6 +467,10 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
                 setRestartRequired(true);
             }
             break;
+        case MaskValues:
+            m_mask_values = value.toBool();
+            settings.setValue("mask_values", m_mask_values);
+            break;
         default:
             break;
         }
@@ -487,6 +497,12 @@ void OptionsModel::setRestartRequired(bool fRequired)
 {
     QSettings settings;
     return settings.setValue("fRestartRequired", fRequired);
+}
+
+void OptionsModel::setMaskValue(bool fPrivacy)
+{
+    QSettings settings;
+    return settings.setValue("mask_values", fPrivacy);
 }
 
 bool OptionsModel::isRestartRequired() const
