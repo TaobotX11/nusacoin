@@ -4,7 +4,7 @@
 
 #include <interfaces/wallet.h>
 
-#include <amount.h>
+#include <consensus/amount.h>
 #include <interfaces/chain.h>
 #include <interfaces/handler.h>
 #include <policy/fees.h>
@@ -12,7 +12,7 @@
 #include <script/standard.h>
 #include <support/allocators/secure.h>
 #include <sync.h>
-#include <ui_interface.h>
+#include <node/ui_interface.h>
 #include <uint256.h>
 #include <util/system.h>
 #include <wallet/feebumper.h>

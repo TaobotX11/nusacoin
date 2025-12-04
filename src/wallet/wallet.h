@@ -6,13 +6,13 @@
 #ifndef BITCOIN_WALLET_WALLET_H
 #define BITCOIN_WALLET_WALLET_H
 
-#include <amount.h>
+#include <consensus/amount.h>
 #include <interfaces/chain.h>
 #include <interfaces/handler.h>
 #include <outputtype.h>
 #include <policy/feerate.h>
 #include <tinyformat.h>
-#include <ui_interface.h>
+#include <node/ui_interface.h>
 #include <util/strencodings.h>
 #include <util/system.h>
 #include <validationinterface.h>

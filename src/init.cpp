@@ -10,7 +10,7 @@
 #include <init.h>
 
 #include <addrman.h>
-#include <amount.h>
+#include <consensus/amount.h>
 #include <banman.h>
 #include <blockfilter.h>
 #include <chain.h>
@@ -46,7 +46,7 @@
 #include <torcontrol.h>
 #include <txdb.h>
 #include <txmempool.h>
-#include <ui_interface.h>
+#include <node/ui_interface.h>
 #include <util/moneystr.h>
 #include <util/system.h>
 #include <util/threadnames.h>

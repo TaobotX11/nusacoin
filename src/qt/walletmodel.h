@@ -9,7 +9,7 @@
 #include <config/nusacoin-config.h>
 #endif
 
-#include <amount.h>
+#include <consensus/amount.h>
 #include <key.h>
 #include <serialize.h>
 #include <script/standard.h>

@@ -6,7 +6,7 @@
 #ifndef BITCOIN_RPC_SERVER_H
 #define BITCOIN_RPC_SERVER_H
 
-#include <amount.h>
+#include <consensus/amount.h>
 #include <rpc/request.h>
 
 #include <map>

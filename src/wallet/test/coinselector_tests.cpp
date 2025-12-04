@@ -6,7 +6,7 @@
 #include <wallet/wallet.h>
 #include <wallet/coinselection.h>
 #include <wallet/coincontrol.h>
-#include <amount.h>
+#include <consensus/amount.h>
 #include <primitives/transaction.h>
 #include <random.h>
 #include <test/setup_common.h>

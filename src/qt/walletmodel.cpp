@@ -19,7 +19,7 @@
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
 #include <key_io.h>
-#include <ui_interface.h>
+#include <node/ui_interface.h>
 #include <util/system.h> // for GetBoolArg
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>

@@ -8,7 +8,7 @@
 
 #include <addrdb.h>
 #include <addrman.h>
-#include <amount.h>
+#include <consensus/amount.h>
 #include <bloom.h>
 #include <compat.h>
 #include <crypto/siphash.h>

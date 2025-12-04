@@ -5,11 +5,11 @@
 #ifndef BITCOIN_INTERFACES_WALLET_H
 #define BITCOIN_INTERFACES_WALLET_H
 
-#include <amount.h>                    // For CAmount
+#include <consensus/amount.h>                    // For CAmount
 #include <pubkey.h>                    // For CKeyID and CScriptID (definitions needed in CTxDestination instantiation)
 #include <script/standard.h>           // For CTxDestination
 #include <support/allocators/secure.h> // For SecureString
-#include <ui_interface.h>              // For ChangeType
+#include <node/ui_interface.h>              // For ChangeType
 
 #include <functional>
 #include <map>

@@ -160,6 +160,7 @@ BITCOIN_CORE_H = \
   node/context.h \
   node/psbt.h \
   node/transaction.h \
+  node/ui_interface.h \
   noui.h \
   optional.h \
   outputtype.h \
@@ -203,7 +204,7 @@ BITCOIN_CORE_H = \
   torcontrol.h \
   txdb.h \
   txmempool.h \
-  ui_interface.h \
+  node/ui_interface.h \
   undo.h \
   util/bip32.h \
   util/bytevectorhash.h \
@@ -289,6 +290,7 @@ libnusacoin_server_a_SOURCES = \
   node/context.cpp \
   node/psbt.cpp \
   node/transaction.cpp \
+  node/ui_interface.cpp \
   noui.cpp \
   policy/fees.cpp \
   policy/rbf.cpp \
@@ -307,7 +309,6 @@ libnusacoin_server_a_SOURCES = \
   torcontrol.cpp \
   txdb.cpp \
   txmempool.cpp \
-  ui_interface.cpp \
   validation.cpp \
   validationinterface.cpp \
   versionbits.cpp \
@@ -336,12 +337,12 @@ endif
 libnusacoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libnusacoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libnusacoin_wallet_a_SOURCES = \
-  interfaces/wallet.cpp \
   wallet/coincontrol.cpp \
   wallet/crypter.cpp \
   wallet/db.cpp \
   wallet/feebumper.cpp \
   wallet/fees.cpp \
+  wallet/interfaces.cpp \
   wallet/load.cpp \
   wallet/psbtwallet.cpp \
   wallet/rpcdump.cpp \
@@ -441,7 +442,7 @@ crypto_libnusacoin_crypto_shani_a_SOURCES = crypto/sha256_shani.cpp
 libnusacoin_consensus_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libnusacoin_consensus_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libnusacoin_consensus_a_SOURCES = \
-  amount.h \
+  consensus/amount.h \
   arith_uint256.cpp \
   arith_uint256.h \
   consensus/merkle.cpp \

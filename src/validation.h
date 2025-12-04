@@ -10,7 +10,7 @@
 #include <config/nusacoin-config.h>
 #endif
 
-#include <amount.h>
+#include <consensus/amount.h>
 #include <coins.h>
 #include <crypto/common.h> // for ReadLE64
 #include <fs.h>
