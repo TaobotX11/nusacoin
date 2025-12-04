@@ -213,6 +213,8 @@ NusacoinGUI::NusacoinGUI(interfaces::Node& node, const PlatformStyle *_platformS
 #ifdef Q_OS_MAC
     m_app_nap_inhibitor = new CAppNapInhibitor;
 #endif
+
+GUIUtil::handleCloseWindowShortcut(this);
 }
 
 NusacoinGUI::~NusacoinGUI()

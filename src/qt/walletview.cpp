@@ -80,8 +80,9 @@ WalletView::WalletView(const PlatformStyle *_platformStyle, QWidget *parent):
     connect(sendCoinsPage, &SendCoinsDialog::message, this, &WalletView::message);
     // Pass through messages from transactionView
     connect(transactionView, &TransactionView::message, this, &WalletView::message);
-
+    // Pass through event to overview
     connect(this, &WalletView::setPrivacy, overviewPage, &OverviewPage::setPrivacy);
+    connect(this, &WalletView::setPrivacy, sendCoinsPage, &SendCoinsDialog::setPrivacy);
 }
 
 WalletView::~WalletView()

@@ -48,6 +48,7 @@
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QProgressDialog>
+#include <QShortcut>
 #include <QSettings>
 #include <QTextDocument> // for Qt::mightBeRichText
 #include <QThread>
@@ -374,6 +375,12 @@ void bringToFront(QWidget* w)
         w->raise();
     }
 }
+
+void handleCloseWindowShortcut(QWidget* w)
+{
+    QObject::connect(new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_W), w), &QShortcut::activated, w, &QWidget::close);
+}
+
 
 void openDebugLogfile()
 {

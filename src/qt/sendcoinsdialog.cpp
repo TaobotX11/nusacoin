@@ -522,11 +522,22 @@ bool SendCoinsDialog::handlePaymentRequest(const SendCoinsRecipient &rv)
     return true;
 }
 
+void SendCoinsDialog::setPrivacy(bool privacy)
+{
+    m_privacy = privacy;
+    setBalance(model->wallet().getBalances());
+}
+
 void SendCoinsDialog::setBalance(const interfaces::WalletBalances& balances)
 {
     if(model && model->getOptionsModel())
     {
-        ui->labelBalance->setText(NusacoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), balances.balance));
+        CAmount balance = balances.balance;
+        if (model->privateKeysDisabled()) {
+            balance = balances.watch_only_balance;
+            ui->labelBalanceName->setText(tr("Watch-only balance:"));
+        }
+        ui->labelBalance->setText(NusacoinUnits::formatWithPrivacy(model->getOptionsModel()->getDisplayUnit(), balance, NusacoinUnits::separatorAlways, m_privacy));
     }
 }
 
