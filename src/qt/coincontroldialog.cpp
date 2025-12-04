@@ -125,6 +125,7 @@ CoinControlDialog::CoinControlDialog(const PlatformStyle *_platformStyle, QWidge
     ui->treeWidget->setColumnWidth(COLUMN_ADDRESS, 320);
     ui->treeWidget->setColumnWidth(COLUMN_DATE, 130);
     ui->treeWidget->setColumnWidth(COLUMN_CONFIRMATIONS, 110);
+    ui->treeWidget->setStyleSheet("QTreeView::item:selected {background-color: #018f01; selection-color:white;} QTreeView::branch:selected {background-color: #018f01; color: transparent;} QTreeView::item:hover {background-color: #daf5da;} QTreeView::item:hover:!selected {background-color: #daf5da;} QTreeView::branch:hover {background-color: #daf5da;}");
 
     // default view is sorted by amount desc
     sortView(COLUMN_AMOUNT, Qt::DescendingOrder);
@@ -533,7 +534,7 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
     int nDisplayUnit = NusacoinUnits::NUX;
     if (model && model->getOptionsModel())
         nDisplayUnit = model->getOptionsModel()->getDisplayUnit();
-
+    QString curStyleLbl = "QLabel {selection-background-color: #018f01; selection-color:white;} QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}";
     QLabel *l1 = dialog->findChild<QLabel *>("labelCoinControlQuantity");
     QLabel *l2 = dialog->findChild<QLabel *>("labelCoinControlAmount");
     QLabel *l3 = dialog->findChild<QLabel *>("labelCoinControlFee");
@@ -549,6 +550,14 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
     dialog->findChild<QLabel *>("labelCoinControlChange")       ->setEnabled(nPayAmount > 0);
 
     // stats
+    l1->setStyleSheet(curStyleLbl);
+    l2->setStyleSheet(curStyleLbl);
+    l3->setStyleSheet(curStyleLbl);
+    l4->setStyleSheet(curStyleLbl);
+    l5->setStyleSheet(curStyleLbl);
+    l7->setStyleSheet(curStyleLbl);
+    l8->setStyleSheet(curStyleLbl);
+
     l1->setText(QString::number(nQuantity));                                 // Quantity
     l2->setText(NusacoinUnits::formatWithUnit(nDisplayUnit, nAmount));        // Amount
     l3->setText(NusacoinUnits::formatWithUnit(nDisplayUnit, nPayFee));        // Fee

@@ -473,6 +473,9 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Ok</set>
      </property>
+     <property name="styleSheet">
+             <string notr="true">QPushButton {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton:hover {background-color: #02d902;color: #ffffff}</string>
+    </property>
     </widget>
    </item>
   </layout>
