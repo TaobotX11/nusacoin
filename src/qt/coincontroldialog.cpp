@@ -125,7 +125,7 @@ CoinControlDialog::CoinControlDialog(const PlatformStyle *_platformStyle, QWidge
     ui->treeWidget->setColumnWidth(COLUMN_ADDRESS, 320);
     ui->treeWidget->setColumnWidth(COLUMN_DATE, 130);
     ui->treeWidget->setColumnWidth(COLUMN_CONFIRMATIONS, 110);
-    ui->treeWidget->setStyleSheet("QTreeView::item:selected {background-color: #018f01; selection-color:white;} QTreeView::branch:selected {background-color: #018f01; color: transparent;} QTreeView::item:hover {background-color: #daf5da;} QTreeView::item:hover:!selected {background-color: #daf5da;} QTreeView::branch:hover {background-color: #daf5da;}");
+    ui->treeWidget->setStyleSheet("QTreeView::item:selected {background-color: #018f01; selection-color: white;} QTreeView::branch:selected {background-color: #018f01; color: transparent;} QTreeView::item:hover {background-color: #daf5da; selection-color: black;} QTreeView::item:hover:!selected {background-color: #daf5da; selection-color: black;} QTreeView::item:selected:hover {background-color: #daf5da; selection-color: black;} QTreeView::branch:hover {background-color: #daf5da; selection-color: black;} QTreeView::branch:hover:selected {background-color: #daf5da; selection-color: black;}");
 
     // default view is sorted by amount desc
     sortView(COLUMN_AMOUNT, Qt::DescendingOrder);
@@ -261,7 +261,7 @@ void CoinControlDialog::lockCoin()
         contextMenuItem->setCheckState(COLUMN_CHECKBOX, Qt::Unchecked);
 
     COutPoint outpt(uint256S(contextMenuItem->data(COLUMN_ADDRESS, TxHashRole).toString().toStdString()), contextMenuItem->data(COLUMN_ADDRESS, VOutRole).toUInt());
-    model->wallet().lockCoin(outpt);
+    model->wallet().lockCoin(outpt, /* write_to_db = */ true);
     contextMenuItem->setDisabled(true);
     contextMenuItem->setIcon(COLUMN_CHECKBOX, platformStyle->SingleColorIcon(":/icons/lock_closed"));
     updateLabelLocked();

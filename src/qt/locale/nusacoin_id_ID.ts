@@ -2896,7 +2896,8 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>Please contribute if you find %s useful. Visit %s for further information about the software.</source>
-        <translation>Silahkan berkontribusi jika Anda merasa %s berguna dan bernilai. Kunjungi %s untuk informasi lebih lanjut tentang marketplace komunitas.</translation>
+        <translation>Silahkan berkontribusi jika Anda merasa %s berguna dan bernilai.
+Kunjungi %s untuk informasi lebih lanjut tentang komunitas.</translation>
     </message>
     <message>
         <source>The source code is available from %s.</source>

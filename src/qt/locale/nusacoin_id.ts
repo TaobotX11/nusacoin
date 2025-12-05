@@ -3208,19 +3208,19 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>Are you sure you wish to close the wallet &lt;i&gt;%1&lt;/i&gt;?</source>
-        <translation type="unfinished">Apakah anda yakin ingin menutup dompet &lt;i&gt;%1&lt;/i&gt;?</translation>
+        <translation>Apakah anda yakin ingin menutup dompet &lt;i&gt;%1&lt;/i&gt;?</translation>
     </message>
     <message>
         <source>Closing the wallet for too long can result in having to resync the entire chain if pruning is enabled.</source>
-        <translation type="unfinished">Menutup dompet terlalu lama dapat menyebabkan harus menyinkron ulang seluruh rantai jika pemangkasan (pruned) diaktifkan.</translation>
+        <translation>Menutup dompet terlalu lama dapat menyebabkan harus menyinkron ulang seluruh rantai jika pemangkasan (pruned) diaktifkan.</translation>
     </message>
     <message>
         <source>Close all wallets</source>
-        <translation type="unfinished">Tutup semua dompet</translation>
+        <translation>Tutup semua dompet</translation>
     </message>
     <message>
         <source>Are you sure you wish to close all wallets?</source>
-        <translation type="unfinished">Apakah anda yakin ingin menutup seluruh dompet ?</translation>
+        <translation>Apakah anda yakin ingin menutup seluruh dompet ?</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
@@ -3401,7 +3401,8 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>Please contribute if you find %s useful. Visit %s for further information about the software.</source>
-        <translation>Silahkan berkontribusi jika Anda merasa %s berguna dan bernilai. Kunjungi %s untuk informasi lebih lanjut tentang marketplace komunitas.</translation>
+        <translation>Silahkan berkontribusi jika Anda merasa %s berguna dan bernilai.
+Kunjungi %s untuk informasi lebih lanjut tentang komunitas.</translation>
     </message>
     <message>
         <source>The source code is available from %s.</source>

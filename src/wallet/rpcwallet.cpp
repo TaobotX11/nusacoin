@@ -2123,8 +2123,9 @@ static UniValue lockunspent(const JSONRPCRequest& request)
                 "Temporarily lock (unlock=false) or unlock (unlock=true) specified transaction outputs.\n"
                 "If no transaction outputs are specified when unlocking then all current locked transaction outputs are unlocked.\n"
                 "A locked transaction output will not be chosen by automatic coin selection, when spending nusacoins.\n"
-                "Locks are stored in memory only. Nodes start with zero locked outputs, and the locked output list\n"
-                "is always cleared (by virtue of process exit) when a node stops or fails.\n"
+                "Locks are stored in memory only, unless persistent=true, in which case they will be written to the\n"
+                "wallet database and loaded on node start. Unwritten (persistent=false) locks are always cleared\n"
+                "(by virtue of process exit) when a node stops or fails. Unlocking will clear both persistent and not.\n"
                 "Also see the listunspent call\n",
                 {
                     {"unlock", RPCArg::Type::BOOL, RPCArg::Optional::NO, "Whether to unlock (true) or lock (false) the specified transactions"},
@@ -2151,6 +2152,8 @@ static UniValue lockunspent(const JSONRPCRequest& request)
             + HelpExampleCli("listlockunspent", "") +
             "\nUnlock the transaction again\n"
             + HelpExampleCli("lockunspent", "true \"[{\\\"txid\\\":\\\"a08e6907dbbd3d809776dbfc5d82e371b764ed838b5655e72f463568df1aadf0\\\",\\\"vout\\\":1}]\"") +
+            "\nLock the transaction persistently in the wallet database\n"
+            + HelpExampleCli("lockunspent", "false \"[{\\\"txid\\\":\\\"a08e6907dbbd3d809776dbfc5d82e371b764ed838b5655e72f463568df1aadf0\\\",\\\"vout\\\":1}]\" true") +
             "\nAs a JSON-RPC call\n"
             + HelpExampleRpc("lockunspent", "false, \"[{\\\"txid\\\":\\\"a08e6907dbbd3d809776dbfc5d82e371b764ed838b5655e72f463568df1aadf0\\\",\\\"vout\\\":1}]\"")
                 },
@@ -2167,9 +2170,13 @@ static UniValue lockunspent(const JSONRPCRequest& request)
 
     bool fUnlock = request.params[0].get_bool();
 
+    const bool persistent{request.params[2].isNull() ? false : request.params[2].get_bool()};
+
     if (request.params[1].isNull()) {
-        if (fUnlock)
-            pwallet->UnlockAllCoins();
+        if (fUnlock) {
+            if (!pwallet->UnlockAllCoins())
+                throw JSONRPCError(RPC_WALLET_ERROR, "Unlocking coins failed");
+        }
         return true;
     }
 
@@ -2220,17 +2227,24 @@ static UniValue lockunspent(const JSONRPCRequest& request)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, expected locked output");
         }
 
-        if (!fUnlock && is_locked) {
+        if (!fUnlock && is_locked && !persistent) {
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, output already locked");
         }
 
         outputs.push_back(outpt);
     }
 
+    std::unique_ptr<WalletBatch> batch = nullptr;
+    // Unlock is always persistent
+    if (fUnlock || persistent) batch = std::unique_ptr<WalletBatch>(new WalletBatch(pwallet->GetDatabase()));
+
     // Atomically set (un)locked status for the outputs.
     for (const COutPoint& outpt : outputs) {
-        if (fUnlock) pwallet->UnlockCoin(outpt);
-        else pwallet->LockCoin(outpt);
+        if (fUnlock) {
+            if (!pwallet->UnlockCoin(outpt, batch.get())) throw JSONRPCError(RPC_WALLET_ERROR, "Unlocking coin failed");
+        } else {
+            if (!pwallet->LockCoin(outpt, batch.get())) throw JSONRPCError(RPC_WALLET_ERROR, "Locking coin failed");
+        }
     }
 
     return true;

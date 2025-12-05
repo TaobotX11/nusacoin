@@ -182,27 +182,29 @@ public:
         LOCK(m_wallet->cs_wallet);
         return m_wallet->GetDestValues(prefix);
     }
-    void lockCoin(const COutPoint& output) override
+    bool lockCoin(const COutPoint& output, const bool write_to_db) override
     {
-        auto locked_chain = m_wallet->chain().lock();
+        //auto locked_chain = m_wallet->chain().lock();
         LOCK(m_wallet->cs_wallet);
-        return m_wallet->LockCoin(output);
+        std::unique_ptr<WalletBatch> batch = write_to_db ? std::unique_ptr<WalletBatch>(new WalletBatch(m_wallet->GetDatabase())) : nullptr;
+        return m_wallet->LockCoin(output, batch.get());
     }
-    void unlockCoin(const COutPoint& output) override
+    bool unlockCoin(const COutPoint& output) override
     {
-        auto locked_chain = m_wallet->chain().lock();
+        //auto locked_chain = m_wallet->chain().lock();
         LOCK(m_wallet->cs_wallet);
-        return m_wallet->UnlockCoin(output);
+        std::unique_ptr<WalletBatch> batch = std::unique_ptr<WalletBatch>(new WalletBatch(m_wallet->GetDatabase()));
+        return m_wallet->UnlockCoin(output, batch.get());
     }
     bool isLockedCoin(const COutPoint& output) override
     {
-        auto locked_chain = m_wallet->chain().lock();
+        //auto locked_chain = m_wallet->chain().lock();
         LOCK(m_wallet->cs_wallet);
         return m_wallet->IsLockedCoin(output.hash, output.n);
     }
     void listLockedCoins(std::vector<COutPoint>& outputs) override
     {
-        auto locked_chain = m_wallet->chain().lock();
+        //auto locked_chain = m_wallet->chain().lock();
         LOCK(m_wallet->cs_wallet);
         return m_wallet->ListLockedCoins(outputs);
     }
