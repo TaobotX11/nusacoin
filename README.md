@@ -1,11 +1,11 @@
 Development is now occurring on the Nusacoin-Core repo
-As of 2025, development has now moved to the Taobot organization, under the Nusacoin repo
+As of 2025, development has now moved to the KMKS organization, under the Nusacoin repo
 
 
 What is Nusacoin?
 Nusacoin (NUX) is a highly secure, decentralized, distributed and time-tested global blockchain that was founded in early December 2025 with a focus on cyber security, payments & secure communications technologies.
 
-For more information, as well as an immediately useable, binary version of the Nusacoin Core software, see https://taobot.org
+For more information, as well as an immediately useable, binary version of the Nusacoin Core software, see https://nusacoin.org
 
 Nusacoin Overview
 
