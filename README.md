@@ -27,7 +27,7 @@ Block Reward Reduction: every 300,000 block
 
 Halving Estimated : every 3.7 year
 
-Current Block Reward: 30 NUX (June 2025)
+Current Block Reward: 30 NUX (Dec 2025)
 
 Mining Algorithms: X11
 
