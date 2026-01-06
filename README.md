@@ -21,7 +21,7 @@ Community Block Hash (0) : <tt>0000017123d6f996589bc2e58bb5502218012ac7f527ab599
 
 Max Total Supply: ~18 Million Nusacoins
 
-Current Supply: 50 NUX (Dec 2025)
+Current Supply: 1,651,080 NUX (January 2025) see https://explorer.taobot.org/ for latest
 
 Block Reward Reduction: every 300,000 block
 
