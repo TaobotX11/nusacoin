@@ -87,6 +87,8 @@ void WalletModel::pollBalanceChanged()
 
         // Balance and number of transactions might have changed
         cachedNumBlocks = numBlocks;
+
+        checkBalanceChanged(new_balances);
         if(transactionTableModel)
             transactionTableModel->updateConfirmations();
     }
