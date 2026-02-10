@@ -145,3 +145,4 @@ cmake-build-debug
 contrib/install_db4.sh
 db-4.8.30.NC.tar.gz.1
 db-4.8.30.NC/
+db5

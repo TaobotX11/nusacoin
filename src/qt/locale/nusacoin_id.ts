@@ -2999,11 +2999,11 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>Received with</source>
-        <translation>Terima dari</translation>
+        <translation>Terima di</translation>
     </message>
     <message>
         <source>Received from</source>
-        <translation>Terima dari</translation>
+        <translation>Terima di</translation>
     </message>
     <message>
         <source>Sent to</source>
