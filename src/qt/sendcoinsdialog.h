@@ -12,6 +12,7 @@
 #include <QString>
 #include <QTimer>
 
+class CCoinControl;
 class ClientModel;
 class PlatformStyle;
 class SendCoinsEntry;
@@ -61,6 +62,7 @@ private:
     Ui::SendCoinsDialog *ui;
     ClientModel *clientModel;
     WalletModel *model;
+    std::unique_ptr<CCoinControl> m_coin_control;
     bool m_privacy{false};
     bool fNewRecipientAllowed;
     bool fFeeMinimized;

@@ -655,6 +655,7 @@ void RPCConsole::setClientModel(ClientModel *model)
         // create ban table context menu
         banTableContextMenu = new QMenu(this);
         banTableContextMenu->addAction(unbanAction);
+        banTableContextMenu->setStyleSheet("QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}");
 
         // ban table context menu signals
         connect(ui->banlistWidget, &QTableView::customContextMenuRequested, this, &RPCConsole::showBanTableContextMenu);

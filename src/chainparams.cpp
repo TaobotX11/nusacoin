@@ -69,10 +69,10 @@ public:
         consensus.BIP16Exception = uint256S("0x00000000000002dc756eebf4f49723ed8d30cc28a5f108eb94b1ba88ac4f9c22");
         consensus.BIP34Height = 1;
         consensus.BIP34Hash = uint256S("0x000000000000024b89b42a942fe0d9fea3bb44ab7bd1b19115dd6a759c0808b8");
-        consensus.BIP65Height = 1;  // 000000000000000004c2b624ed5d7756c508d90fd0da2c7c679febfa6c4735f0
-        consensus.BIP66Height = 1;  // 00000000000000000379eaa19dce8c9b722d46ae6a57c2f1a988119488b50931
-        consensus.CSVHeight = 1;    // 000000000000000004a1b34462cb8aeebd5799177f7a29cf28f2d1961716b5b5
-        consensus.SegwitHeight = 1; // 0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893
+        consensus.BIP65Height = 1;  // 000007c732d45a968b00b2aa31612aa09cb9dd9785cf18144e1dde8599beb81c
+        consensus.BIP66Height = 1;  // 000007c732d45a968b00b2aa31612aa09cb9dd9785cf18144e1dde8599beb81c
+        consensus.CSVHeight = 1;    // 000007c732d45a968b00b2aa31612aa09cb9dd9785cf18144e1dde8599beb81c
+        consensus.SegwitHeight = 1; // 000007c732d45a968b00b2aa31612aa09cb9dd9785cf18144e1dde8599beb81c
         consensus.MinBIP9WarningHeight = consensus.SegwitHeight + consensus.nMinerConfirmationWindow;
         consensus.powLimit = uint256S("00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
@@ -89,14 +89,14 @@ public:
         consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000000000000000000");
 
         // By default assume that the signatures in ancestors of this block are valid.
-        //        consensus.defaultAssumeValid = uint256S("0x00000000000000000005f8920febd3925f8272a6a71237563d78c2edfdd09ddf"); // 597379
+        consensus.defaultAssumeValid = uint256S("0x0000000000002f9068f2ad17114980f05f330de05532d2b268200da4de7eef39"); // 64700
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 32-bit integer with any alignment.
          */
-        pchMessageStart[0] = 0x4E; // 4E555341
+        pchMessageStart[0] = 0x4E; //4E555341
         pchMessageStart[1] = 0x55;
         pchMessageStart[2] = 0x53;
         pchMessageStart[3] = 0x41;
@@ -134,13 +134,16 @@ public:
         checkpointData = {
             {
                 {0, uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669")},
+                {11111, uint256S("0x0000005aca0b6c5da29a28c1c2cb15f82146e5131ab8beb612c7c68049cd7dea")},
+                {33333, uint256S("0x000000000178723058e1c46a19e88302563ba3ee2d1b146b57b8a8c0ee7a6a88")},
+                {55555, uint256S("0x0000000000008991e725897a9509f43e144cd717c21a1ca6dbb0dcddfc957ffb")},
             }};
 
         chainTxData = ChainTxData{
-            // Data from RPC: getchaintxstats 4096 00000000000000000005f8920febd3925f8272a6a71237563d78c2edfdd09ddf
-            /* nTime    */ 1764547439,
-            /* nTxCount */ 0,
-            /* dTxRate  */ 0,
+            // Data from RPC: getchaintxstats 4096 0000000000001e8561d9391bd8791e498c21876a4a61ba4e0228f4fa3b07e4b3
+            /* nTime    */ 1770803782,
+            /* nTxCount */ 90261,
+            /* dTxRate  */ 0.01150903170222397,
         };
     }
 };
@@ -156,21 +159,21 @@ public:
         strNetworkID = CBaseChainParams::TESTNET;
         consensus.signet_blocks = false;
         consensus.signet_challenge.clear();
-        consensus.nSubsidyHalvingInterval = 300000; // halving every 210,000 block
+        consensus.nSubsidyHalvingInterval = 300000; // halving every 300,000 block
         consensus.BIP16Exception = uint256S("0x00000000dd30457c001f4095d208cc1296b0eed002427aa599874af7a432b105");
         consensus.BIP34Height = 1;
         consensus.BIP34Hash = uint256S("0x0000000023b3a96d3484e5abb3755c413e7d41500f8e2a5c3f0dd01299cd8ef8");
-        consensus.BIP65Height = 1;  // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
-        consensus.BIP66Height = 1;  // 000000002104c8c45e99a8853285a3b592602a3ccde2b832481da85e9e4ba182
-        consensus.CSVHeight = 1;    // 00000000025e930139bac5c6c31a403776da130831ab85be56578f3fa75369bb
-        consensus.SegwitHeight = 1; // 00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca
+        consensus.BIP65Height = 1;  
+        consensus.BIP66Height = 1;  
+        consensus.CSVHeight = 1;  
+        consensus.SegwitHeight = 1;
         consensus.MinBIP9WarningHeight = consensus.SegwitHeight + consensus.nMinerConfirmationWindow;
         consensus.powLimit = uint256S("00ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
         consensus.nPowTargetSpacing = 6 * 60;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
-        consensus.nRuleChangeActivationThreshold = 3192; // 75% for testchains
+        consensus.nRuleChangeActivationThreshold = 3192; //
         consensus.nMinerConfirmationWindow = 3360;       // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
@@ -193,8 +196,8 @@ public:
 
         genesis = CreateGenesisBlock(1764547439, 29271886, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        //assert(consensus.hashGenesisBlock == uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669"));
-        //assert(genesis.hashMerkleRoot == uint256S("0x660edadda7d259dff20e3d21fd57165417b0ce9bd2d40a28ae437638aa61fd9b"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669"));
+        assert(genesis.hashMerkleRoot == uint256S("0x660edadda7d259dff20e3d21fd57165417b0ce9bd2d40a28ae437638aa61fd9b"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
@@ -257,7 +260,7 @@ public:
         consensus.nPowTargetSpacing = 6 * 60;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
-        consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains
+        consensus.nRuleChangeActivationThreshold = 108; //
         consensus.nMinerConfirmationWindow = 144;       // Faster than normal for regtest (144 instead of 2016)
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 0;
