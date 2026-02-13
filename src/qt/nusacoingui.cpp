@@ -746,7 +746,7 @@ void NusacoinGUI::createTrayIconMenu()
     // return if trayIcon is unset (only on non-macOSes)
     if (!trayIcon)
         return;
-
+    trayIconMenu->setStyleSheet("QMenu {background-color: #018f01; selection-background-color: #018f01;} QMenu::item:selected {background-color: #018f01;}");
     trayIcon->setContextMenu(trayIconMenu.get());
     connect(trayIcon, &QSystemTrayIcon::activated, this, &NusacoinGUI::trayIconActivated);
 #else
@@ -829,7 +829,7 @@ void NusacoinGUI::showHelpMessageClicked()
 #ifdef ENABLE_WALLET
 void NusacoinGUI::openClicked()
 {
-    OpenURIDialog dlg(this);
+    OpenURIDialog dlg(platformStyle,this);
     if(dlg.exec())
     {
         Q_EMIT receivedURI(dlg.getURI());

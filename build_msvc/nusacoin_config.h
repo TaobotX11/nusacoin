@@ -14,10 +14,10 @@
 #define CLIENT_VERSION_MAJOR 0
 
 /* Minor version */
-#define CLIENT_VERSION_MINOR 19
+#define CLIENT_VERSION_MINOR 26
 
 /* Build revision */
-#define CLIENT_VERSION_REVISION 99
+#define CLIENT_VERSION_REVISION 10
 
 /* Copyright holder(s) before %s replacement */
 #define COPYRIGHT_HOLDERS "The %s developers"
@@ -29,7 +29,7 @@
 #define COPYRIGHT_HOLDERS_SUBSTITUTION "Nusacoin Core"
 
 /* Copyright year */
-#define COPYRIGHT_YEAR 2019
+#define COPYRIGHT_YEAR 2025
 
 /* Define to 1 to enable wallet functions */
 #define ENABLE_WALLET 1
@@ -336,13 +336,13 @@
 #define LT_OBJDIR ".libs/"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "https://github.com/nusacoin/nusacoin/issues"
+#define PACKAGE_BUGREPORT "https://github.com/TaobotX11/nusacoin/issues"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "Nusacoin Core"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Nusacoin Core 0.19.99"
+#define PACKAGE_STRING "Nusacoin Core 0.26.10"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "nusacoin"
@@ -351,7 +351,7 @@
 #define PACKAGE_URL "https://nusacoin.org/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.25.99"
+#define PACKAGE_VERSION "0.26.10"
 
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */

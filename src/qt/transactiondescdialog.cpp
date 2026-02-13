@@ -3,6 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <qt/transactiondescdialog.h>
+#include <qt/guiutil.h>
 #include <qt/forms/ui_transactiondescdialog.h>
 
 #include <qt/transactiontablemodel.h>
@@ -10,7 +11,7 @@
 #include <QModelIndex>
 
 TransactionDescDialog::TransactionDescDialog(const QModelIndex &idx, QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, GUIUtil::dialog_flags),
     ui(new Ui::TransactionDescDialog)
 {
     ui->setupUi(this);

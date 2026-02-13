@@ -111,7 +111,7 @@ void FreespaceChecker::check()
 
 
 Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_size) :
-    QDialog(parent),
+    QDialog(parent, GUIUtil::dialog_flags),
     ui(new Ui::Intro),
     thread(nullptr),
     signalled(false),
@@ -125,7 +125,7 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz
     ui->lblExplanation1->setText(ui->lblExplanation1->text()
         .arg(PACKAGE_NAME)
         .arg(m_blockchain_size)
-        .arg(2025)
+        .arg(2026)
         .arg(tr("Nusacoin"))
     );
     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));

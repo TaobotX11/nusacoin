@@ -10,6 +10,7 @@
 #include <qt/forms/ui_askpassphrasedialog.h>
 
 #include <qt/guiconstants.h>
+#include <qt/guiutil.h>
 #include <qt/walletmodel.h>
 
 #include <support/allocators/secure.h>
@@ -19,7 +20,7 @@
 #include <QPushButton>
 
 AskPassphraseDialog::AskPassphraseDialog(Mode _mode, QWidget *parent, SecureString* passphrase_out) :
-    QDialog(parent),
+    QDialog(parent, GUIUtil::dialog_flags),
     ui(new Ui::AskPassphraseDialog),
     mode(_mode),
     model(nullptr),

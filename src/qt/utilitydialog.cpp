@@ -9,7 +9,7 @@
 #include <qt/utilitydialog.h>
 
 #include <qt/forms/ui_helpmessagedialog.h>
-
+#include <qt/guiutil.h>
 #include <qt/nusacoingui.h>
 
 #include <clientversion.h>
@@ -28,7 +28,7 @@
 
 /** "Help message" or "About" dialog box */
 HelpMessageDialog::HelpMessageDialog(interfaces::Node& node, QWidget *parent, bool about) :
-    QDialog(parent),
+    QDialog(parent, GUIUtil::dialog_flags),
     ui(new Ui::HelpMessageDialog)
 {
     ui->setupUi(this);

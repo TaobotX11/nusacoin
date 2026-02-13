@@ -654,6 +654,13 @@ void RPCConsole::setClientModel(ClientModel *model)
 
         // create ban table context menu
         banTableContextMenu = new QMenu(this);
+         /*: Context menu action to copy the IP/Netmask of a banned peer.
+            IP/Netmask is the combination of a peer's IP address and its Netmask.
+            For IP address see: https://en.wikipedia.org/wiki/IP_address */
+        banTableContextMenu->addAction(tr("&Copy IP/Netmask"), [this] {
+            GUIUtil::copyEntryData(ui->banlistWidget, BanTableModel::Address, Qt::DisplayRole);
+        });
+        banTableContextMenu->addSeparator();
         banTableContextMenu->addAction(unbanAction);
         banTableContextMenu->setStyleSheet("QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}");
 
@@ -1128,11 +1135,12 @@ void RPCConsole::updateNodeDetail(const CNodeCombinedStats *stats)
     ui->peerPingWait->setText(GUIUtil::formatPingTime(stats->nodeStats.dPingWait));
     ui->peerMinPing->setText(GUIUtil::formatPingTime(stats->nodeStats.dMinPing));
     ui->timeoffset->setText(GUIUtil::formatTimeOffset(stats->nodeStats.nTimeOffset));
-    ui->peerVersion->setText(QString("%1").arg(QString::number(stats->nodeStats.nVersion)));
+    ui->peerVersion->setText(QString::number(stats->nodeStats.nVersion));
     ui->peerSubversion->setText(QString::fromStdString(stats->nodeStats.cleanSubVer));
     ui->peerDirection->setText(stats->nodeStats.fInbound ? tr("Inbound") : tr("Outbound"));
-    ui->peerHeight->setText(QString("%1").arg(QString::number(stats->nodeStats.nStartingHeight)));
+    ui->peerHeight->setText(QString::number(stats->nodeStats.nStartingHeight));
     ui->peerWhitelisted->setText(stats->nodeStats.m_legacyWhitelisted ? tr("Yes") : tr("No"));
+    ui->peerMappedAS->setText(stats->nodeStats.m_mapped_as != 0 ? QString::number(stats->nodeStats.m_mapped_as) : tr("N/A"));
 
     // This check fails for example if the lock was busy and
     // nodeStateStats couldn't be fetched.
