@@ -10,6 +10,7 @@ QT_TS = \
   qt/locale/nusacoin_de_DE.ts \
   qt/locale/nusacoin_el.ts \
   qt/locale/nusacoin_el_GR.ts \
+  qt/locale/nusacoin_en.ts \
   qt/locale/nusacoin_en_AU.ts \
   qt/locale/nusacoin_en_GB.ts \
   qt/locale/nusacoin_eo.ts \
