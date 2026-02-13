@@ -78,7 +78,7 @@
     <message>
         <source>These are your Nusacoin addresses for receiving payments. Use the &apos;Create new receiving address&apos; button in the receive tab to create new addresses.
 Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
-        <translation>Berikut adalah alamat Nusacoin Anda untuk menerima pembayaran. Tekan tombol &apos;buat alamat terima baru&apos; di menu &apos;Menerima&apos; untuk membuat alamat baru. Penandatanganan hanya dimungkinkan dengan alamat jenis &apos;legacy&apos; (Awalan C)</translation>
+        <translation>Berikut adalah alamat Nusacoin Anda untuk menerima pembayaran. Tekan tombol &apos;buat alamat terima baru&apos; di menu &apos;Menerima&apos; untuk membuat alamat baru. Penandatanganan hanya dimungkinkan dengan alamat jenis &apos;legacy&apos; (Awalan N)</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
