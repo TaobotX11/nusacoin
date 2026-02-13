@@ -17,7 +17,6 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "qt/nusacoingui -> qt/utilitydialog -> qt/nusacoingui"
     "qt/nusacoingui -> qt/walletframe -> qt/nusacoingui"
     "qt/nusacoingui -> qt/walletview -> qt/nusacoingui"
-    "qt/clientmodel -> qt/peertablemodel -> qt/clientmodel"
     "qt/paymentserver -> qt/walletmodel -> qt/paymentserver"
     "qt/recentrequeststablemodel -> qt/walletmodel -> qt/recentrequeststablemodel"
     "qt/sendcoinsdialog -> qt/walletmodel -> qt/sendcoinsdialog"
