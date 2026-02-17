@@ -114,6 +114,10 @@ public Q_SLOTS:
     /** User has requested more information about the out of sync state */
     void requestedSyncWarningInfo();
 
+private Q_SLOTS:
+    void disableTransactionView(bool disable);
+
+
 Q_SIGNALS:
     void setPrivacy(bool privacy);
     /** Signal that we want to show the main window */

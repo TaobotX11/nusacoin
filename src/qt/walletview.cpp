@@ -83,6 +83,7 @@ WalletView::WalletView(const PlatformStyle *_platformStyle, QWidget *parent):
     // Pass through event to overview
     connect(this, &WalletView::setPrivacy, overviewPage, &OverviewPage::setPrivacy);
     connect(this, &WalletView::setPrivacy, sendCoinsPage, &SendCoinsDialog::setPrivacy);
+    connect(this, &WalletView::setPrivacy, this, &WalletView::disableTransactionView);
 }
 
 WalletView::~WalletView()
@@ -312,7 +313,6 @@ void WalletView::showProgress(const QString &title, int nProgress)
         progressDialog = new QProgressDialog(title, tr("Cancel"), 0, 100);
         GUIUtil::PolishProgressDialog(progressDialog);
         progressDialog->setWindowModality(Qt::ApplicationModal);
-        progressDialog->setMinimumDuration(0);
         progressDialog->setAutoClose(false);
         progressDialog->setValue(0);
     } else if (nProgress == 100) {
@@ -328,6 +328,11 @@ void WalletView::showProgress(const QString &title, int nProgress)
             progressDialog->setValue(nProgress);
         }
     }
+}
+
+void WalletView::disableTransactionView(bool disable)
+{
+    transactionView->setDisabled(disable);
 }
 
 void WalletView::requestedSyncWarningInfo()

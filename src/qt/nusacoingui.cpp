@@ -420,6 +420,7 @@ void NusacoinGUI::createActions()
         });
 
         connect(m_mask_values_action, &QAction::toggled, this, &NusacoinGUI::setPrivacy);
+        connect(m_mask_values_action, &QAction::toggled, this, &NusacoinGUI::enableHistoryAction);
     }
 #endif // ENABLE_WALLET
 
@@ -628,6 +629,12 @@ void NusacoinGUI::setClientModel(ClientModel *_clientModel)
 }
 
 #ifdef ENABLE_WALLET
+void NusacoinGUI::enableHistoryAction(bool privacy)
+{
+    historyAction->setEnabled(!privacy);
+    if (historyAction->isChecked()) gotoOverviewPage();
+}
+
 void NusacoinGUI::setWalletController(WalletController* wallet_controller)
 {
     assert(!m_wallet_controller);
@@ -660,6 +667,10 @@ void NusacoinGUI::addWallet(WalletModel* walletModel)
         m_wallet_selector_label_action->setVisible(true);
         m_wallet_selector_action->setVisible(true);
     }
+    
+    const bool privacy = isPrivacyModeActivated();
+    //wallet_view->setPrivacy(privacy);
+    enableHistoryAction(privacy);
 }
 
 void NusacoinGUI::removeWallet(WalletModel* walletModel)
@@ -1346,7 +1357,6 @@ void NusacoinGUI::showProgress(const QString &title, int nProgress)
         progressDialog = new QProgressDialog(title, QString(), 0, 100);
         GUIUtil::PolishProgressDialog(progressDialog);
         progressDialog->setWindowModality(Qt::ApplicationModal);
-        progressDialog->setMinimumDuration(0);
         progressDialog->setAutoClose(false);
         progressDialog->setValue(0);
     } else if (nProgress == 100) {

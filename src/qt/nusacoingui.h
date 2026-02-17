@@ -275,6 +275,9 @@ public Q_SLOTS:
     /** Show Sign/Verify Message dialog and switch to verify message tab */
     void gotoVerifyMessageTab(QString addr = "");
 
+    /** Enable history action when privacy is changed */
+    void enableHistoryAction(bool privacy);
+
     /** Show open dialog */
     void openClicked();
 #endif // ENABLE_WALLET
