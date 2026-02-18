@@ -110,6 +110,8 @@ NusacoinGUI::NusacoinGUI(interfaces::Node& node, const PlatformStyle *_platformS
         Q_EMIT consoleShown(rpcConsole);
     }
 
+    modalOverlay = new ModalOverlay(enableWallet, this->centralWidget());
+
     // Accept D&D of URIs
     setAcceptDrops(true);
 
@@ -201,7 +203,6 @@ NusacoinGUI::NusacoinGUI(interfaces::Node& node, const PlatformStyle *_platformS
         openOptionsDialogWithTab(OptionsDialog::TAB_NETWORK);
     });
 
-    modalOverlay = new ModalOverlay(enableWallet, this->centralWidget());
     connect(labelBlocksIcon, &GUIUtil::ClickableLabel::clicked, this, &NusacoinGUI::showModalOverlay);
     connect(progressBar, &GUIUtil::ClickableProgressBar::clicked, this, &NusacoinGUI::showModalOverlay);
 #ifdef ENABLE_WALLET
@@ -238,6 +239,7 @@ NusacoinGUI::~NusacoinGUI()
 void NusacoinGUI::createActions()
 {
     QActionGroup *tabGroup = new QActionGroup(this);
+    connect(modalOverlay, &ModalOverlay::triggered, tabGroup, &QActionGroup::setEnabled);
 
     overviewAction = new QAction(platformStyle->SingleColorIcon(":/icons/overview"), tr("&Overview"), this);
     overviewAction->setStatusTip(tr("Show general overview of wallet"));
