@@ -12,7 +12,7 @@ Quick Start
 The minimal steps required to build Nusacoin Core with the msbuild toolchain are below. More detailed instructions are contained in the following sections.
 
 ```
-vcpkg install --triplet x64-windows-static boost-filesystem boost-multi-index boost-signals2 boost-test boost-thread libevent openssl zeromq berkeleydb rapidcheck double-conversion
+vcpkg install --triplet x64-windows-static boost-filesystem boost-multi-index boost-signals2 boost-test boost-thread libevent zeromq berkeleydb rapidcheck double-conversion
 py -3 build_msvc\msvc-autogen.py
 msbuild /m build_msvc\nusacoin.sln /p:Platform=x64 /p:Configuration=Release /t:build
 ```
@@ -33,7 +33,6 @@ The [external dependencies](https://github.com/nusacoin/nusacoin/blob/master/doc
 - Boost
 - DoubleConversion
 - libevent
-- OpenSSL
 - Qt5
 - RapidCheck
 - ZeroMQ
@@ -54,7 +53,7 @@ The instructions below use `vcpkg` to install the dependencies.
 - Install the required packages (replace x64 with x86 as required):
 
 ```
-PS >.\vcpkg install --triplet x64-windows-static boost-filesystem boost-multi-index boost-signals2 boost-test boost-thread libevent openssl zeromq berkeleydb rapidcheck double-conversion
+PS >.\vcpkg install --triplet x64-windows-static boost-filesystem boost-multi-index boost-signals2 boost-test boost-thread libevent zeromq berkeleydb rapidcheck double-conversion
 ```
 
 - Use Python to generate `*.vcxproj` from Makefile
