@@ -21,8 +21,6 @@ class CConnman;
 class CValidationInterface;
 class uint256;
 class CScheduler;
-class CTxMemPool;
-enum class MemPoolRemovalReason;
 
 // These functions dispatch to one or all registered wallets
 
@@ -102,10 +100,32 @@ protected:
     /**
      * Notifies listeners of a transaction leaving mempool.
      *
-     * This only fires for transactions which leave mempool because of expiry,
-     * size limiting, reorg (changes in lock times/coinbase maturity), or
-     * replacement. This does not include any transactions which are included
-     * in BlockConnectedDisconnected either in block->vtx or in txnConflicted.
+     * This notification fires for transactions that are removed from the
+     * mempool for the following reasons:
+     *
+     * - EXPIRY (expired from mempool after -mempoolexpiry hours)
+     * - SIZELIMIT (removed in size limiting if the mempool exceeds -maxmempool megabytes)
+     * - REORG (removed during a reorg) 
+     * - CONFLICT (removed because it conflicts with in-block transaction)
+     * - REPLACED (removed due to RBF replacement)
+     *
+     * This does not fire for transactions that are removed from the mempool
+     * because they have been included in a block. Any client that is interested
+     * in transactions removed from the mempool for inclusion in a block can learn
+     * about those transactions from the BlockConnected notification.
+     *
+     * Transactions that are removed from the mempool because they conflict
+     * with a transaction in the new block will have
+     * TransactionRemovedFromMempool events fired *before* the BlockConnected
+     * event is fired. If multiple blocks are connected in one step, then the
+     * ordering could be:
+     *
+     * - TransactionRemovedFromMempool(tx1 from block A)
+     * - TransactionRemovedFromMempool(tx2 from block A)
+     * - TransactionRemovedFromMempool(tx1 from block B)
+     * - TransactionRemovedFromMempool(tx2 from block B)
+     * - BlockConnected(A)
+     * - BlockConnected(B)
      *
      * Called on a background thread.
      */
@@ -116,13 +136,13 @@ protected:
      *
      * Called on a background thread.
      */
-    virtual void BlockConnected(const std::shared_ptr<const CBlock> &block, const CBlockIndex *pindex, const std::vector<CTransactionRef> &txnConflicted) {}
+    virtual void BlockConnected(const std::shared_ptr<const CBlock> &block, const CBlockIndex *pindex) {}
     /**
      * Notifies listeners of a block being disconnected
      *
      * Called on a background thread.
      */
-    virtual void BlockDisconnected(const std::shared_ptr<const CBlock> &block) {}
+    virtual void BlockDisconnected(const std::shared_ptr<const CBlock> &block, const CBlockIndex* pindex) {}
     /**
      * Notifies listeners of the new active block chain on-disk.
      *
@@ -151,9 +171,7 @@ protected:
      * Notifies listeners that a block which builds directly on our current tip
      * has been received and connected to the headers tree, though not validated yet */
     virtual void NewPoWValidBlock(const CBlockIndex *pindex, const std::shared_ptr<const CBlock>& block) {};
-    friend void ::RegisterSharedValidationInterface(std::shared_ptr<CValidationInterface>);
-    friend void ::UnregisterValidationInterface(CValidationInterface*);
-    friend void ::UnregisterAllValidationInterfaces();
+    friend class CMainSignals;
 };
 
 struct MainSignalsInstance;
@@ -166,8 +184,6 @@ private:
     friend void ::UnregisterAllValidationInterfaces();
     friend void ::CallFunctionInValidationInterfaceQueue(std::function<void ()> func);
 
-    void MempoolEntryRemoved(CTransactionRef tx, MemPoolRemovalReason reason);
-
 public:
     /** Register a CScheduler to give callbacks which should run in the background (may only be called once) */
     void RegisterBackgroundSignalScheduler(CScheduler& scheduler);
@@ -178,15 +194,11 @@ public:
 
     size_t CallbacksPending();
 
-    /** Register with mempool to call TransactionRemovedFromMempool callbacks */
-    void RegisterWithMempoolSignals(CTxMemPool& pool);
-    /** Unregister with mempool */
-    void UnregisterWithMempoolSignals(CTxMemPool& pool);
-
     void UpdatedBlockTip(const CBlockIndex *, const CBlockIndex *, bool fInitialDownload);
     void TransactionAddedToMempool(const CTransactionRef &);
-    void BlockConnected(const std::shared_ptr<const CBlock> &, const CBlockIndex *pindex, const std::shared_ptr<const std::vector<CTransactionRef>> &);
-    void BlockDisconnected(const std::shared_ptr<const CBlock> &);
+    void TransactionRemovedFromMempool(const CTransactionRef &);
+    void BlockConnected(const std::shared_ptr<const CBlock> &, const CBlockIndex *pindex);
+    void BlockDisconnected(const std::shared_ptr<const CBlock> &, const CBlockIndex* pindex);
     void ChainStateFlushed(const CBlockLocator &);
     void BlockChecked(const CBlock&, const BlockValidationState&);
     void NewPoWValidBlock(const CBlockIndex *, const std::shared_ptr<const CBlock>&);

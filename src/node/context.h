@@ -10,6 +10,7 @@
 
 class BanMan;
 class CConnman;
+class CScheduler;
 class CTxMemPool;
 class PeerLogicValidation;
 namespace interfaces {
@@ -33,6 +34,7 @@ struct NodeContext {
     std::unique_ptr<PeerLogicValidation> peer_logic;
     std::unique_ptr<BanMan> banman;
     std::unique_ptr<interfaces::Chain> chain;
+    std::unique_ptr<CScheduler> scheduler;
     std::vector<std::unique_ptr<interfaces::ChainClient>> chain_clients;
 
     //! Declare default constructor and destructor that are not inline, so code
