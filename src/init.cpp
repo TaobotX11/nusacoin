@@ -577,7 +577,7 @@ std::string LicenseInfo()
     const std::string URL_SOURCE_CODE = "<https://github.com/TaobotX11/nusacoin>";
     const std::string URL_WEBSITE = "<https://nusacoin.org>";
 
-    return CopyrightHolders(strprintf(_("Copyright (C) %i-%i").translated, 2026, COPYRIGHT_YEAR) + " ") + "\n" +
+    return CopyrightHolders(strprintf(_("Copyright (C) %i-%i").translated, 2025, COPYRIGHT_YEAR) + " ") + "\n" +
            "\n" +
            strprintf(_("Please contribute if you find %s useful. "
                        "Visit %s for further information about the software.").translated,
@@ -1288,6 +1288,12 @@ bool AppInitMain(NodeContext& node)
     // Start the lightweight task scheduler thread
     CScheduler::Function serviceLoop = std::bind(&CScheduler::serviceQueue, &scheduler);
     threadGroup.create_thread(std::bind(&TraceThread<CScheduler::Function>, "scheduler", serviceLoop));
+
+    // Gather some entropy once per minute.
+    scheduler.scheduleEvery([]{
+        RandAddPeriodic();
+    }, 60000);
+
 
     GetMainSignals().RegisterBackgroundSignalScheduler(scheduler);
     GetMainSignals().RegisterWithMempoolSignals(mempool);
