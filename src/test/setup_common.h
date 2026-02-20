@@ -16,7 +16,7 @@
 
 #include <type_traits>
 
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 
 // Enable BOOST_CHECK_EQUAL for enum class types
 template <typename T>

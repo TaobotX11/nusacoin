@@ -17,8 +17,6 @@
 #include <atomic>
 #include <string>
 
-#include <boost/thread.hpp>
-
 namespace DBKeys {
 const std::string ACENTRY{"acentry"};
 const std::string BESTBLOCK_NOMERKLE{"bestblock_nomerkle"};
@@ -505,11 +503,7 @@ DBErrors WalletBatch::LoadWallet(CWallet* pwallet)
                 pwallet->WalletLogPrintf("%s\n", strErr);
         }
         pcursor->close();
-    }
-    catch (const boost::thread_interrupted&) {
-        throw;
-    }
-    catch (...) {
+    } catch (...) {
         result = DBErrors::CORRUPT;
     }
 
@@ -610,11 +604,7 @@ DBErrors WalletBatch::FindWalletTx(std::vector<uint256>& vTxHash, std::vector<CW
             }
         }
         pcursor->close();
-    }
-    catch (const boost::thread_interrupted&) {
-        throw;
-    }
-    catch (...) {
+    } catch (...) {
         result = DBErrors::CORRUPT;
     }
 

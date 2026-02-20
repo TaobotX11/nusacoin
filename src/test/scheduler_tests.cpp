@@ -7,7 +7,7 @@
 
 #include <test/setup_common.h>
 
-#include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_SUITE(scheduler_tests)
