@@ -67,6 +67,7 @@ void SendCoinsEntry::on_addressBookButton_clicked()
 {
     if(!model)
         return;
+    model->refresh(/* pk_hash_only */ false);
     AddressBookPage dlg(platformStyle, AddressBookPage::ForSelection, AddressBookPage::SendingTab, this);
     dlg.setModel(model->getAddressTableModel());
     if(dlg.exec())
