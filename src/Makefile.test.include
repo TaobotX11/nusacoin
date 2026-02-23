@@ -7,6 +7,7 @@ FUZZ_TARGETS = \
   test/fuzz/address_deserialize \
   test/fuzz/addrman_deserialize \
   test/fuzz/banentry_deserialize \
+  test/fuzz/bech32 \
   test/fuzz/block_deserialize \
   test/fuzz/blockheader_deserialize \
   test/fuzz/blocklocator_deserialize \
@@ -60,7 +61,9 @@ BITCOIN_TEST_SUITE = \
   test/lib/transaction_utils.cpp \
   test/main.cpp \
   test/setup_common.h \
-  test/setup_common.cpp
+  test/setup_common.cpp \
+  test/util/str.h \
+  test/util/str.cpp
 
 FUZZ_SUITE = \
   test/setup_common.h \
@@ -141,6 +144,7 @@ BITCOIN_TESTS =\
   test/script_standard_tests.cpp \
   test/scriptnum_tests.cpp \
   test/serialize_tests.cpp \
+  test/settings_tests.cpp \
   test/sighash_tests.cpp \
   test/sigopcount_tests.cpp \
   test/skiplist_tests.cpp \
