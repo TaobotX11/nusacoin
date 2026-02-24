@@ -162,6 +162,7 @@ BITCOIN_CORE_H = \
   node/psbt.h \
   node/transaction.h \
   node/ui_interface.h \
+  node/utxo_snapshot.h \
   noui.h \
   optional.h \
   outputtype.h \
@@ -217,6 +218,7 @@ BITCOIN_CORE_H = \
   util/system.h \
   util/macros.h \
   util/memory.h \
+  util/message.h \
   util/moneystr.h \
   util/rbf.h \
   util/string.h \
@@ -224,7 +226,6 @@ BITCOIN_CORE_H = \
   util/time.h \
   util/translation.h \
   util/url.h \
-  util/validation.h \
   util/vector.h \
   validation.h \
   validationinterface.h \
@@ -538,6 +539,7 @@ libnusacoin_util_a_SOURCES = \
   util/bytevectorhash.cpp \
   util/error.cpp \
   util/fees.cpp \
+  util/message.cpp \
   util/system.cpp \
   util/moneystr.cpp \
   util/rbf.cpp \
@@ -547,7 +549,6 @@ libnusacoin_util_a_SOURCES = \
   util/string.cpp \
   util/time.cpp \
   util/url.cpp \
-  util/validation.cpp \
   $(BITCOIN_CORE_H)
 
 if GLIBC_BACK_COMPAT
