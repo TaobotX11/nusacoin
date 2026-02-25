@@ -167,8 +167,6 @@ bool BerkeleyEnvironment::Open(bool retry)
     if (fDbEnvInit)
         return true;
 
-    boost::this_thread::interruption_point();
-
     fs::path pathIn = strPath;
     TryCreateDirectories(pathIn);
     if (!LockDirectory(pathIn, ".walletlock")) {
@@ -240,8 +238,6 @@ bool BerkeleyEnvironment::Open(bool retry)
 BerkeleyEnvironment::BerkeleyEnvironment()
 {
     Reset();
-
-    boost::this_thread::interruption_point();
 
     LogPrint(BCLog::DB, "BerkeleyEnvironment::MakeMock\n");
 
