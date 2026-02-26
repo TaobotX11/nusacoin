@@ -27,6 +27,7 @@
 #include <sync.h>
 #include <txmempool.h>
 #include <node/ui_interface.h>
+#include <util/ref.h>
 #include <util/system.h>
 #include <validation.h>
 #include <warnings.h>
@@ -81,7 +82,7 @@ public:
     bool appInitMain() override
     {
         m_context.chain = MakeChain(m_context);
-        return AppInitMain(m_context);
+        return AppInitMain(m_context_ref, m_context);
     }
     void appShutdown() override
     {
@@ -170,8 +171,8 @@ public:
     }
     int64_t getTotalBytesRecv() override { return m_context.connman ? m_context.connman->GetTotalBytesRecv() : 0; }
     int64_t getTotalBytesSent() override { return m_context.connman ? m_context.connman->GetTotalBytesSent() : 0; }
-    size_t getMempoolSize() override { return ::mempool.size(); }
-    size_t getMempoolDynamicUsage() override { return ::mempool.DynamicMemoryUsage(); }
+    size_t getMempoolSize() override { return m_context.mempool ? m_context.mempool->size() : 0; }
+    size_t getMempoolDynamicUsage() override { return m_context.mempool ? m_context.mempool->DynamicMemoryUsage() : 0; }
     bool getHeaderTip(int& height, int64_t& block_time) override
     {
         LOCK(::cs_main);
@@ -226,7 +227,7 @@ public:
     CFeeRate getDustRelayFee() override { return ::dustRelayFee; }
     UniValue executeRpc(const std::string& command, const UniValue& params, const std::string& uri) override
     {
-        JSONRPCRequest req;
+        JSONRPCRequest req(m_context_ref);
         req.params = params;
         req.strMethod = command;
         req.URI = uri;
@@ -255,8 +256,9 @@ public:
     std::vector<std::unique_ptr<Wallet>> getWallets() override
     {
         std::vector<std::unique_ptr<Wallet>> wallets;
-        for (const std::shared_ptr<CWallet>& wallet : GetWallets()) {
-            wallets.emplace_back(MakeWallet(wallet));
+        for (auto& client : m_context.chain_clients) {
+            auto client_wallets = client->getWallets();
+            std::move(client_wallets.begin(), client_wallets.end(), std::back_inserter(wallets));
         }
         return wallets;
     }
@@ -324,6 +326,7 @@ public:
     }
     NodeContext* context() override { return &m_context; }
     NodeContext m_context;
+    util::Ref m_context_ref{m_context};
 };
 
 } // namespace

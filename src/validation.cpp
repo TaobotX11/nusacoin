@@ -18,6 +18,7 @@
 #include <flatfile.h>
 #include <hash.h>
 #include <index/txindex.h>
+#include <optional.h>
 #include <policy/fees.h>
 #include <policy/policy.h>
 #include <policy/settings.h>
@@ -74,22 +75,19 @@ bool CBlockIndexWorkComparator::operator()(const CBlockIndex* pa, const CBlockIn
     return false;
 }
 
-namespace {
-BlockManager g_blockman;
-} // namespace
-
-std::unique_ptr<CChainState> g_chainstate;
+ChainstateManager g_chainman;
 
 CChainState& ChainstateActive()
 {
-    assert(g_chainstate);
-    return *g_chainstate;
+    LOCK(::cs_main);
+    assert(g_chainman.m_active_chainstate);
+    return *g_chainman.m_active_chainstate;
 }
 
 CChain& ChainActive()
 {
-    assert(g_chainstate);
-    return g_chainstate->m_chain;
+    LOCK(::cs_main);
+    return ::ChainstateActive().m_chain;
 }
 
 /**
@@ -154,8 +152,8 @@ std::set<int> setDirtyFileInfo;
 CBlockIndex* LookupBlockIndex(const uint256& hash)
 {
     AssertLockHeld(cs_main);
-    BlockMap::const_iterator it = g_blockman.m_block_index.find(hash);
-    return it == g_blockman.m_block_index.end() ? nullptr : it->second;
+    BlockMap::const_iterator it = g_chainman.BlockIndex().find(hash);
+    return it == g_chainman.BlockIndex().end() ? nullptr : it->second;
 }
 
 CBlockIndex* FindForkInGlobalIndex(const CChain& chain, const CBlockLocator& locator)
@@ -180,8 +178,8 @@ CBlockIndex* FindForkInGlobalIndex(const CChain& chain, const CBlockLocator& loc
 std::unique_ptr<CBlockTreeDB> pblocktree;
 
 // See definition for documentation
-static void FindFilesToPruneManual(std::set<int>& setFilesToPrune, int nManualPruneHeight);
-static void FindFilesToPrune(std::set<int>& setFilesToPrune, uint64_t nPruneAfterHeight);
+static void FindFilesToPruneManual(ChainstateManager& chainman, std::set<int>& setFilesToPrune, int nManualPruneHeight);
+static void FindFilesToPrune(ChainstateManager& chainman, std::set<int>& setFilesToPrune, uint64_t nPruneAfterHeight);
 bool CheckInputs(const CTransaction& tx, TxValidationState& state, const CCoinsViewCache& inputs, unsigned int flags, bool cacheSigStore, bool cacheFullScriptStore, PrecomputedTransactionData& txdata, std::vector<CScriptCheck>* pvChecks = nullptr);
 static FILE* OpenUndoFile(const FlatFilePos& pos, bool fReadOnly = false);
 static FlatFileSeq BlockFileSeq();
@@ -1219,9 +1217,9 @@ void CoinsViews::InitCache()
     m_cacheview = MakeUnique<CCoinsViewCache>(&m_catcherview);
 }
 
-// NOTE: for now m_blockman is set to a global, but this will be changed
-// in a future commit.
-CChainState::CChainState() : m_blockman(g_blockman) {}
+CChainState::CChainState(BlockManager& blockman, uint256 from_snapshot_blockhash)
+    : m_blockman(blockman),
+      m_from_snapshot_blockhash(from_snapshot_blockhash) {}
 
 
 void CChainState::InitCoinsDB(
@@ -1230,6 +1228,10 @@ void CChainState::InitCoinsDB(
     bool should_wipe,
     std::string leveldb_name)
 {
+    if (!m_from_snapshot_blockhash.IsNull()) {
+        leveldb_name += "_" + m_from_snapshot_blockhash.ToString();
+    }
+
     m_coins_views = MakeUnique<CoinsViews>(
         leveldb_name, cache_size_bytes, in_memory, should_wipe);
 }
@@ -1271,7 +1273,8 @@ static CBlockIndex *pindexBestForkTip = nullptr, *pindexBestForkBase = nullptr;
 
 BlockMap& BlockIndex()
 {
-    return g_blockman.m_block_index;
+    LOCK(::cs_main);
+    return g_chainman.m_blockman.m_block_index;
 }
 
 static void AlertNotify(const std::string& strMessage)
@@ -2157,13 +2160,44 @@ bool CChainState::ConnectBlock(const CBlock& block, BlockValidationState& state,
     return true;
 }
 
+CoinsCacheSizeState CChainState::GetCoinsCacheSizeState(const CTxMemPool& tx_pool)
+{
+    return this->GetCoinsCacheSizeState(
+        tx_pool,
+        nCoinCacheUsage,
+        gArgs.GetArg("-maxmempool", DEFAULT_MAX_MEMPOOL_SIZE) * 1000000);
+}
+
+CoinsCacheSizeState CChainState::GetCoinsCacheSizeState(
+    const CTxMemPool& tx_pool,
+    size_t max_coins_cache_size_bytes,
+    size_t max_mempool_size_bytes)
+{
+    int64_t nMempoolUsage = tx_pool.DynamicMemoryUsage();
+    int64_t cacheSize = CoinsTip().DynamicMemoryUsage();
+    int64_t nTotalSpace =
+        max_coins_cache_size_bytes + std::max<int64_t>(max_mempool_size_bytes - nMempoolUsage, 0);
+
+    //! No need to periodic flush if at least this much space still available.
+    static constexpr int64_t MAX_BLOCK_COINSDB_USAGE_BYTES = 10 * 1024 * 1024;  // 10MB 
+    int64_t large_threshold = 
+        std::max((9 * nTotalSpace) / 10, nTotalSpace - MAX_BLOCK_COINSDB_USAGE_BYTES);
+
+    if (cacheSize > nTotalSpace) {
+        LogPrintf("Cache size (%s) exceeds total space (%s)\n", cacheSize, nTotalSpace);
+        return CoinsCacheSizeState::CRITICAL;
+    } else if (cacheSize > large_threshold) {
+        return CoinsCacheSizeState::LARGE;
+    }
+    return CoinsCacheSizeState::OK;
+}
+
 bool CChainState::FlushStateToDisk(
     const CChainParams& chainparams,
     BlockValidationState& state,
     FlushStateMode mode,
     int nManualPruneHeight)
 {
-    int64_t nMempoolUsage = mempool.DynamicMemoryUsage();
     LOCK(cs_main);
     assert(this->CanFlushToDisk());
     static int64_t nLastWrite = 0;
@@ -2174,12 +2208,13 @@ bool CChainState::FlushStateToDisk(
         {
             bool fFlushForPrune = false;
             bool fDoFullFlush = false;
+            CoinsCacheSizeState cache_state = GetCoinsCacheSizeState(::mempool);
             LOCK(cs_LastBlockFile);
             if (fPruneMode && (fCheckForPruning || nManualPruneHeight > 0) && !fReindex) {
                 if (nManualPruneHeight > 0) {
-                    FindFilesToPruneManual(setFilesToPrune, nManualPruneHeight);
+                    FindFilesToPruneManual(g_chainman, setFilesToPrune, nManualPruneHeight);
                 } else {
-                    FindFilesToPrune(setFilesToPrune, chainparams.PruneAfterHeight());
+                    FindFilesToPrune(g_chainman, setFilesToPrune, chainparams.PruneAfterHeight());
                     fCheckForPruning = false;
                 }
                 if (!setFilesToPrune.empty()) {
@@ -2198,13 +2233,11 @@ bool CChainState::FlushStateToDisk(
             if (nLastFlush == 0) {
                 nLastFlush = nNow;
             }
-            int64_t nMempoolSizeMax = gArgs.GetArg("-maxmempool", DEFAULT_MAX_MEMPOOL_SIZE) * 1000000;
-            int64_t cacheSize = CoinsTip().DynamicMemoryUsage();
-            int64_t nTotalSpace = nCoinCacheUsage + std::max<int64_t>(nMempoolSizeMax - nMempoolUsage, 0);
+            
             // The cache is large and we're within 10% and 10 MiB of the limit, but we have time now (not in the middle of a block processing).
-            bool fCacheLarge = mode == FlushStateMode::PERIODIC && cacheSize > std::max((9 * nTotalSpace) / 10, nTotalSpace - MAX_BLOCK_COINSDB_USAGE * 1024 * 1024);
+            bool fCacheLarge = mode == FlushStateMode::PERIODIC && cache_state >= CoinsCacheSizeState::LARGE;
             // The cache is over the limit, we have to write now.
-            bool fCacheCritical = mode == FlushStateMode::IF_NEEDED && cacheSize > nTotalSpace;
+            bool fCacheCritical = mode == FlushStateMode::IF_NEEDED && cache_state >= CoinsCacheSizeState::CRITICAL;
             // It's been a while since we wrote the block index to disk. Do this frequently, so we don't need to redownload after a crash.
             bool fPeriodicWrite = mode == FlushStateMode::PERIODIC && nNow > nLastWrite + (int64_t)DATABASE_WRITE_INTERVAL * 1000000;
             // It's been very long since we flushed the cache. Do this infrequently, to optimize cache usage.
@@ -3370,7 +3403,7 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
     if (fCheckpointsEnabled) {
         // Don't accept any forks from the main chain prior to last checkpoint.
         // GetLastCheckpoint finds the last checkpoint in MapCheckpoints that's in our
-        // g_blockman.m_block_index.
+        // BlockIndex().
         CBlockIndex* pcheckpoint = GetLastCheckpoint(params.Checkpoints());
         if (pcheckpoint && nHeight < pcheckpoint->nHeight) {
             LogPrintf("ERROR: %s: forked chain older than last checkpoint (height %d)\n", __func__, nHeight);
@@ -3569,13 +3602,15 @@ bool BlockManager::AcceptBlockHeader(const CBlockHeader& block, BlockValidationS
 }
 
 // Exposed wrapper for AcceptBlockHeader
-bool ProcessNewBlockHeaders(const std::vector<CBlockHeader>& headers, BlockValidationState& state, const CChainParams& chainparams, const CBlockIndex** ppindex)
+bool ChainstateManager::ProcessNewBlockHeaders(const std::vector<CBlockHeader>& headers, BlockValidationState& state, const CChainParams& chainparams, const CBlockIndex** ppindex)
 {
+    AssertLockNotHeld(cs_main);
     {
         LOCK(cs_main);
         for (const CBlockHeader& header : headers) {
             CBlockIndex* pindex = nullptr; // Use a temp pindex instead of ppindex to avoid a const_cast
-            bool accepted = g_blockman.AcceptBlockHeader(header, state, chainparams, &pindex);
+            bool accepted = m_blockman.AcceptBlockHeader(
+                header, state, chainparams, &pindex);
             ::ChainstateActive().CheckBlockIndex(chainparams.GetConsensus());
 
             if (!accepted) {
@@ -3697,7 +3732,7 @@ bool CChainState::AcceptBlock(const std::shared_ptr<const CBlock>& pblock, Block
     return true;
 }
 
-bool ProcessNewBlock(const CChainParams& chainparams, const std::shared_ptr<const CBlock> pblock, bool fForceProcessing, bool* fNewBlock)
+bool ChainstateManager::ProcessNewBlock(const CChainParams& chainparams, const std::shared_ptr<const CBlock> pblock, bool fForceProcessing, bool* fNewBlock)
 {
     AssertLockNotHeld(cs_main);
 
@@ -3773,12 +3808,12 @@ uint64_t CalculateCurrentUsage()
     return retval;
 }
 
-/* Prune a block file (modify associated database entries)*/
-void PruneOneBlockFile(const int fileNumber)
+void ChainstateManager::PruneOneBlockFile(const int fileNumber)
 {
+    AssertLockHeld(cs_main);
     LOCK(cs_LastBlockFile);
 
-    for (const auto& entry : g_blockman.m_block_index) {
+    for (const auto& entry : m_blockman.m_block_index) {
         CBlockIndex* pindex = entry.second;
         if (pindex->nFile == fileNumber) {
             pindex->nStatus &= ~BLOCK_HAVE_DATA;
@@ -3792,12 +3827,12 @@ void PruneOneBlockFile(const int fileNumber)
             // to be downloaded again in order to consider its chain, at which
             // point it would be considered as a candidate for
             // m_blocks_unlinked or setBlockIndexCandidates.
-            auto range = g_blockman.m_blocks_unlinked.equal_range(pindex->pprev);
+            auto range = m_blockman.m_blocks_unlinked.equal_range(pindex->pprev);
             while (range.first != range.second) {
                 std::multimap<CBlockIndex*, CBlockIndex*>::iterator _it = range.first;
                 range.first++;
                 if (_it->second == pindex) {
-                    g_blockman.m_blocks_unlinked.erase(_it);
+                    m_blockman.m_blocks_unlinked.erase(_it);
                 }
             }
         }
@@ -3819,7 +3854,7 @@ void UnlinkPrunedFiles(const std::set<int>& setFilesToPrune)
 }
 
 /* Calculate the block/rev files to delete based on height specified by user with RPC command pruneblockchain */
-static void FindFilesToPruneManual(std::set<int>& setFilesToPrune, int nManualPruneHeight)
+static void FindFilesToPruneManual(ChainstateManager& chainman, std::set<int>& setFilesToPrune, int nManualPruneHeight)
 {
     assert(fPruneMode && nManualPruneHeight > 0);
 
@@ -3833,7 +3868,7 @@ static void FindFilesToPruneManual(std::set<int>& setFilesToPrune, int nManualPr
     for (int fileNumber = 0; fileNumber < nLastBlockFile; fileNumber++) {
         if (vinfoBlockFile[fileNumber].nSize == 0 || vinfoBlockFile[fileNumber].nHeightLast > nLastBlockWeCanPrune)
             continue;
-        PruneOneBlockFile(fileNumber);
+        chainman.PruneOneBlockFile(fileNumber);
         setFilesToPrune.insert(fileNumber);
         count++;
     }
@@ -3866,7 +3901,7 @@ void PruneBlockFilesManual(int nManualPruneHeight)
  *
  * @param[out]   setFilesToPrune   The set of file indices that can be unlinked will be returned
  */
-static void FindFilesToPrune(std::set<int>& setFilesToPrune, uint64_t nPruneAfterHeight)
+static void FindFilesToPrune(ChainstateManager& chainman, std::set<int>& setFilesToPrune, uint64_t nPruneAfterHeight)
 {
     LOCK2(cs_main, cs_LastBlockFile);
     if (::ChainActive().Tip() == nullptr || nPruneTarget == 0) {
@@ -3908,7 +3943,7 @@ static void FindFilesToPrune(std::set<int>& setFilesToPrune, uint64_t nPruneAfte
             if (vinfoBlockFile[fileNumber].nHeightLast > nLastBlockWeCanPrune)
                 continue;
 
-            PruneOneBlockFile(fileNumber);
+            chainman.PruneOneBlockFile(fileNumber);
             // Queue up the files for removal
             setFilesToPrune.insert(fileNumber);
             nCurrentUsage -= nBytesToPrune;
@@ -4033,11 +4068,13 @@ void BlockManager::Unload()
     m_block_index.clear();
 }
 
-bool static LoadBlockIndexDB(const CChainParams& chainparams) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
+bool static LoadBlockIndexDB(ChainstateManager& chainman, const CChainParams& chainparams) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
 {
-    if (!g_blockman.LoadBlockIndex(
-            chainparams.GetConsensus(), *pblocktree, ::ChainstateActive().setBlockIndexCandidates))
+    if (!chainman.m_blockman.LoadBlockIndex(
+            chainparams.GetConsensus(), *pblocktree,
+            ::ChainstateActive().setBlockIndexCandidates)) {
         return false;
+    }
 
     // Load block file info
     pblocktree->ReadLastBlockFile(nLastBlockFile);
@@ -4059,7 +4096,8 @@ bool static LoadBlockIndexDB(const CChainParams& chainparams) EXCLUSIVE_LOCKS_RE
     // Check presence of blk files
     LogPrintf("Checking all blk files are present...\n");
     std::set<int> setBlkDataFiles;
-    for (const std::pair<const uint256, CBlockIndex*>& item : g_blockman.m_block_index) {
+    for (const std::pair<const uint256, CBlockIndex*>& item : chainman.BlockIndex())
+    {
         CBlockIndex* pindex = item.second;
         if (pindex->nStatus & BLOCK_HAVE_DATA) {
             setBlkDataFiles.insert(pindex->nFile);
@@ -4432,27 +4470,14 @@ bool CChainState::RewindBlockIndex(const CChainParams& params)
             PruneBlockIndexCandidates();
 
             CheckBlockIndex(params.GetConsensus());
-        }
-    }
-
-    return true;
-}
-
-bool RewindBlockIndex(const CChainParams& params)
-{
-    if (!::ChainstateActive().RewindBlockIndex(params)) {
-        return false;
-    }
-
-    LOCK(cs_main);
-    if (::ChainActive().Tip() != nullptr) {
         // FlushStateToDisk can possibly read ::ChainActive(). Be conservative
-        // and skip it here, we're about to -reindex-chainstate anyway, so
-        // it'll get called a bunch real soon.
-        BlockValidationState state;
-        if (!::ChainstateActive().FlushStateToDisk(params, state, FlushStateMode::ALWAYS)) {
-            LogPrintf("RewindBlockIndex: unable to flush state to disk (%s)\n", state.ToString());
-            return false;
+            // and skip it here, we're about to -reindex-chainstate anyway, so
+            // it'll get called a bunch real soon.
+            BlockValidationState state;
+            if (!FlushStateToDisk(params, state, FlushStateMode::ALWAYS)) {
+                LogPrintf("RewindBlockIndex: unable to flush state to disk (%s)\n", state.ToString());
+                return false;
+            }
         }
     }
 
@@ -4471,8 +4496,7 @@ void CChainState::UnloadBlockIndex()
 void UnloadBlockIndex()
 {
     LOCK(cs_main);
-    ::ChainActive().SetTip(nullptr);
-    g_blockman.Unload();
+    g_chainman.Unload();
     pindexBestInvalid = nullptr;
     pindexBestHeader = nullptr;
     mempool.clear();
@@ -4485,18 +4509,17 @@ void UnloadBlockIndex()
         warningcache[b].clear();
     }
     fHavePruned = false;
-
-    ::ChainstateActive().UnloadBlockIndex();
 }
 
-bool LoadBlockIndex(const CChainParams& chainparams)
+bool ChainstateManager::LoadBlockIndex(const CChainParams& chainparams)
 {
+    AssertLockHeld(cs_main);
     // Load block index from databases
     bool needs_init = fReindex;
     if (!fReindex) {
-        bool ret = LoadBlockIndexDB(chainparams);
+        bool ret = LoadBlockIndexDB(*this, chainparams);
         if (!ret) return false;
-        needs_init = g_blockman.m_block_index.empty();
+        needs_init = m_blockman.m_block_index.empty();
     }
 
     if (needs_init) {
@@ -4616,7 +4639,7 @@ bool LoadExternalBlockFile(const CChainParams& chainparams, FILE* fileIn, FlatFi
                 // Activate the genesis block so normal node progress can continue
                 if (hash == chainparams.GetConsensus().hashGenesisBlock) {
                     BlockValidationState state;
-                    if (!ActivateBestChain(state, chainparams)) {
+                    if (!ActivateBestChain(state, chainparams, nullptr)) {
                         break;
                     }
                 }
@@ -4844,6 +4867,14 @@ void CChainState::CheckBlockIndex(const Consensus::Params& consensusParams)
     assert(nNodes == forward.size());
 }
 
+std::string CChainState::ToString()
+{
+    CBlockIndex* tip = m_chain.Tip(); 
+    return strprintf("Chainstate [%s] @ height %d (%s)",
+        m_from_snapshot_blockhash.IsNull() ? "ibd" : "snapshot",
+        tip ? tip->nHeight : -1, tip ? tip->GetBlockHash().ToString() : "null"); 
+}
+
 std::string CBlockFileInfo::ToString() const
 {
     return strprintf("CBlockFileInfo(blocks=%u, size=%u, heights=%u...%u, time=%s...%s)", nBlocks, nSize, nHeightFirst, nHeightLast, FormatISO8601Date(nTimeFirst), FormatISO8601Date(nTimeLast));
@@ -5033,10 +5064,99 @@ public:
     ~CMainCleanup()
     {
         // block headers
-        BlockMap::iterator it1 = g_blockman.m_block_index.begin();
-        for (; it1 != g_blockman.m_block_index.end(); it1++)
+        BlockMap::iterator it1 = g_chainman.BlockIndex().begin();
+        for (; it1 != g_chainman.BlockIndex().end(); it1++)
             delete (*it1).second;
-        g_blockman.m_block_index.clear();
+        g_chainman.BlockIndex().clear();
     }
 };
 static CMainCleanup instance_of_cmaincleanup;
+
+Optional<uint256> ChainstateManager::SnapshotBlockhash() const {
+    if (m_active_chainstate != nullptr) {
+        // If a snapshot chainstate exists, it will always be our active.
+        return m_active_chainstate->m_from_snapshot_blockhash;
+    }
+    return {};
+}
+
+std::vector<CChainState*> ChainstateManager::GetAll()
+{
+    std::vector<CChainState*> out;
+
+    if (!IsSnapshotValidated() && m_ibd_chainstate) {
+        out.push_back(m_ibd_chainstate.get());
+    }
+
+    if (m_snapshot_chainstate) {
+        out.push_back(m_snapshot_chainstate.get());
+    }
+
+    return out;
+}
+
+CChainState& ChainstateManager::InitializeChainstate(const uint256& snapshot_blockhash)
+{
+    bool is_snapshot = !snapshot_blockhash.IsNull();
+    std::unique_ptr<CChainState>& to_modify =
+        is_snapshot ? m_snapshot_chainstate : m_ibd_chainstate;
+
+    if (to_modify) {
+        throw std::logic_error("should not be overwriting a chainstate");
+    }
+
+    to_modify.reset(new CChainState(m_blockman, snapshot_blockhash));
+
+    // Snapshot chainstates and initial IBD chaintates always become active.
+    if (is_snapshot || (!is_snapshot && !m_active_chainstate)) {
+        LogPrintf("Switching active chainstate to %s\n", to_modify->ToString());
+        m_active_chainstate = to_modify.get(); 
+    } else {
+        throw std::logic_error("unexpected chainstate activation");
+    }
+
+    return *to_modify;
+}
+
+CChain& ChainstateManager::ActiveChain() const
+{
+    assert(m_active_chainstate);
+    return m_active_chainstate->m_chain; 
+}
+
+bool ChainstateManager::IsSnapshotActive() const
+{
+    return m_snapshot_chainstate && m_active_chainstate == m_snapshot_chainstate.get();
+}
+
+CChainState& ChainstateManager::ValidatedChainstate() const
+{
+    if (m_snapshot_chainstate && IsSnapshotValidated()) {
+        return *m_snapshot_chainstate.get();
+    }
+    assert(m_ibd_chainstate);
+    return *m_ibd_chainstate.get();
+}
+
+bool ChainstateManager::IsBackgroundIBD(CChainState* chainstate) const
+{
+    return (m_snapshot_chainstate && chainstate == m_ibd_chainstate.get());
+}
+
+void ChainstateManager::Unload()
+{
+    for (CChainState* chainstate : this->GetAll()) {
+        chainstate->m_chain.SetTip(nullptr);
+        chainstate->UnloadBlockIndex();
+    }
+
+    m_blockman.Unload();
+}
+
+void ChainstateManager::Reset()
+{
+    m_ibd_chainstate.reset();
+    m_snapshot_chainstate.reset();
+    m_active_chainstate = nullptr; 
+    m_snapshot_validated = false;
+}

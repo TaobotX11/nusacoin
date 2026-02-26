@@ -221,6 +221,7 @@ BITCOIN_CORE_H = \
   util/message.h \
   util/moneystr.h \
   util/rbf.h \
+  util/ref.h \
   util/string.h \
   util/threadnames.h \
   util/time.h \
