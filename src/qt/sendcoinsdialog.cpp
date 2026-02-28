@@ -401,7 +401,7 @@ void SendCoinsDialog::on_sendButton_clicked()
         CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
         ssTx << psbtx;
         GUIUtil::setClipboard(EncodeBase64(ssTx.str()).c_str());
-        QMessageBox msgBox;
+        QMessageBox msgBox(this);
         msgBox.setText("Unsigned Transaction");
         msgBox.setInformativeText("The PSBT has been copied to the clipboard. You can also save it.");
         msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
