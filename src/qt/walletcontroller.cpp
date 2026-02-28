@@ -166,7 +166,7 @@ WalletControllerActivity::~WalletControllerActivity()
 void WalletControllerActivity::showProgressDialog(const QString& label_text)
 {
     m_progress_dialog = new QProgressDialog(m_parent_widget);
-
+    m_progress_dialog->setStyleSheet("QProgressDialog { background-color: lightgray; border: 1px solid gray; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00ff00, stop: 1 #018f01); border-radius: 4px; margin: 0px; }");
     m_progress_dialog->setLabelText(label_text);
     m_progress_dialog->setRange(0, 0);
     m_progress_dialog->setCancelButton(nullptr);

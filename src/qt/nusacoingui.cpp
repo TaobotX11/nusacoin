@@ -323,6 +323,8 @@ void NusacoinGUI::createActions()
     signMessageAction->setStatusTip(tr("Sign messages with your Nusacoin addresses to prove you own them"));
     verifyMessageAction = new QAction(tr("&Verify message..."), this);
     verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Nusacoin addresses"));
+    m_load_psbt_action = new QAction(tr("Load PSBT..."), this);
+    m_load_psbt_action->setStatusTip(tr("Load Partially Signed Nusacoin Transaction"));
 
     openRPCConsoleAction = new QAction(tr("Node window"), this);
     openRPCConsoleAction->setStatusTip(tr("Open node debugging and diagnostic console"));
@@ -377,6 +379,7 @@ void NusacoinGUI::createActions()
         connect(changePassphraseAction, &QAction::triggered, walletFrame, &WalletFrame::changePassphrase);
         connect(signMessageAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
         connect(signMessageAction, &QAction::triggered, [this]{ gotoSignMessageTab(); });
+        connect(m_load_psbt_action, &QAction::triggered, [this]{ gotoLoadPSBT(); });
         connect(verifyMessageAction, &QAction::triggered, [this]{ showNormalIfMinimized(); });
         connect(verifyMessageAction, &QAction::triggered, [this]{ gotoVerifyMessageTab(); });
         connect(usedSendingAddressesAction, &QAction::triggered, walletFrame, &WalletFrame::usedSendingAddresses);
@@ -452,6 +455,7 @@ void NusacoinGUI::createMenuBar()
         file->addAction(backupWalletAction);
         file->addAction(signMessageAction);
         file->addAction(verifyMessageAction);
+        file->addAction(m_load_psbt_action);
         file->addSeparator();
     }
     file->addAction(quitAction);
@@ -734,6 +738,7 @@ void NusacoinGUI::setWalletActionsEnabled(bool enabled)
     changePassphraseAction->setEnabled(enabled);
     signMessageAction->setEnabled(enabled);
     verifyMessageAction->setEnabled(enabled);
+    m_load_psbt_action->setEnabled(enabled);
     usedSendingAddressesAction->setEnabled(enabled);
     usedReceivingAddressesAction->setEnabled(enabled);
     openAction->setEnabled(enabled);
@@ -759,7 +764,7 @@ void NusacoinGUI::createTrayIconMenu()
     // return if trayIcon is unset (only on non-macOSes)
     if (!trayIcon)
         return;
-    trayIconMenu->setStyleSheet("QMenu {selection-background-color: #018f01;} QMenu::item:selected {background-color: #439143;}");
+    trayIconMenu->setStyleSheet("QMenu {selection-background-color: #018f01;}"); // QMenu::item:selected {background-color: #439143;}
     trayIcon->setContextMenu(trayIconMenu.get());
     connect(trayIcon, &QSystemTrayIcon::activated, this, &NusacoinGUI::trayIconActivated);
 #else
@@ -881,6 +886,11 @@ void NusacoinGUI::gotoSignMessageTab(QString addr)
 void NusacoinGUI::gotoVerifyMessageTab(QString addr)
 {
     if (walletFrame) walletFrame->gotoVerifyMessageTab(addr);
+}
+
+void NusacoinGUI::gotoLoadPSBT()
+{
+    if (walletFrame) walletFrame->gotoLoadPSBT();
 }
 #endif // ENABLE_WALLET
 
@@ -1357,6 +1367,7 @@ void NusacoinGUI::showProgress(const QString &title, int nProgress)
 {
     if (nProgress == 0) {
         progressDialog = new QProgressDialog(title, QString(), 0, 100);
+        progressDialog->setStyleSheet("QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00ff00, stop: 1 #018f01); border-radius: 4px; margin: 0px; }");
         GUIUtil::PolishProgressDialog(progressDialog);
         progressDialog->setWindowModality(Qt::ApplicationModal);
         progressDialog->setAutoClose(false);

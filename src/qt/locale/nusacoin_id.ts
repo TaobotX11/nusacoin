@@ -393,6 +393,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>&amp;Verifikasi pesan...</translation>
     </message>
     <message>
+        <source>Load PSBT...</source>
+        <translation>Muat PSBT...</translation>
+    </message>
+    <message>
         <source>&amp;Send</source>
         <translation>&amp;Kirim</translation>
     </message>
@@ -419,6 +423,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>Verify messages to ensure they were signed with specified Nusacoin addresses</source>
         <translation>Verifikasi pesan untuk memastikan bahwa pesan tersebut ditanda tangani oleh suatu alamat Nusacoin tertentu</translation>
+    </message>
+    <message>
+        <source>Load Partially Signed Nusacoin Transaction</source>
+        <translation>Muat transaksi PSBT Nusacoin</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -449,8 +457,8 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Tampilkan daftar alamat dan label yang diterima</translation>
     </message>
     <message>
-        <source>Open a nusacoin: URI or payment request</source>
-        <translation>Buka URI nusacoin: atau permintaan pembayaran</translation>
+        <source>Open a nusacoin: URI</source>
+        <translation>Buka URI nusacoin:</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
@@ -2342,6 +2350,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Dengan Biaya:</translation>
     </message>
     <message>
+        <source>Watch-only balance:</source>
+        <translation>Saldo Hanya lihat:</translation>
+    </message>
+    <message>
         <source>Change:</source>
         <translation>Uang Kembali:</translation>
     </message>
@@ -3225,6 +3237,13 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>&amp;Cancel</source>
         <translation>&amp;Batal</translation>
+    </message>
+</context>
+<context>
+    <name>WalletFrame</name>
+    <message>
+        <source>No wallet has been loaded.</source>
+        <translation>Tidak ada dompet yang dimuat.</translation>
     </message>
 </context>
 <context>

@@ -1,7 +1,22 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	]
+    "folders": [
+        {
+            "path": "../nusacoin"
+        }
+    ],
+    "settings": {
+        "files.exclude": {
+            "**/*.a": true,
+            "**/*.moc": true,
+            "**/*.o": true,
+            "**/*.lo": true,
+            "**/*.la": true,
+            "**/*.in": true,
+            "**/*.qrc": true,
+            "**/*.exe": true,
+            "**/*.mm": true,
+            "**/moc_*": true,
+            "**/qrc_*": true
+        }
+    }
 }
