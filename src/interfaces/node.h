@@ -34,6 +34,7 @@ enum class WalletCreationStatus;
 namespace interfaces {
 class Handler;
 class Wallet;
+struct BlockTip;
 
 //! Top-level interface for a nusacoin node (nusacoind process).
 class Node
@@ -149,6 +150,9 @@ public:
 
     //! Get last block time.
     virtual int64_t getLastBlockTime() = 0;
+
+    //! Get best block hash.
+    virtual uint256 getBestBlockHash() = 0;
 
     //! Get verification progress.
     virtual double getVerificationProgress() = 0;

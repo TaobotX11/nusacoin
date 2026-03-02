@@ -188,6 +188,11 @@ public:
         LOCK(::cs_main);
         return ::ChainActive().Height();
     }
+    uint256 getBestBlockHash() override
+    {
+        const CBlockIndex* tip = WITH_LOCK(::cs_main, return ::ChainActive().Tip());
+        return tip ? tip->GetBlockHash() : Params().GenesisBlock().GetHash();
+    }
     int64_t getLastBlockTime() override
     {
         LOCK(::cs_main);
