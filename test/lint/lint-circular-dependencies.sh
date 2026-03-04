@@ -28,7 +28,6 @@ EXPECTED_CIRCULAR_DEPENDENCIES=(
     "wallet/wallet -> wallet/walletdb -> wallet/wallet"
     "policy/fees -> txmempool -> validation -> policy/fees"
     "qt/guiutil -> qt/walletmodel -> qt/optionsmodel -> qt/guiutil"
-    "wallet/scriptpubkeyman -> wallet/wallet -> wallet/scriptpubkeyman"
 )
 
 EXIT_CODE=0

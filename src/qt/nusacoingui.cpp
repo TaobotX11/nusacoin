@@ -1373,6 +1373,7 @@ void NusacoinGUI::showProgress(const QString &title, int nProgress)
         progressDialog->setAutoClose(false);
         progressDialog->setValue(0);
     } else if (nProgress == 100) {
+        progressDialog->setStyleSheet("QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00ff00, stop: 1 #018f01); border-radius: 4px; margin: 0px; }");
         if (progressDialog) {
             progressDialog->close();
             progressDialog->deleteLater();
