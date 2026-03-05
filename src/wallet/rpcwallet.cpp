@@ -27,7 +27,6 @@
 #include <util/vector.h>
 #include <wallet/coincontrol.h>
 #include <wallet/feebumper.h>
-#include <wallet/psbtwallet.h>
 #include <wallet/rpcwallet.h>
 #include <wallet/wallet.h>
 #include <wallet/walletdb.h>
@@ -566,22 +565,15 @@ static UniValue signmessage(const JSONRPCRequest& request)
         throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to key");
     }
 
-    CScript script_pub_key = GetScriptForDestination(*pkhash);
-    std::unique_ptr<SigningProvider> provider = pwallet->GetSigningProvider(script_pub_key);
-    if (!provider) {
-        throw JSONRPCError(RPC_WALLET_ERROR, "Private key not available");
-    }
-
-    CKey key;
-    CKeyID keyID(*pkhash);
-    if (!provider->GetKey(keyID, key)) {
-        throw JSONRPCError(RPC_WALLET_ERROR, "Private key not available");
-    }
+    
 
     std::string signature;
 
-    if (!MessageSign(key, strMessage, signature)) {
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Sign failed");
+    SigningResult err = pwallet->SignMessage(strMessage, *pkhash, signature);
+    if (err == SigningResult::SIGNING_FAILED) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, SigningResultString(err));
+    } else if (err != SigningResult::OK){
+        throw JSONRPCError(RPC_WALLET_ERROR, SigningResultString(err));
     }
     return signature;
 }
@@ -3000,7 +2992,7 @@ static UniValue listunspent(const JSONRPCRequest& request)
                 entry.pushKV("label", i->second.name);
             }
 
-            std::unique_ptr<SigningProvider> provider = pwallet->GetSigningProvider(scriptPubKey);
+            std::unique_ptr<SigningProvider> provider = pwallet->GetSolvingProvider(scriptPubKey);
             if (provider) {
                 if (scriptPubKey.IsPayToScriptHash()) {
                     const CScriptID& hash = CScriptID(boost::get<ScriptHash>(address));
@@ -3040,7 +3032,7 @@ static UniValue listunspent(const JSONRPCRequest& request)
         entry.pushKV("spendable", out.fSpendable);
         entry.pushKV("solvable", out.fSolvable);
         if (out.fSolvable) {
-            std::unique_ptr<SigningProvider> provider = pwallet->GetSigningProvider(scriptPubKey);  
+            std::unique_ptr<SigningProvider> provider = pwallet->GetSolvingProvider(scriptPubKey);  
             if (provider) {
                 auto descriptor = InferDescriptor(scriptPubKey, *provider);
                 entry.pushKV("desc", descriptor->ToString());
@@ -3356,23 +3348,15 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)
     // Parse the prevtxs array
     ParsePrevouts(request.params[1], nullptr, coins);
 
-    std::set<std::shared_ptr<SigningProvider>> providers;
-    for (const std::pair<COutPoint, Coin> coin_pair : coins) {
-        std::unique_ptr<SigningProvider> provider = pwallet->GetSigningProvider(coin_pair.second.out.scriptPubKey);
-        if (provider) {
-            providers.insert(std::move(provider));
-        }
-    }
-    if (providers.size() == 0) { 
-        // When there are no available providers, use a dummy SigningProvider so we can check if the tx is complete
-        providers.insert(std::make_shared<SigningProvider>());
-    }
+    int nHashType = ParseSighashString(request.params[2]);
 
+    // Script verification errors
+    std::map<int, std::string> input_errors;
+
+    bool complete = pwallet->SignTransaction(mtx, coins, nHashType, input_errors);
     UniValue result(UniValue::VOBJ);
-    for (std::shared_ptr<SigningProvider> provider : providers) {
-        SignTransaction(mtx, provider.get(), coins, request.params[2], result);
-    }
-     return result;
+    SignTransactionResultToJSON(mtx, complete, coins, input_errors, result);
+    return result;
 }
 
 static UniValue bumpfee(const JSONRPCRequest& request)
@@ -3443,9 +3427,11 @@ static UniValue bumpfee(const JSONRPCRequest& request)
     RPCTypeCheck(request.params, {UniValue::VSTR, UniValue::VOBJ});
     uint256 hash(ParseHashV(request.params[0], "txid"));
 
+    CCoinControl coin_control;
+    coin_control.fAllowWatchOnly = pwallet->IsWalletFlagSet(WALLET_FLAG_DISABLE_PRIVATE_KEYS);
+
     // optional parameters
     CAmount totalFee = 0;
-    CCoinControl coin_control;
     coin_control.m_signal_bip125_rbf = true;
     if (!request.params[1].isNull()) {
         UniValue options = request.params[1];
@@ -3531,17 +3517,32 @@ static UniValue bumpfee(const JSONRPCRequest& request)
         }
     }
 
-    // sign bumped transaction
-    if (!feebumper::SignTransaction(*pwallet, mtx)) {
-        throw JSONRPCError(RPC_WALLET_ERROR, "Can't sign transaction.");
-    }
-    // commit the bumped transaction
-    uint256 txid;
-    if (feebumper::CommitTransaction(*pwallet, hash, std::move(mtx), errors, txid) != feebumper::Result::OK) {
-        throw JSONRPCError(RPC_WALLET_ERROR, errors[0]);
-    }
+    
     UniValue result(UniValue::VOBJ);
-    result.pushKV("txid", txid.GetHex());
+    // If wallet private keys are enabled, return the new transaction id,
+    // otherwise return the base64-encoded unsigned PSBT of the new transaction.
+    if (!pwallet->IsWalletFlagSet(WALLET_FLAG_DISABLE_PRIVATE_KEYS)) {
+        if (!feebumper::SignTransaction(*pwallet, mtx)) {
+            throw JSONRPCError(RPC_WALLET_ERROR, "Can't sign transaction.");
+        }
+
+        uint256 txid;
+        if (feebumper::CommitTransaction(*pwallet, hash, std::move(mtx), errors, txid) != feebumper::Result::OK) {
+            throw JSONRPCError(RPC_WALLET_ERROR, errors[0]);
+        }
+
+        result.pushKV("txid", txid.GetHex());
+    } else {
+        PartiallySignedTransaction psbtx(mtx);
+        bool complete = false;
+        const TransactionError err = pwallet->FillPSBT(psbtx, complete, SIGHASH_ALL, false /* sign */, true /* bip32derivs */);
+        CHECK_NONFATAL(err == TransactionError::OK);
+        CHECK_NONFATAL(!complete);
+        CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
+        ssTx << psbtx;
+        result.pushKV("psbt", EncodeBase64(ssTx.str()));
+    }
+
     result.pushKV("origfee", ValueFromAmount(old_fee));
     result.pushKV("fee", ValueFromAmount(new_fee));
     UniValue result_errors(UniValue::VARR);
@@ -3737,7 +3738,7 @@ static UniValue DescribeWalletAddress(CWallet* pwallet, const CTxDestination& de
     CScript script = GetScriptForDestination(dest);
     std::unique_ptr<SigningProvider> provider = nullptr;
     if (pwallet) {
-        provider = pwallet->GetSigningProvider(script);
+        provider = pwallet->GetSolvingProvider(script);
     }
     ret.pushKVs(detail);
     ret.pushKVs(boost::apply_visitor(DescribeWalletAddressVisitor(provider.get()), dest));
@@ -3839,7 +3840,7 @@ UniValue getaddressinfo(const JSONRPCRequest& request)
 
     CScript scriptPubKey = GetScriptForDestination(dest);
     ret.pushKV("scriptPubKey", HexStr(scriptPubKey.begin(), scriptPubKey.end()));
-    std::unique_ptr<SigningProvider> provider = pwallet->GetSigningProvider(scriptPubKey);
+    std::unique_ptr<SigningProvider> provider = pwallet->GetSolvingProvider(scriptPubKey);
 
     isminetype mine = pwallet->IsMine(dest);
     ret.pushKV("ismine", bool(mine & ISMINE_SPENDABLE));
@@ -4126,7 +4127,7 @@ UniValue walletprocesspsbt(const JSONRPCRequest& request)
     bool sign = request.params[1].isNull() ? true : request.params[1].get_bool();
     bool bip32derivs = request.params[3].isNull() ? false : request.params[3].get_bool();
     bool complete = true;
-    const TransactionError err = FillPSBT(pwallet, psbtx, complete, nHashType, sign, bip32derivs);
+    const TransactionError err = pwallet->FillPSBT(psbtx, complete, nHashType, sign, bip32derivs);
     if (err != TransactionError::OK) {
         throw JSONRPCTransactionError(err);
     }
@@ -4249,7 +4250,7 @@ UniValue walletcreatefundedpsbt(const JSONRPCRequest& request)
     // Fill transaction with out data but don't sign
     bool bip32derivs = request.params[4].isNull() ? false : request.params[4].get_bool();
     bool complete = true;
-    const TransactionError err = FillPSBT(pwallet, psbtx, complete, 1, false, bip32derivs);
+    const TransactionError err = pwallet->FillPSBT(psbtx, complete, 1, false, bip32derivs);
     if (err != TransactionError::OK) {
         throw JSONRPCTransactionError(err);
     }

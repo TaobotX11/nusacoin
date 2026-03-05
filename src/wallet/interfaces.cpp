@@ -21,7 +21,6 @@
 #include <wallet/ismine.h>
 #include <wallet/rpcwallet.h>
 #include <wallet/load.h>
-#include <wallet/psbtwallet.h>
 #include <wallet/rpcwallet.h>
 #include <wallet/wallet.h>
 
@@ -121,19 +120,15 @@ public:
     }
     bool getPubKey(const CScript& script, const CKeyID& address, CPubKey& pub_key) override  
     {
-        std::unique_ptr<SigningProvider> provider = m_wallet->GetSigningProvider(script);
+        std::unique_ptr<SigningProvider> provider = m_wallet->GetSolvingProvider(script);
         if (provider) {
             return provider->GetPubKey(address, pub_key); 
         }
         return false;
     }
-    bool getPrivKey(const CScript& script, const CKeyID& address, CKey& key) override
+    SigningResult signMessage(const std::string& message, const PKHash& pkhash, std::string& str_sig) override
     {
-        std::unique_ptr<SigningProvider> provider = m_wallet->GetSigningProvider(script);
-        if (provider) {
-            return provider->GetKey(address, key);
-        }
-        return false;
+        return m_wallet->SignMessage(message, pkhash, str_sig);
     }
     bool isSpendable(const CTxDestination& dest) override { return m_wallet->IsMine(dest) & ISMINE_SPENDABLE; }
     bool haveWatchOnly() override
@@ -365,7 +360,7 @@ public:
         PartiallySignedTransaction& psbtx,
         bool& complete) override
     {
-        return FillPSBT(m_wallet.get(), psbtx, complete, sighash_type, sign, bip32derivs);
+        return m_wallet->FillPSBT(psbtx, complete, sighash_type, sign, bip32derivs);
     }
     
     WalletBalances getBalances() override
