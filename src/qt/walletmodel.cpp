@@ -177,6 +177,15 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
 
     CAmount nBalance = m_wallet->getAvailableBalance(coinControl);
 
+    if (!coinControl.HasSelected()) {
+        interfaces::WalletBalances balances = m_wallet->getBalances();
+        // if wallet private keys are disabled, this is a watch-only wallet
+        // so, let's include the watch-only balance.
+        if (balances.have_watch_only && m_wallet->privateKeysDisabled()) {
+            nBalance += balances.watch_only_balance;
+        }
+    }
+
     if(total > nBalance)
     {
         return AmountExceedsBalance;

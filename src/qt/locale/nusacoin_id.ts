@@ -3407,6 +3407,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Memindai ulang...</translation>
     </message>
     <message>
+        <source>Can&apos;t generate a change-address key. No keys in the internal keypool and can&apos;t generate any keys.</source>
+        <translation>Tidak dapat membuat alamat kembalian. Tidak ada kunci pribadi pada wallet ini.</translation>
+    </message>
+    <message>
         <source>Done loading</source>
         <translation>Memuat selesai</translation>
     </message>
