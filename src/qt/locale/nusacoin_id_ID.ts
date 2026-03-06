@@ -1562,8 +1562,8 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>&amp;Informasi</translation>
     </message>
     <message>
-        <source>Debug window</source>
-        <translation>Jendela</translation>
+        <source>Node window</source>
+        <translation>Jendela node</translation>
     </message>
     <message>
         <source>General</source>
