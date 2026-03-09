@@ -47,8 +47,8 @@ static UniValue validateaddress(const JSONRPCRequest& request)
                     }
                 },
                 RPCExamples{
-                    HelpExampleCli("validateaddress", "\"1PSSGeFHDnKNxiEyFrD1wcEaHr9hrQDDWc\"")
-            + HelpExampleRpc("validateaddress", "\"1PSSGeFHDnKNxiEyFrD1wcEaHr9hrQDDWc\"")
+                    HelpExampleCli("validateaddress", "\"" + EXAMPLE_ADDRESS[0] + "\"")
+            + HelpExampleRpc("validateaddress", "\"" + EXAMPLE_ADDRESS[0] + "\"")
                 },
             }.Check(request);
 
