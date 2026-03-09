@@ -711,6 +711,9 @@
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
+             <property name="styleSheet">
+             <string notr="true">QSlider::handle:horizontal {background-color: rgb(1, 143, 1)} QSlider::sub-page:horizontal { background-color:  rgb(3, 182, 3)}</string>
+             </property>
             </widget>
            </item>
            <item>
