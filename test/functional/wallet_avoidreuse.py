@@ -134,6 +134,30 @@ class AvoidReuseTest(NusacoinTestFramework):
         # Unload temp wallet
         self.nodes[1].unloadwallet(tempwallet)
 
+    def test_change_remains_change(self, node):
+        self.log.info("Test that change doesn't turn into non-change when spent")
+
+        reset_balance(node, node.getnewaddress())
+        addr = node.getnewaddress()
+        txid = node.sendtoaddress(addr, 1)
+        out = node.listunspent(minconf=0, query_options={'minimumAmount': 2})
+        assert len(out) == 1
+        changeaddr = out[0]['address']
+
+        # Make sure it's starting out as change as expected
+        assert node.getaddressinfo(changeaddr)['ischange']
+        for logical_tx in node.listtransactions():
+            assert logical_tx.get('address') != changeaddr
+
+        # Spend it
+        reset_balance(node, node.getnewaddress())
+
+        # It should still be change
+        assert node.getaddressinfo(changeaddr)['ischange']
+        for logical_tx in node.listtransactions():
+            assert logical_tx.get('address') != changeaddr
+
+
     def test_sending_from_reused_address_without_avoid_reuse(self):
         '''
         Test the same as test_sending_from_reused_address_fails, except send the 10 BTC with
