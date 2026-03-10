@@ -14,15 +14,13 @@
 #include <wincrypt.h>
 #endif
 #include <logging.h>  // for LogPrintf()
+#include <randomenv.h>
+#include <support/allocators/secure.h>
 #include <sync.h>     // for Mutex
 #include <util/time.h> // for GetTime()
 
 #include <stdlib.h>
 #include <thread>
-
-#include <randomenv.h>
-
-#include <support/allocators/secure.h>
 
 #ifndef WIN32
 #include <fcntl.h>
@@ -594,11 +592,6 @@ bool g_mock_deterministic_tests{false};
 uint64_t GetRand(uint64_t nMax) noexcept
 {
     return FastRandomContext(g_mock_deterministic_tests).randrange(nMax);
-}
-
-std::chrono::microseconds GetRandMicros(std::chrono::microseconds duration_max) noexcept
-{
-    return std::chrono::microseconds{GetRand(duration_max.count())};
 }
 
 int GetRandInt(int nMax) noexcept
