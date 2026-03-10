@@ -594,6 +594,11 @@ uint64_t GetRand(uint64_t nMax) noexcept
     return FastRandomContext(g_mock_deterministic_tests).randrange(nMax);
 }
 
+std::chrono::milliseconds GetRandMillis(std::chrono::milliseconds duration_max) noexcept
+{
+    return std::chrono::milliseconds{GetRand(duration_max.count())};
+}
+
 int GetRandInt(int nMax) noexcept
 {
     return GetRand(nMax);
