@@ -13,7 +13,6 @@
 #include <init.h>
 #include <miner.h>
 #include <net.h>
-#include <net_processing.h>
 #include <noui.h>
 #include <pow.h>
 #include <rpc/blockchain.h>

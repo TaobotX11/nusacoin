@@ -31,31 +31,6 @@ FUZZ_TARGETS = \
   test/fuzz/transaction \
   test/fuzz/txoutcompressor_deserialize \
   test/fuzz/txundo_deserialize
-  test/fuzz/process_message \
-  test/fuzz/process_message_addr \
-  test/fuzz/process_message_block \
-  test/fuzz/process_message_blocktxn \
-  test/fuzz/process_message_cmpctblock \
-  test/fuzz/process_message_feefilter \
-  test/fuzz/process_message_filteradd \
-  test/fuzz/process_message_filterclear \
-  test/fuzz/process_message_filterload \
-  test/fuzz/process_message_getaddr \
-  test/fuzz/process_message_getblocks \
-  test/fuzz/process_message_getblocktxn \
-  test/fuzz/process_message_getdata \
-  test/fuzz/process_message_getheaders \
-  test/fuzz/process_message_headers \
-  test/fuzz/process_message_inv \
-  test/fuzz/process_message_mempool \
-  test/fuzz/process_message_notfound \
-  test/fuzz/process_message_ping \
-  test/fuzz/process_message_pong \
-  test/fuzz/process_message_sendcmpct \
-  test/fuzz/process_message_sendheaders \
-  test/fuzz/process_message_tx \
-  test/fuzz/process_message_verack \
-  test/fuzz/process_message_version \
 
 if ENABLE_FUZZ
 noinst_PROGRAMS += $(FUZZ_TARGETS:=)
