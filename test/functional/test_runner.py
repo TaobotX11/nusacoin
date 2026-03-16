@@ -204,6 +204,7 @@ BASE_SCRIPTS = [
     'feature_loadblock.py',
     'p2p_dos_header_tree.py',
     'p2p_unrequested_blocks.py',
+    'p2p_blockfilters.py',
     'feature_includeconf.py',
     'mempool_unbroadcast.py',
     'rpc_deriveaddresses.py',
