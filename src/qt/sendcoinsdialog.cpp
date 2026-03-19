@@ -443,7 +443,9 @@ void SendCoinsDialog::on_sendButton_clicked()
         // process sendStatus and on error generate message shown to user
         processSendCoinsReturn(sendStatus);
         if (sendStatus.status == WalletModel::OK) {
-            Q_EMIT coinsSent(m_current_transaction->getWtx()->GetHash());
+            if(!m_privacy){
+                Q_EMIT coinsSent(m_current_transaction->getWtx()->GetHash());
+            }
         } else {
             send_failure = true;
         }
