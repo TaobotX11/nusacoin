@@ -36,7 +36,7 @@ void ProcessMessage(
     CNode& pfrom,
     const std::string& msg_type,
     CDataStream& vRecv,
-    int64_t nTimeReceived,
+    const std::chrono::microseconds time_received,
     const CChainParams& chainparams,
     ChainstateManager& chainman,
     CTxMemPool& mempool,
@@ -95,7 +95,7 @@ void test_one_input(const std::vector<uint8_t>& buffer)
     p2p_node.SetSendVersion(PROTOCOL_VERSION);
     g_setup->m_node.peer_logic->InitializeNode(&p2p_node);
     try {
-        ProcessMessage(p2p_node, random_message_type, random_bytes_data_stream, GetTimeMillis(),
+        ProcessMessage(p2p_node, random_message_type, random_bytes_data_stream, GetTime<std::chrono::microseconds>(),
             Params(), *g_setup->m_node.chainman, *g_setup->m_node.mempool,
             *g_setup->m_node.connman, g_setup->m_node.banman.get(),
             std::atomic<bool>{false});

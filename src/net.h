@@ -47,16 +47,10 @@ static const bool DEFAULT_WHITELISTRELAY = true;
 /** Default for -whitelistforcerelay. */
 static const bool DEFAULT_WHITELISTFORCERELAY = false;
 
-/** Time between pings automatically sent out for latency probing and keepalive (in seconds). */
-static const int PING_INTERVAL = 2 * 60;
 /** Time after which to disconnect, after waiting for a ping response (or inactivity). */
 static const int TIMEOUT_INTERVAL = 20 * 60;
 /** Run the feeler connection loop once every 2 minutes or 120 seconds. **/
 static const int FEELER_INTERVAL = 120;
-/** The maximum number of entries in an 'inv' protocol message */
-static const unsigned int MAX_INV_SZ = 50000;
-/** The maximum number of entries in a locator */
-static const unsigned int MAX_LOCATOR_SZ = 101;
 /** The maximum number of new addresses to accumulate before announcing. */
 static const unsigned int MAX_ADDR_TO_SEND = 1000;
 /** Maximum length of incoming protocol messages (no message over 4 MB is currently acceptable). */
@@ -594,9 +588,9 @@ public:
     mapMsgCmdSize mapRecvBytesPerMsgCmd;
     NetPermissionFlags m_permissionFlags;
     bool m_legacyWhitelisted;
-    double dPingTime;
-    double dPingWait;
-    double dMinPing;
+    int64_t m_ping_usec;
+    int64_t m_ping_wait_usec;
+    int64_t m_min_ping_usec;
     CAmount minFeeFilter;
     // Our address, as reported by the peer
     std::string addrLocal;
@@ -615,13 +609,13 @@ public:
  */
 class CNetMessage {
 public:
-    CDataStream m_recv;                  // received message data
-    int64_t m_time = 0;                  // time (in microseconds) of message receipt.
+    CDataStream m_recv;                  //!< received message data
+    std::chrono::microseconds m_time{0}; //!< time of message receipt
     bool m_valid_netmagic = false;
     bool m_valid_header = false;
     bool m_valid_checksum = false;
-    uint32_t m_message_size = 0;         // size of the payload
-    uint32_t m_raw_message_size = 0;     // used wire size of the message (including header/checksum)
+    uint32_t m_message_size{0};     //!< size of the payload
+    uint32_t m_raw_message_size{0}; //!< used wire size of the message (including header/checksum)
     std::string m_command;
 
     CNetMessage(CDataStream&& recv_in) : m_recv(std::move(recv_in)) {}
@@ -645,7 +639,7 @@ public:
     // read and deserialize data
     virtual int Read(const char *data, unsigned int bytes) = 0;
     // decomposes a message from the context
-    virtual CNetMessage GetMessage(const CMessageHeader::MessageStartChars& message_start, int64_t time) = 0;
+    virtual CNetMessage GetMessage(const CMessageHeader::MessageStartChars& message_start, std::chrono::microseconds time) = 0;
     virtual ~TransportDeserializer() {}
 };
 
@@ -698,7 +692,7 @@ public:
         if (ret < 0) Reset();
         return ret;
     }
-    CNetMessage GetMessage(const CMessageHeader::MessageStartChars& message_start, int64_t time) override;
+    CNetMessage GetMessage(const CMessageHeader::MessageStartChars& message_start, std::chrono::microseconds time) override;
 };
 
 /** Information about a peer */
@@ -831,8 +825,8 @@ public:
     // Ping time measurement:
     // The pong reply we're expecting, or 0 if no pong expected.
     std::atomic<uint64_t> nPingNonceSent{0};
-    // Time (in usec) the last ping was sent, or 0 if no ping was ever sent.
-    std::atomic<int64_t> nPingUsecStart{0};
+    /** When the last ping was sent, or 0 if no ping was ever sent */
+    std::atomic<std::chrono::microseconds> m_ping_start{std::chrono::microseconds{0}};
     // Last measured round-trip time.
     std::atomic<int64_t> nPingUsecTime{0};
     // Best measured round-trip time.
