@@ -80,9 +80,10 @@ TransactionError BroadcastTransaction(NodeContext& node, const CTransactionRef t
     if (relay) {
          // the mempool tracks locally submitted transactions to make a
         // best-effort of initial broadcast
-        node.mempool->AddUnbroadcastTx(hashTx);
-        
-        RelayTransaction(hashTx, *node.connman);
+        node.mempool->AddUnbroadcastTx(hashTx, tx->GetWitnessHash());
+
+        LOCK(cs_main);
+        RelayTransaction(hashTx, tx->GetWitnessHash(), *node.connman);
     }
 
     return TransactionError::OK;
