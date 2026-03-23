@@ -778,6 +778,49 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
 </context>
 <context>
+    <name>CreateWalletDialog</name>
+    <message>
+        <source>Create Wallet</source>
+        <translation>Buat Dompet</translation>
+    </message>
+    <message>
+        <source>Wallet Name</source>
+        <translation>Nama Dompet</translation>
+    </message>
+    <message>
+        <source>Encrypt the wallet. The wallet will be encrypted with a passphrase of your choice.</source>
+        <translation>Enkripsi dompet. Dompet akan dienkripsi dengan sandi frasa pilihan Anda.</translation>
+    </message>
+    <message>
+        <source>Encrypt Wallet</source>
+        <translation>Enkripsi Dompet</translation>
+    </message>
+    <message>
+        <source>Disable private keys for this wallet. Wallets with private keys disabled will have no private keys and cannot have an HD seed or imported private keys. This is ideal for watch-only wallets.</source>
+        <translation>Nonaktifkan kunci pribadi untuk dompet ini. Dompet dengan kunci pribadi yang dinonaktifkan tidak akan memiliki kunci pribadi dan tidak dapat memiliki benih HD atau kunci pribadi yang diimpor. Ini sangat ideal untuk dompet khusus.</translation>
+    </message>
+    <message>
+        <source>Disable Private Keys</source>
+        <translation>Matikan kunci pribadi</translation>
+    </message>
+    <message>
+        <source>Make a blank wallet. Blank wallets do not initially have private keys or scripts. Private keys and addresses can be imported, or an HD seed can be set, at a later time.</source>
+        <translation>Buat dompet kosong. Dompet kosong awalnya tidak memiliki kunci atau skrip pribadi. Kunci dan alamat pribadi dapat diimpor, atau benih HD dapat disetel, di lain waktu.</translation>
+    </message>
+    <message>
+        <source>Make Blank Wallet</source>
+        <translation>Buat Dompet Kosong</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Membuat</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Batal</translation>
+    </message>
+</context>
+<context>
     <name>EditAddressDialog</name>
     <message>
         <source>Edit Address</source>
@@ -1548,6 +1591,29 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
 </context>
 <context>
+    <name>QRImageWidget</name>
+    <message>
+        <source>&amp;Save Image...</source>
+        <translation>&amp;Simpan Gambar...</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Image</source>
+        <translation>&amp;Salin Gambar</translation>
+    </message>
+    <message>
+        <source>Save QR Code</source>
+        <translation>Simpan Kode QR</translation>
+    </message>
+    <message>
+        <source>PNG Image (*.png)</source>
+        <translation>Gambar PNG (*.png)</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation>Batal</translation>
+    </message>
+</context>
+<context>
     <name>RPCConsole</name>
     <message>
         <source>N/A</source>
@@ -1828,6 +1894,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Salin &amp;URI</translation>
     </message>
     <message>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Batal</translation>
+    </message>
+    <message>
         <source>Copy &amp;Address</source>
         <translation>Salin &amp;Alamat</translation>
     </message>
@@ -2052,6 +2122,22 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>S&amp;end</source>
         <translation>K&amp;irim</translation>
+    </message>
+    <message>
+        <source>Create Unsigned</source>
+        <translation>Tanpa&amp;Tandatangan</translation>
+    </message>
+    <message>
+        <source>Creates a Partially Signed Bitcoin Transaction (PSBT) for use with e.g. an offline %1 wallet, or a PSBT-compatible hardware wallet.</source>
+        <translation>Membuat Transaksi Nusacoin yang Ditandatangani Sebagian (PSBT) untuk digunakan dengan mis. dompet %1 offline, atau dompet perangkat keras yang kompatibel dengan PSBT.</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Batal</translation>
+    </message>
+    <message>
+        <source>Show Details...</source>
+        <translation>Tampilkan Detil</translation>
     </message>
     <message>
         <source>Confirm send coins</source>

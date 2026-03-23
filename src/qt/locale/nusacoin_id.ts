@@ -1790,6 +1790,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <source>PNG Image (*.png)</source>
         <translation>Gambar PNG (*.png)</translation>
     </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation>Batal</translation>
+    </message>
 </context>
 <context>
     <name>RPCConsole</name>
@@ -2204,6 +2208,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Salin &amp;URI</translation>
     </message>
     <message>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Batal</translation>
+    </message>
+    <message>
         <source>Copy &amp;Address</source>
         <translation>Salin &amp;Alamat</translation>
     </message>
@@ -2450,7 +2458,7 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>K&amp;irim</translation>
     </message>
     <message>
-        <source>Cr&amp;eate Unsigned</source>
+        <source>Create Unsigned</source>
         <translation>Tanpa&amp;Tandatangan</translation>
     </message>
     <message>
@@ -2460,6 +2468,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>Cancel</source>
         <translation>Batal</translation>
+    </message>
+    <message>
+        <source>Show Details...</source>
+        <translation>Tampilkan Detil</translation>
     </message>
     <message>
         <source>Confirm send coins</source>

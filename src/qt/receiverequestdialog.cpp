@@ -22,6 +22,7 @@ ReceiveRequestDialog::ReceiveRequestDialog(QWidget *parent) :
     model(nullptr)
 {
     ui->setupUi(this);
+    ui->buttonBox->button(QDialogButtonBox::Close)->setText(tr("&Cancel"));
 
 #ifndef USE_QRCODE
     ui->btnSaveAs->setVisible(false);
