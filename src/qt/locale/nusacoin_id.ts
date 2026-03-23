@@ -2284,6 +2284,87 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
 </context>
 <context>
+    <name>QWidgetTextControl</name>
+    <message>
+        <source>&amp;Undo</source>
+        <translation>&amp;Anulir</translation>
+    </message>
+    <message>
+        <source>&amp;Redo</source>
+        <translation>&amp;Ulangi</translation>
+    </message>
+    <message>
+        <source>Cu&amp;t</source>
+        <translation>Po&amp;tong</translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation>Sa&amp;lin</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Link Location</source>
+        <translation>Salin &amp;tautan</translation>
+    </message>
+    <message>
+        <source>&amp;Paste</source>
+        <translation>T&amp;empel</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Hapus</translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation>Pilih semua</translation>
+    </message>
+</context>
+<context>
+    <name>QMessageBox</name>
+    <message>
+        <source>Show Details...</source>
+        <translation>Tampilkan detail...</translation>
+    </message>
+     <message>
+        <source>Hide Details...</source>
+        <translation>Tutup détail...</translation>
+    </message>
+</context>
+<context>
+    <name>QLineEdit</name>
+    <message>
+        <source>&amp;Undo</source>
+        <translation>&amp;Anulir</translation>
+    </message>
+    <message>
+        <source>&amp;Redo</source>
+        <translation>&amp;Ulangi</translation>
+    </message>
+    <message>
+        <source>Cu&amp;t</source>
+        <translation>Po&amp;tong</translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation>Sa&amp;lin</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Link Location</source>
+        <translation>Salin &amp;tautan</translation>
+    </message>
+    <message>
+        <source>&amp;Paste</source>
+        <translation>T&amp;empel</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Hapus</translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation>Pilih semua</translation>
+    </message>
+</context>
+<context>
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
@@ -2985,6 +3066,21 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>Close</source>
         <translation>Tutup</translation>
+    </message>
+</context>
+<context>
+    <name>QAbstractSpinBox</name>
+    <message>
+        <source>&amp;Select All</source>
+        <translation>Pilih &amp;semua</translation>
+    </message>
+    <message>
+        <source>&amp;Step up</source>
+        <translation>&amp;Naikkan</translation>
+    </message>
+    <message>
+        <source>Step &amp;down</source>
+        <translation>&amp;Turunkan</translation>
     </message>
 </context>
 <context>
