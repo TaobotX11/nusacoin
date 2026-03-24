@@ -118,6 +118,7 @@ Wallet
   transactions, the mempool tracks these transactions as a part of the newly
   introduced unbroadcast set. See the "P2P and network changes" section for
   more information on the unbroadcast set. (#18038)
+- [doc / test / mempool] unbroadcast follow-ups #18807
 
 - The wallet now by default uses bech32 addresses when using RPC, and creates native segwit change outputs.
 - The way that output trust was computed has been fixed in #16766, which impacts confirmed/unconfirmed balance status and coin selection
