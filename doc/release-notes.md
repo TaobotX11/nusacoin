@@ -128,6 +128,13 @@ Low-level changes
 - The RPC gettransaction, listtransactions and listsinceblock responses now also
 includes the height of the block that contains the wallet transaction, if any.
 
+Command line
+------------
+
+Command line options prefixed with main/test/regtest network names like
+`-main.port=8333` `-test.server=1` previously were allowed but ignored. Now
+they trigger "Invalid parameter" errors on startup.
+
 Tests
 -----
 
