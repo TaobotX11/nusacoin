@@ -131,8 +131,8 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Ya</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Batal</translation>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Batal</translation>
     </message>
     <message>
         <source>Passphrase Dialog</source>
@@ -2125,6 +2125,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Nilai permintaan opsional. Biarkan ini kosong atau nol bila tidak meminta nilai tertentu.</translation>
     </message>
     <message>
+        <source>An optional message that is attached to the payment request and may be displayed to the sender.</source>
+        <translation>Pesan opsional yang dilampirkan pada permintaan pembayaran dan boleh ditampilkan kepada pengirim.</translation>
+    </message>
+    <message>
+        <source>An optional label to associate with the new receiving address (used by you to identify an invoice).  It is also attached to the payment request.</source>
+        <translation>Label opsional untuk dikaitkan dengan alamat penerima baru (yang Anda gunakan untuk mengidentifikasi faktur). Label ini juga dilampirkan pada permintaan pembayaran.</translation>
+    </message>
+    <message>
         <source>Clear all fields of the form.</source>
         <translation>Hapus informasi dari form.</translation>
     </message>
@@ -2697,7 +2705,15 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>The fee will be deducted from the amount being sent. The recipient will receive less Nusacoins than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>Biaya akan diambil dari jumlah yang dikirim. Penerima akan menerima nusacoin lebih sedikit daripada yang Anda masukkan di bidang jumlah. Jika beberapa penerima dipilih, biaya dibagi rata.</translation>
+        <translation>Biaya akan diambil dari jumlah yang dikirim. Penerima akan menerima Nusacoin lebih sedikit daripada yang Anda masukkan di bidang jumlah. Jika beberapa penerima dipilih, biaya dibagi rata.</translation>
+    </message>
+    <message>
+        <source>This is an unauthenticated payment request.</source>
+        <translation>Ini adalah permintaan pembayaran yang belum terautentikasi.</translation>
+    </message>
+    <message>
+        <source>This is an authenticated payment request.</source>
+        <translation>Ini adalah permintaan pembayaran yang telah diverifikasi.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
