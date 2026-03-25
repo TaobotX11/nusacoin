@@ -115,10 +115,21 @@ void AskPassphraseDialog::accept()
             // Cannot encrypt with empty passphrase
             break;
         }
-        QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm wallet encryption"),
-                 tr("Warning: If you encrypt your wallet and lose your passphrase, you will <b>LOSE ALL OF YOUR NusacoinS</b>!") + "<br><br>" + tr("Are you sure you wish to encrypt your wallet?"),
-                 QMessageBox::Yes|QMessageBox::Cancel,
-                 QMessageBox::Cancel);
+        QMessageBox msgBox(this);
+        msgBox.setIcon(QMessageBox::Question);
+        msgBox.setWindowTitle(tr("Confirm wallet encryption"));
+        msgBox.setText(tr("Warning: If you encrypt your wallet and lose your passphrase, you will ")+"<span style='color:#d60606; font-weight:bold;'>"+tr("LOSE ALL OF YOUR NUX!")+"</span>" + "<br><br>" + tr("Are you sure you wish to encrypt your wallet?"));
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.setStyleSheet("* {selection-color: #ffffff;selection-background-color: #018f01;}");
+        msgBox.button(QMessageBox::Yes)->setText(tr("&Yes"));
+        msgBox.button(QMessageBox::Cancel)->setText(tr("&Cancel"));
+        int retval = msgBox.exec();
+
+        // QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm wallet encryption"),
+        //          tr("Warning: If you encrypt your wallet and lose your passphrase, you will <b>LOSE ALL OF YOUR NusacoinS</b>!") + "<br><br>" + tr("Are you sure you wish to encrypt your wallet?"),
+        //          QMessageBox::Yes|QMessageBox::Cancel,
+        //          QMessageBox::Cancel);
         if(retval == QMessageBox::Yes)
         {
             if(newpass1 == newpass2)

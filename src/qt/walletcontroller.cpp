@@ -24,6 +24,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QWindow>
+#include <QPushButton>
 
 WalletController::WalletController(ClientModel& client_model, const PlatformStyle* platform_style, QObject* parent)
     : QObject(parent)
@@ -83,6 +84,8 @@ void WalletController::closeWallet(WalletModel* wallet_model, QWidget* parent)
     box.setInformativeText(tr("Closing the wallet for too long can result in having to resync the entire chain if pruning is enabled."));
     box.setStandardButtons(QMessageBox::Yes|QMessageBox::Cancel);
     box.setDefaultButton(QMessageBox::Yes);
+    box.button(QMessageBox::Yes)->setText(tr("&Yes"));
+    box.button(QMessageBox::Cancel)->setText(tr("&Cancel"));
     if (box.exec() != QMessageBox::Yes) return;
 
     // First remove wallet from node.

@@ -123,6 +123,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
 <context>
     <name>AskPassphraseDialog</name>
     <message>
+        <source>&amp;Yes</source>
+        <translation>Ya</translation>
+    </message>
+    <message>
         <source>&amp;Cancel</source>
         <translation>&amp;Batal</translation>
     </message>
@@ -237,10 +241,6 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>Warning: The Caps Lock key is on!</source>
         <translation>Peringatan: Tombol Caps Lock aktif!</translation>
-    </message>
-    <message>
-        <source>&amp;Cancel</source>
-        <translation>Batal</translation>
     </message>
     <message>
         <source>Wallet to be encrypted</source>
@@ -547,6 +547,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>Up to date</source>
         <translation>Terbaru</translation>
+    </message>
+    <message>
+        <source>Close Wallet...</source>
+        <translation>Tutup Dompet...</translation>
+    </message>
+    <message>
+        <source>Close wallet</source>
+        <translation>Tutup dompet</translation>
     </message>
     <message>
         <source>Show the %1 help message to get a list with possible Nusacoin command-line options</source>
@@ -883,8 +891,8 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Simpan</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Batal</translation>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Batal</translation>
     </message>
 </context>
 <context>
@@ -1096,6 +1104,25 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
 </context>
 <context>
+    <name>OpenWalletActivity</name>
+    <message>
+        <source>default wallet</source>
+        <translation>dompet default</translation>
+    </message>
+    <message>
+        <source>Opening Wallet &lt;b&gt;%1&lt;/b&gt;...</source>
+        <translation>Membuka Dompet &lt;b&gt;%1&lt;/b&gt;...</translation>
+    </message>
+    <message>
+        <source>Open wallet failed</source>
+        <translation>Gagal membuka dompet</translation>
+    </message>
+    <message>
+        <source>Open wallet warning</source>
+        <translation>Peringatan membuka dompet</translation>
+    </message>
+</context>
+<context>
     <name>OptionsDialog</name>
     <message>
         <source>Options</source>
@@ -1284,6 +1311,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>&amp;Window</source>
         <translation>&amp;Jendela</translation>
+    </message>
+    <message>
+        <source>&amp;Minimize</source>
+        <translation>Minimalkan Jendela</translation>
     </message>
     <message>
         <source>Show only a tray icon after minimizing the window.</source>
@@ -2021,6 +2052,18 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
      <message>
         <source>Hide Details...</source>
         <translation>Tutup détail...</translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;Mengenai Qt&lt;/h3&gt;&lt;p&gt;Program ini menggunakan Qt versi %1.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 3 or GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Ini ditujukan untuk pengembangan aplikasi C++ multiplate.&lt;/p&gt;&lt;p&gt;Qt menawarkan sumber kode unik yang kompatibel dengan sistem utama eksploitasi &quot;biro&quot; (Linux, Mac, Windows). Ini juga kompatibel dengan sistem eksploitasi jenis Linux atau lainnya.&lt;/p&gt;&lt;p&gt;Ini dapat digunakan oleh istilah-istilah dari tiga jenis lisensi yang berbeda, sehingga merespons dengan maksimal pengguna.&lt;/p&gt;&lt;p&gt;Lisensi komersial Qt sangat sesuai untuk Anda pengembangan pemilik logika/komersial untuk lesquels Anda tidak perlu membagi sumber kode dengan tingkat pihak atau menuangkan lesquels persyaratan lisensi GNU LGPL versi 3 atau GNU LGPL versi 2.1 tidak sesuai dengan Anda.&lt;/p&gt;&lt;p&gt;Lisensi GNU LGPL versi 3 de Qt sangat sesuai untuk le pengembangan aplikasi Qt jika Anda menerima persyaratan dan ketentuan lisensi GNU LGPL versi 3.&lt;/p&gt;&lt;p&gt;Lisensi GNU LGPL versi 2.1 sesuai untuk pengembangan aplikasi Qt jika Anda menerima persyaratan dan ketentuan lisensi GNU LGPL versi 2.1.&lt;/p&gt;&lt;p&gt;Konsultan kami &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; untuk detail berbagai jenis lisensi Qt.&lt;/p&gt;&lt;p&gt;Hak Cipta (C) %1 &quot;The Qt Company Ltd&quot; dan kontributor lainnya.&lt;/p&gt;&lt;p&gt;Qt dan logo Qt adalah merek &quot;The Qt Company Ltd&quot;.&lt;/p&gt;&lt;p&gt;Qt adalah produk &quot;The Qt Company Ltd&quot;, dikembangkan oleh kami bentuk proyek terbuka sumber. Anda akan menemukan lebih banyak informasi di &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt;.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>About Qt</source>
+        <translation>Mengenai Qt</translation>
     </message>
 </context>
 <context>
@@ -2913,23 +2956,23 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <name>WalletController</name>
     <message>
         <source>Close wallet</source>
-        <translation>Tutup wallet</translation>
+        <translation>Tutup dompet</translation>
     </message>
     <message>
         <source>Are you sure you wish to close the wallet &lt;i&gt;%1&lt;/i&gt;?</source>
-        <translation type="unfinished">Apakah anda yakin ingin menutup dompet &lt;i&gt;%1&lt;/i&gt;?</translation>
+        <translation>Apakah anda yakin ingin menutup dompet &lt;i&gt;%1&lt;/i&gt;?</translation>
     </message>
     <message>
         <source>Closing the wallet for too long can result in having to resync the entire chain if pruning is enabled.</source>
-        <translation type="unfinished">Menutup dompet terlalu lama dapat menyebabkan harus menyinkron ulang seluruh rantai jika pemangkasan (pruned) diaktifkan.</translation>
+        <translation>Menutup dompet terlalu lama dapat menyebabkan harus menyinkron ulang seluruh rantai jika pemangkasan (pruned) diaktifkan.</translation>
     </message>
     <message>
         <source>Close all wallets</source>
-        <translation type="unfinished">Tutup semua dompet</translation>
+        <translation>Tutup semua dompet</translation>
     </message>
     <message>
         <source>Are you sure you wish to close all wallets?</source>
-        <translation type="unfinished">Apakah anda yakin ingin menutup seluruh dompet ?</translation>
+        <translation>Apakah anda yakin ingin menutup seluruh dompet ?</translation>
     </message>
     <message>
         <source>&amp;Yes</source>

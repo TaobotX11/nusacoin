@@ -68,6 +68,7 @@ bool VerifyWallets(interfaces::Chain& chain, const std::vector<std::string>& wal
 
 bool LoadWallets(interfaces::Chain& chain, const std::vector<std::string>& wallet_files)
 {
+    try {
     for (const std::string& walletFile : wallet_files) {
         bilingual_str error;
             std::vector<bilingual_str> warnings;
@@ -79,8 +80,11 @@ bool LoadWallets(interfaces::Chain& chain, const std::vector<std::string>& walle
         }
         AddWallet(pwallet);
     }
-
     return true;
+    } catch (const std::runtime_error& e) {
+        chain.initError(Untranslated(e.what()));
+        return false;
+    }
 }
 
 void StartWallets(CScheduler& scheduler)
