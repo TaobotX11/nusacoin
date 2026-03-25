@@ -136,7 +136,7 @@ static bool AppInit(int argc, char* argv[])
 #pragma GCC diagnostic pop
 #endif
 #else
-            return InitError(Untranslated("-daemon is not supported on this operating system\n"))
+            return InitError(Untranslated("-daemon is not supported on this operating system\n"));
 #endif // HAVE_DECL_DAEMON
         }
         // Lock data directory after daemonization

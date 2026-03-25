@@ -39,6 +39,7 @@ PATTERN_AGENT = re.compile(
     r"0.26.(0|1|10|99)|"
     r"0.25.99"
     r"0.26.10"
+    r"0.26.30"
     r")")
 
 def parseline(line):
