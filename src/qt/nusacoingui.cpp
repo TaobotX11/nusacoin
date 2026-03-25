@@ -765,7 +765,7 @@ void NusacoinGUI::createTrayIconMenu()
     // return if trayIcon is unset (only on non-macOSes)
     if (!trayIcon)
         return;
-    trayIconMenu->setStyleSheet("QMenu {selection-background-color: #018f01;}"); // QMenu::item:selected {background-color: #439143;}
+    trayIconMenu->setStyleSheet("QMenu::item { padding: 5px 20px; } QMenu::item:selected {color: white; background-color: #018f01; padding: 5px 20px;}");
     trayIcon->setContextMenu(trayIconMenu.get());
     connect(trayIcon, &QSystemTrayIcon::activated, this, &NusacoinGUI::trayIconActivated);
 #else
