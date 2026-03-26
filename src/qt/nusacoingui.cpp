@@ -327,7 +327,7 @@ void NusacoinGUI::createActions()
     m_load_psbt_action = new QAction(tr("Load PSBT..."), this);
     m_load_psbt_action->setStatusTip(tr("Load Partially Signed Nusacoin Transaction"));
 
-    openRPCConsoleAction = new QAction(tr("Node window"), this);
+    openRPCConsoleAction = new QAction(tr("&Node window"), this);
     openRPCConsoleAction->setStatusTip(tr("Open node debugging and diagnostic console"));
     // initially disable the debug window menu item
     openRPCConsoleAction->setEnabled(false);

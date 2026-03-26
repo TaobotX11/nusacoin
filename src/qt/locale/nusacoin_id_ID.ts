@@ -401,8 +401,8 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Ubah kata kunci yang digunakan untuk enkripsi dompet</translation>
     </message>
     <message>
-        <source>&amp;Debug window</source>
-        <translation>&amp;Jendela</translation>
+        <source>&amp;Node window</source>
+        <translation>&amp;Jendela node</translation>
     </message>
     <message>
         <source>Open debugging and diagnostic console</source>
