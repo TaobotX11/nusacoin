@@ -5,6 +5,8 @@
 #ifndef BITCOIN_SCRIPT_DESCRIPTOR_H
 #define BITCOIN_SCRIPT_DESCRIPTOR_H
 
+#include <optional.h>
+#include <outputtype.h>
 #include <script/script.h>
 #include <script/sign.h>
 #include <script/signingprovider.h>
@@ -85,6 +87,9 @@ struct Descriptor {
     /** Convert the descriptor back to a string, undoing parsing. */
     virtual std::string ToString() const = 0;
 
+     /** Whether this descriptor will return one scriptPubKey or multiple (aka is or is not combo) */
+    virtual bool IsSingleType() const = 0;
+
     /** Convert the descriptor to a private string. This fails if the provided provider does not have the relevant private keys. */
     virtual bool ToPrivateString(const SigningProvider& provider, std::string& out) const = 0;
 
@@ -114,6 +119,9 @@ struct Descriptor {
      * @param[out] out: Any private keys available for the specified `pos`.
      */
     virtual void ExpandPrivate(int pos, const SigningProvider& provider, FlatSigningProvider& out) const = 0;
+    
+    /** @return The OutputType of the scriptPubKey(s) produced by this descriptor. Or nullopt if indeterminate (multiple or none) */
+    virtual Optional<OutputType> GetOutputType() const = 0;
 };
 
 /** Parse a `descriptor` string. Included private keys are put in `out`.

@@ -851,6 +851,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Membuat</translation>
     </message>
     <message>
+        <source>Descriptor Wallet</source>
+        <translation>Dompet Deskriptor</translation>
+    </message>
+    <message>
+        <source>Use descriptors for scriptPubKey management</source>
+        <translation>Gunakan deskriptor untuk manajemen scriptPubKey.</translation>
+    </message>
+    <message>
         <source>Cancel</source>
         <translation>Batal</translation>
     </message>
@@ -1875,7 +1883,7 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>Wallet: </source>
-        <translation>Wallet: </translation>
+        <translation>Dompet: </translation>
     </message>
     <message>
         <source>(none)</source>

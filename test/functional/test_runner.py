@@ -186,6 +186,7 @@ BASE_SCRIPTS = [
     'wallet_implicitsegwit.py',
     'rpc_named_arguments.py',
     'wallet_listsinceblock.py',
+    'wallet_listdescriptors.py --descriptors',
     'p2p_leak.py',
     'wallet_encryption.py',
     'feature_dersig.py',
