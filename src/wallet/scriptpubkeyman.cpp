@@ -588,10 +588,6 @@ TransactionError LegacyScriptPubKeyMan::FillPSBT(PartiallySignedTransaction& psb
             continue;
         }
 
-        // Verify input looks sane. This will check that we have at most one uxto, witness or non-witness.
-        if (!input.IsSane()) {
-            return TransactionError::INVALID_PSBT;
-        }
 
         // Get the Sighash type
         if (sign && input.sighash_type > 0 && input.sighash_type != sighash_type) {
@@ -2062,10 +2058,6 @@ TransactionError DescriptorScriptPubKeyMan::FillPSBT(PartiallySignedTransaction&
             continue;
         }
 
-        // Verify input looks sane. This will check that we have at most one uxto, witness or non-witness.
-        if (!input.IsSane()) {
-            return TransactionError::INVALID_PSBT;
-        }
 
         // Get the Sighash type
         if (sign && input.sighash_type > 0 && input.sighash_type != sighash_type) {
