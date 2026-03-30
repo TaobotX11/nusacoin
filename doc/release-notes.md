@@ -112,6 +112,10 @@ GUI changes
 Wallet
 ------
 
+- A new `listdescriptors` RPC is available to inspect the contents of descriptor-enabled wallets.
+  The RPC returns public versions of all imported descriptors, including their timestamp and flags.
+  For ranged descriptors, it also returns the range boundaries and the next index to generate addresses from. (#20226)
+
 - To improve wallet privacy, the frequency of wallet rebroadcast attempts is
   reduced from approximately once every 15 minutes to once every 12-36 hours.
   To maintain a similar level of guarantee for initial broadcast of wallet
