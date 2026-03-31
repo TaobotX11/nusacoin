@@ -11,6 +11,7 @@
 #include <consensus/validation.h>
 #include <crypto/sha256.h>
 #include <init.h>
+#include <interfaces/chain.h>
 #include <miner.h>
 #include <net.h>
 #include <noui.h>
@@ -25,8 +26,10 @@
 #include <util/strencodings.h>
 #include <util/time.h>
 #include <util/translation.h>
+#include <util/vector.h>
 #include <validation.h>
 #include <validationinterface.h>
+#include <walletinitinterface.h>
 
 #include <functional>
 
@@ -40,15 +43,33 @@ std::ostream& operator<<(std::ostream& os, const uint256& num)
     return os;
 }
 
-BasicTestingSetup::BasicTestingSetup(const std::string& chainName)
+BasicTestingSetup::BasicTestingSetup(const std::string& chainName, const std::vector<const char*>& extra_args)
     : m_path_root{fs::temp_directory_path() / "test_common_" PACKAGE_NAME / g_insecure_rand_ctx_temp_path.rand256().ToString()}
 {
+    const std::vector<const char*> arguments = Cat(
+        {
+            "dummy",
+            "-printtoconsole=0",
+            "-logtimemicros",
+            "-debug",
+            "-debugexclude=libevent",
+            "-debugexclude=leveldb",
+        },
+        extra_args);
     fs::create_directories(m_path_root);
     gArgs.ForceSetArg("-datadir", m_path_root.string());
     ClearDatadirCache();
+    {
+        SetupServerArgs(m_node);
+        std::string error;
+        const bool success{m_node.args->ParseParameters(arguments.size(), arguments.data(), error)};
+        assert(success);
+        assert(error.empty());
+    }
     SelectParams(chainName);
     gArgs.ForceSetArg("-printtoconsole", "0");
     InitLogging();
+    AppInitParameterInteraction();
     LogInstance().StartLogging();
     SHA256AutoDetect();
     ECC_Start();
@@ -56,6 +77,8 @@ BasicTestingSetup::BasicTestingSetup(const std::string& chainName)
     SetupNetworking();
     InitSignatureCache();
     InitScriptExecutionCache();
+    m_node.chain = interfaces::MakeChain(m_node);
+    g_wallet_init_interface.Construct(m_node);
     fCheckBlockIndex = true;
     static bool noui_connected = false;
     if (!noui_connected) {
@@ -68,10 +91,12 @@ BasicTestingSetup::~BasicTestingSetup()
 {
     LogInstance().DisconnectTestLogger();
     fs::remove_all(m_path_root);
+    gArgs.ClearArgs();
     ECC_Stop();
 }
 
-TestingSetup::TestingSetup(const std::string& chainName) : BasicTestingSetup(chainName)
+TestingSetup::TestingSetup(const std::string& chainName, const std::vector<const char*>& extra_args)
+    : BasicTestingSetup(chainName, extra_args)
 {
     const CChainParams& chainparams = Params();
     // Ideally we'd move all the RPC tests to the functional testing framework
@@ -123,6 +148,7 @@ TestingSetup::~TestingSetup()
     g_rpc_node = nullptr;
     m_node.connman.reset();
     m_node.banman.reset();
+    m_node.args = nullptr;
     m_node.mempool = nullptr;
     UnloadBlockIndex();
     g_chainman.Reset();

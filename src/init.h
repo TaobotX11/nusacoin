@@ -57,9 +57,9 @@ bool AppInitLockDataDirectory();
 bool AppInitMain(const util::Ref& context, NodeContext& node);
 
 /**
- * Setup the arguments for gArgs
- */
-void SetupServerArgs();
+* Register all arguments with the ArgsManager
+*/
+void SetupServerArgs(NodeContext& node);
 
 /** Returns licensing information (for -version) */
 std::string LicenseInfo();

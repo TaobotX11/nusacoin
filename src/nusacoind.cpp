@@ -52,7 +52,7 @@ static bool AppInit(int argc, char* argv[])
     // Parameters
     //
     // If Qt is used, parameters/nusacoin.conf are parsed in qt/nusacoin.cpp's main()
-    SetupServerArgs();
+    SetupServerArgs(node);
     std::string error;
     if (!gArgs.ParseParameters(argc, argv, error)) {
         return InitError(Untranslated(strprintf("Error parsing command line arguments: %s\n", error)));
