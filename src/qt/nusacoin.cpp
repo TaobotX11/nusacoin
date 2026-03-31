@@ -35,6 +35,7 @@
 #include <uint256.h>
 #include <util/system.h>
 #include <util/threadnames.h>
+#include <validation.h>
 
 #include <memory>
 
@@ -62,6 +63,7 @@ Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin);
 // Declare meta types used for QMetaObject::invokeMethod
 Q_DECLARE_METATYPE(bool*)
 Q_DECLARE_METATYPE(CAmount)
+Q_DECLARE_METATYPE(SynchronizationState)
 Q_DECLARE_METATYPE(uint256)
 
 static QString GetLangTerritory()
@@ -145,8 +147,9 @@ void NusacoinCore::initialize()
     {
         qDebug() << __func__ << ": Running initialization in thread";
         util::ThreadRename("qt-init");
-        bool rv = m_node.appInitMain();
-        Q_EMIT initializeResult(rv);
+        interfaces::BlockAndHeaderTipInfo tip_info;
+        bool rv = m_node.appInitMain(&tip_info);
+        Q_EMIT initializeResult(rv, tip_info);
     } catch (const std::exception& e) {
         handleRunawayException(&e);
     } catch (...) {
@@ -322,7 +325,7 @@ void NusacoinApplication::requestShutdown()
     Q_EMIT requestedShutdown();
 }
 
-void NusacoinApplication::initializeResult(bool success)
+void NusacoinApplication::initializeResult(bool success, interfaces::BlockAndHeaderTipInfo tip_info)
 {
     qDebug() << __func__ << ": Initialization result: " << success;
     // Set exit result.
@@ -332,7 +335,7 @@ void NusacoinApplication::initializeResult(bool success)
         // Log this only after AppInitMain finishes, as then logging setup is guaranteed complete
         qInfo() << "Platform customization:" << platformStyle->getName();
         clientModel = new ClientModel(m_node, optionsModel);
-        window->setClientModel(clientModel);
+        window->setClientModel(clientModel, &tip_info);
 #ifdef ENABLE_WALLET
         if (WalletModel::isWalletEnabled()) {
             m_wallet_controller = new WalletController(*clientModel, platformStyle, this);
@@ -435,6 +438,7 @@ int GuiMain(int argc, char* argv[])
 
     // Register meta types used for QMetaObject::invokeMethod and Qt::QueuedConnection
     qRegisterMetaType<bool*>();
+    qRegisterMetaType<SynchronizationState>();
 #ifdef ENABLE_WALLET
     qRegisterMetaType<WalletModel*>();
 #endif
@@ -445,6 +449,7 @@ int GuiMain(int argc, char* argv[])
 
     qRegisterMetaType<std::function<void()>>("std::function<void()>");
     qRegisterMetaType<QMessageBox::Icon>("QMessageBox::Icon");
+    qRegisterMetaType<interfaces::BlockAndHeaderTipInfo>("interfaces::BlockAndHeaderTipInfo");
     /// 2. Parse command-line options. We do this after qt in order to show an error if there are problems parsing these
     // Command-line options take precedence:
     node->setupServerArgs();

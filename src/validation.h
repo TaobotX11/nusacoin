@@ -106,6 +106,13 @@ struct BlockHasher
     size_t operator()(const uint256& hash) const { return ReadLE64(hash.begin()); }
 };
 
+/** Current sync state passed to tip changed callbacks. */
+enum class SynchronizationState {
+    INIT_REINDEX,
+    INIT_DOWNLOAD,
+    POST_INIT
+};
+
 extern CScript COINBASE_FLAGS;
 extern RecursiveMutex cs_main;
 extern CBlockPolicyEstimator feeEstimator;
