@@ -53,6 +53,7 @@
 #include <util/threadnames.h>
 #include <util/translation.h>
 #include <util/asmap.h>
+#include <util/check.h>
 #include <validation.h>
 #include <hash.h>
 
@@ -1372,9 +1373,9 @@ bool AppInitMain(const util::Ref& context, NodeContext& node, interfaces::BlockA
     node.mempool = &::mempool;
     assert(!node.chainman);
     node.chainman = &g_chainman;
-    ChainstateManager& chainman = EnsureChainman(node);
+    ChainstateManager& chainman = *Assert(node.chainman);
 
-    node.peer_logic.reset(new PeerLogicValidation(node.connman.get(), node.banman.get(), *node.scheduler, *node.chainman, *node.mempool));
+    node.peer_logic.reset(new PeerLogicValidation(node.connman.get(), node.banman.get(), *node.scheduler, chainman, *node.mempool));
     RegisterValidationInterface(node.peer_logic.get());
 
 
