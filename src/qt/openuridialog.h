@@ -24,7 +24,7 @@ public:
     QString getURI();
 
 protected Q_SLOTS:
-    void accept();
+    void accept() override;
     void changeEvent(QEvent* e) override;
 
 private:
