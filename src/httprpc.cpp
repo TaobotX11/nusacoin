@@ -166,7 +166,7 @@ static bool HTTPReq_JSONRPC(const util::Ref& context, HTTPRequest* req)
         /* Deter brute-forcing
            If this results in a DoS the user really
            shouldn't have their RPC port exposed. */
-        MilliSleep(250);
+        UninterruptibleSleep(std::chrono::milliseconds{250});
 
         req->WriteHeader("WWW-Authenticate", WWW_AUTH_HEADER_DATA);
         req->WriteReply(HTTP_UNAUTHORIZED);

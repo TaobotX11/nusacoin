@@ -553,8 +553,6 @@ class WalletTest(NusacoinTestFramework):
             '-reindex',
             '-zapwallettxes=1',
             '-zapwallettxes=2',
-            # disabled until issue is fixed: https://github.com/nusacoin/nusacoin/issues/7463
-            # '-salvagewallet',
         ]
         chainlimit = 6
         for m in maintenance:
