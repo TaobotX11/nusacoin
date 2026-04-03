@@ -195,6 +195,7 @@ protected:
     std::vector<util::SettingsValue> GetSettingsList(const std::string& arg) const;
 public:
     ArgsManager();
+    ~ArgsManager();
 
     /**
      * Select the network in use
