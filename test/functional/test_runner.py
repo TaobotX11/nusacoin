@@ -215,6 +215,7 @@ BASE_SCRIPTS = [
     'feature_logging.py',
     'p2p_node_network_limited.py',
     'p2p_permissions.py',
+    'wallet_startup.py',
     'feature_blocksdir.py',
     'feature_config_args.py',
     'feature_settings.py',
