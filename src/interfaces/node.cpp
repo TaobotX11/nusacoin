@@ -59,7 +59,7 @@ class NodeImpl : public Node
 {
 public:
     NodeImpl(NodeContext* context) { setContext(context); }
-    void initError(const std::string& message) override { InitError(Untranslated(message)); }
+    void initError(const bilingual_str& message) override { InitError(message); }
     bool parseParameters(int argc, const char* const argv[], std::string& error) override
     {
         return gArgs.ParseParameters(argc, argv, error);
@@ -69,6 +69,7 @@ public:
     bool softSetArg(const std::string& arg, const std::string& value) override { return gArgs.SoftSetArg(arg, value); }
     bool softSetBoolArg(const std::string& arg, bool value) override { return gArgs.SoftSetBoolArg(arg, value); }
     void selectParams(const std::string& network) override { SelectParams(network); }
+    bool initSettings(std::string& error) override { return gArgs.InitSettings(error); }
     uint64_t getAssumedBlockchainSize() override { return Params().AssumedBlockchainSize(); }
     uint64_t getAssumedChainStateSize() override { return Params().AssumedChainStateSize(); }
     std::string getNetwork() override { return Params().NetworkIDString(); }

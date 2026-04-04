@@ -55,7 +55,7 @@ public:
     virtual ~Node() {}
 
     //! Send init error.
-    virtual void initError(const std::string& message) = 0;
+    virtual void initError(const bilingual_str& message) = 0;
 
     //! Set command line arguments.
     virtual bool parseParameters(int argc, const char* const argv[], std::string& error) = 0;
@@ -74,6 +74,11 @@ public:
 
     //! Choose network parameters.
     virtual void selectParams(const std::string& network) = 0;
+
+    //! Read and update <datadir>/settings.json file with saved settings. This
+    //! needs to be called after selectParams() because the settings file
+    //! location is network-specific.
+    virtual bool initSettings(std::string& error) = 0;
 
     //! Get the (assumed) blockchain size.
     virtual uint64_t getAssumedBlockchainSize() = 0;

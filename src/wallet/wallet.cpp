@@ -3040,7 +3040,7 @@ bool CWallet::CreateTransaction(interfaces::Chain::Lock& locked_chain, const std
     }
 
     if (nFeeRet > m_default_max_tx_fee) {
-        error = Untranslated(TransactionErrorString(TransactionError::MAX_FEE_EXCEEDED));
+        error = TransactionErrorString(TransactionError::MAX_FEE_EXCEEDED);
         return false;
     }
 
