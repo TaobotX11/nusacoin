@@ -62,9 +62,10 @@ void AppTests::appTests()
     }
 #endif
 
-    BasicTestingSetup test{CBaseChainParams::REGTEST}; // Create a temp data directory to backup the gui settings to
-    ECC_Stop(); // Already started by the common test setup, so stop it to avoid interference
-    LogInstance().DisconnectTestLogger();
+    fs::create_directories([] {
+        BasicTestingSetup test{CBaseChainParams::REGTEST}; // Create a temp data directory to backup the gui settings to
+        return GetDataDir() / "blocks";
+    }());
 
     qRegisterMetaType<interfaces::BlockAndHeaderTipInfo>("interfaces::BlockAndHeaderTipInfo");
     m_app.parameterSetup();
@@ -81,6 +82,7 @@ void AppTests::appTests()
     m_app.exec();
 
     // Reset global state to avoid interfering with later tests.
+    LogInstance().DisconnectTestLogger();
     AbortShutdown();
     UnloadBlockIndex();
 }

@@ -38,7 +38,7 @@ Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin);
 #endif
 
 // This is all you need to run all the tests
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Initialize persistent globals with the testing setup state for sanity.
     // E.g. -datadir in gArgs is set to a temp directory dummy value (instead
@@ -69,6 +69,8 @@ int main(int argc, char *argv[])
     NusacoinApplication app(*node);
     app.setApplicationName("Nusacoin-Qt-test");
 
+    node->setupServerArgs();            // Make gArgs available in the NodeContext
+    node->context()->args->ClearArgs(); // Clear added args again
     AppTests app_tests(app);
     if (QTest::qExec(&app_tests) != 0) {
         fInvalid = true;
