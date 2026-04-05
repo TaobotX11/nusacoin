@@ -51,8 +51,6 @@ std::unique_ptr<interfaces::Handler> HandleLoadWallet(interfaces::Node::LoadWall
 
 namespace interfaces {
 
-class Wallet;
-
 namespace {
 
 class NodeImpl : public Node
