@@ -181,6 +181,7 @@ BASE_SCRIPTS = [
     'rpc_bind.py --ipv4',
     'rpc_bind.py --ipv6',
     'rpc_bind.py --nonloopback',
+    'wallet_crosschain.py',
     'mining_basic.py',
     'wallet_bumpfee.py',
     'wallet_implicitsegwit.py',
