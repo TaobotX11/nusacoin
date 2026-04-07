@@ -592,8 +592,3 @@ void WalletModel::refresh(bool pk_hash_only)
 {
     addressTableModel = new AddressTableModel(this, pk_hash_only);
 }
-
-uint256 WalletModel::getLastBlockProcessed() const
-{
-    return m_client_model ? m_client_model->getBestBlockHash() : uint256{};
-}
