@@ -23,8 +23,9 @@ struct WalletTxStatus;
 class TransactionStatus
 {
 public:
-    TransactionStatus() : countsForBalance(false), sortKey(""),
-                          matures_in(0), status(Unconfirmed), depth(0), open_for(0)
+    TransactionStatus():
+        countsForBalance(false), sortKey(""),
+        matures_in(0), status(Unconfirmed), depth(0), open_for(0), cur_num_blocks(-1)
     { }
 
     enum Status {
@@ -60,8 +61,8 @@ public:
                       finalization */
     /**@}*/
 
-    /** Current block hash (to know whether cached status is still valid) */
-    uint256 m_cur_block_hash{};
+    /** Current number of blocks (to know whether cached status is still valid) */
+    int cur_num_blocks;
 
     bool needsUpdate;
 };
@@ -137,11 +138,11 @@ public:
 
     /** Update status from core wallet tx.
      */
-    void updateStatus(const interfaces::WalletTxStatus& wtx, const uint256& block_hash, int numBlocks, int64_t block_time);
+    void updateStatus(const interfaces::WalletTxStatus& wtx, int numBlocks, int64_t block_time);
 
     /** Return whether a status update is needed.
      */
-    bool statusUpdateNeeded(const uint256& block_hash) const;
+    bool statusUpdateNeeded(int numBlocks) const;
 };
 
 #endif // BITCOIN_QT_TRANSACTIONRECORD_H

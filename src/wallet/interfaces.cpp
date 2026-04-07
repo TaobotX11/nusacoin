@@ -360,13 +360,14 @@ public:
         }
         return result;
     }
-    bool tryGetBalances(WalletBalances& balances, uint256& block_hash) override
+    bool tryGetBalances(WalletBalances& balances, int& num_blocks, bool force, int cached_num_blocks) override
     {
+        num_blocks = m_wallet->GetLastBlockHeight();
+        if (!force && num_blocks == cached_num_blocks) return false;
         TRY_LOCK(m_wallet->cs_wallet, locked_wallet);
         if (!locked_wallet) {
             return false;
         }
-        block_hash = m_wallet->GetLastBlockHash();
         balances = getBalances();
         return true;
     }

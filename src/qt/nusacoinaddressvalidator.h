@@ -17,7 +17,7 @@ class NusacoinAddressEntryValidator : public QValidator
 public:
     explicit NusacoinAddressEntryValidator(QObject *parent);
 
-    State validate(QString &input, int &pos) const override;
+    State validate(QString &input, int &pos) const;
 };
 
 /** Nusacoin address widget validator, checks for a valid nusacoin address.
@@ -29,7 +29,7 @@ class NusacoinAddressCheckValidator : public QValidator
 public:
     explicit NusacoinAddressCheckValidator(QObject *parent);
 
-    State validate(QString &input, int &pos) const override;
+    State validate(QString &input, int &pos) const;
 };
 
 #endif // BITCOIN_QT_BITCOINADDRESSVALIDATOR_H

@@ -200,8 +200,7 @@ public:
 
     interfaces::Node& node() const { return m_node; }
     interfaces::Wallet& wallet() const { return *m_wallet; }
-    ClientModel& clientModel() const { return *m_client_model; }
-    void setClientModel(ClientModel* client_model);
+    ClientModel& clientModel() const { return m_client_model; }
 
     QString getWalletName() const;
     QString getDisplayName() const;
@@ -222,7 +221,7 @@ private:
     std::unique_ptr<interfaces::Handler> m_handler_show_progress;
     std::unique_ptr<interfaces::Handler> m_handler_watch_only_changed;
     std::unique_ptr<interfaces::Handler> m_handler_can_get_addrs_changed;
-    ClientModel* m_client_model;
+    ClientModel& m_client_model;
     interfaces::Node& m_node;
 
     bool fHaveWatchOnly;
@@ -239,11 +238,7 @@ private:
     // Cache some values to be able to detect changes
     interfaces::WalletBalances m_cached_balances;
     EncryptionStatus cachedEncryptionStatus;
-    
-    QTimer* timer;
-
-    // Block hash denoting when the last balance update was done.
-    uint256 m_cached_last_update_tip{};
+    int cachedNumBlocks;
 
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
