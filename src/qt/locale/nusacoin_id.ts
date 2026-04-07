@@ -3463,6 +3463,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <source>Export the data in the current tab to a file</source>
         <translation>Ekspor data dalam tab sekarang ke sebuah berkas</translation>
     </message>
+    <message>
+        <source>Broadcasted transaction sucessfully.</source>
+        <translation>Transaksi berhasil tersiar</translation>
+    </message>
+    <message>
+        <source>Transaction needs more signatures. Copy to clipboard?</source>
+        <translation>Transaksi membutuhkan tandatangan lainnya. Lanjut Salin?</translation>
+    </message>
 </context>
 <context>
     <name>nusacoin-core</name>

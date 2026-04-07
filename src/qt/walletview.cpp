@@ -261,7 +261,7 @@ void WalletView::gotoLoadPSBT()
         msgBox.setInformativeText("PSBT is incomplete. Copy to clipboard for manual inspection?");
         break;
     case PSBTRole::SIGNER:
-        msgBox.setInformativeText("Transaction needs more signatures. Copy to clipboard?");
+        msgBox.setInformativeText(tr("Transaction needs more signatures. Copy to clipboard?"));
         break;
     case PSBTRole::FINALIZER:
     case PSBTRole::EXTRACTOR:
