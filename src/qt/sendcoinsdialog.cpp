@@ -377,7 +377,7 @@ void SendCoinsDialog::on_sendButton_clicked()
     assert(m_current_transaction);
 
     const QString confirmation = model->wallet().privateKeysDisabled() ? tr("Confirm transaction proposal") : tr("Confirm send coins");
-    const QString confirmButtonText = model->wallet().privateKeysDisabled() ? tr("Create Unsigned") : tr("S&end");
+    const QString confirmButtonText = model->wallet().privateKeysDisabled() ? tr("Cr&eate Unsigned") : tr("S&end");
     SendConfirmationDialog confirmationDialog(confirmation, question_string, informative_text, detailed_text, SEND_CONFIRM_DELAY, confirmButtonText, this);
     confirmationDialog.exec();
     QMessageBox::StandardButton retval = static_cast<QMessageBox::StandardButton>(confirmationDialog.result());
@@ -401,10 +401,12 @@ void SendCoinsDialog::on_sendButton_clicked()
         ssTx << psbtx;
         GUIUtil::setClipboard(EncodeBase64(ssTx.str()).c_str());
         QMessageBox msgBox(this);
-        msgBox.setText("Unsigned Transaction");
-        msgBox.setInformativeText("The PSBT has been copied to the clipboard. You can also save it.");
+        msgBox.setText(tr("Unsigned Transaction"));
+        msgBox.setInformativeText(tr("The PSBT has been copied to the clipboard. You can also save it."));
         msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
         msgBox.setDefaultButton(QMessageBox::Discard);
+        msgBox.button(QMessageBox::Save)->setText(tr("&Save"));
+        msgBox.button(QMessageBox::Discard)->setText(tr("&Close without Saving"));
         switch (msgBox.exec()) { 
         case QMessageBox::Save: {
             QString selectedFilter;
@@ -884,9 +886,16 @@ void SendCoinsDialog::coinControlChangeEdited(const QString& text)
                 ui->labelCoinControlChangeLabel->setText(tr("Warning: Unknown change address"));
 
                 // confirmation dialog
-                QMessageBox::StandardButton btnRetVal = QMessageBox::question(this, tr("Confirm custom change address"), tr("The address you selected for change is not part of this wallet. Any or all funds in your wallet may be sent to this address. Are you sure?"),
-                    QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel);
-
+                QMessageBox msgBox(this);
+                msgBox.setIcon(QMessageBox::Question);
+                msgBox.setWindowTitle(tr("Confirm custom change address"));
+                msgBox.setText(tr("The address you selected for change is not part of this wallet. Any or all funds in your wallet may be sent to this address. Are you sure?"));
+                msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+                msgBox.setDefaultButton(QMessageBox::Cancel);
+                msgBox.setStyleSheet("* {selection-color: #ffffff;selection-background-color: #018f01;}");
+                msgBox.button(QMessageBox::Yes)->setText(tr("&Yes"));
+                msgBox.button(QMessageBox::Cancel)->setText(tr("&Cancel"));
+                int btnRetVal = msgBox.exec();
                 if(btnRetVal == QMessageBox::Yes)
                     m_coin_control->destChange = dest;
                 else

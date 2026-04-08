@@ -2427,6 +2427,26 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Mohon, periksa kembali transaksi Anda.</translation>
     </message>
     <message>
+        <source>Confirm transaction proposal</source>
+        <translation>Konfirmasi Proposal</translation>
+    </message>
+    <message>
+        <source>Please, review your transaction proposal. This will produce a Partially Signed Bitcoin Transaction (PSBT) which you can copy and then sign with e.g. an offline %1 wallet, or a PSBT-compatible hardware wallet.</source>
+        <translation>Silakan tinjau kembali proposal transaksi Anda. Ini akan menghasilkan Transaksi Nusacoin yang Ditandatangani Sebagian (PSBT) yang dapat Anda salin dan kemudian tandatangani dengan misalnya dompet %1 offline, atau dompet perangkat keras yang kompatibel dengan PSBT.</translation>
+    </message>
+    <message>
+        <source>Do you want to draft this transaction?</source>
+        <translation>Apakah Anda ingin membuat draf transaksi ini?</translation>
+    </message>
+    <message>
+        <source>Unsigned Transaction</source>
+        <translation>Transaksi yang Belum Ditandatangani</translation>
+    </message>
+    <message>
+        <source>The PSBT has been copied to the clipboard. You can also save it.</source>
+        <translation>PSBT telah disalin ke papanklip. Anda juga dapat menyimpannya.</translation>
+    </message>
+    <message>
         <source>%1 to %2</source>
         <translation>%1 kepada %2</translation>
     </message>
@@ -2579,7 +2599,7 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Kirim</translation>
     </message>
     <message>
-        <source>Create Unsigned</source>
+        <source>Cr&amp;eate Unsigned</source>
         <translation>Tanpa&amp;Tandatangan</translation>
     </message>
     <message>
@@ -2691,6 +2711,22 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>No</source>
         <translation>Tidak</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Batal</translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>&amp;Ya</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>&amp;Simpan</translation>
+    </message>
+    <message>
+        <source>&amp;Close without Saving</source>
+        <translation>&amp;Tidak perlu</translation>
     </message>
 </context>
 <context>
@@ -3545,6 +3581,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>Zapping all transactions from wallet...</source>
         <translation>Setiap transaksi dalam dompet sedang di-&apos;Zap&apos;...</translation>
+    </message>
+    <message>
+        <source>Transaction needs a change address, but we can't generate it. Please call keypoolrefill first.</source>
+        <translation>Transaksi memerlukan alamat kembalian, tetapi kami tidak dapat membuatnya. Silakan jalankan keypoolrefill terlebih dahulu..</translation>
     </message>
     <message>
         <source>Unknown network specified in -onlynet: &apos;%s&apos;</source>
