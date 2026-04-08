@@ -253,12 +253,12 @@ void WalletView::gotoLoadPSBT()
     CMutableTransaction mtx;
     bool complete = false;
     PSBTAnalysis analysis = AnalyzePSBT(psbtx);
-    QMessageBox msgBox;
+    QMessageBox msgBox(this);
     msgBox.setText("PSBT");
     switch (analysis.next) {
     case PSBTRole::CREATOR:
     case PSBTRole::UPDATER:
-        msgBox.setInformativeText("PSBT is incomplete. Copy to clipboard for manual inspection?");
+        msgBox.setInformativeText(tr("PSBT is incomplete. Copy to clipboard for manual inspection?"));
         break;
     case PSBTRole::SIGNER:
         msgBox.setInformativeText(tr("Transaction needs more signatures. Copy to clipboard?"));
@@ -276,6 +276,8 @@ void WalletView::gotoLoadPSBT()
     }
 
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+    msgBox.button(QMessageBox::Yes)->setText(tr("&Yes"));
+    msgBox.button(QMessageBox::Cancel)->setText(tr("&Cancel"));
     switch (msgBox.exec()) {
     case QMessageBox::Yes: {
         if (complete) {

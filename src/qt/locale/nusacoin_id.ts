@@ -3507,6 +3507,18 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <source>Transaction needs more signatures. Copy to clipboard?</source>
         <translation>Transaksi membutuhkan tandatangan lainnya. Lanjut Salin?</translation>
     </message>
+    <message>
+        <source>PSBT is incomplete. Copy to clipboard for manual inspection?</source>
+        <translation>PSBT tidak lengkap. Salin ke papanklip untuk pemeriksaan manual?</translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>Ya</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Batal</translation>
+    </message>
 </context>
 <context>
     <name>nusacoin-core</name>
