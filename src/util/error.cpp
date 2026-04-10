@@ -24,11 +24,11 @@ bilingual_str TransactionErrorString(const TransactionError err)
         case TransactionError::MEMPOOL_ERROR:
             Untranslated("AcceptToMemoryPool failed");
         case TransactionError::INVALID_PSBT:
-            Untranslated("PSBT is not sane");
+            return Untranslated("PSBT is not well-formed");
         case TransactionError::PSBT_MISMATCH:
             Untranslated("PSBTs not compatible (different transactions)");
         case TransactionError::SIGHASH_MISMATCH:
-            Untranslated("Specified sighash value does not match existing value");
+            return Untranslated("Specified sighash value does not match value stored in PSBT");
         case TransactionError::MAX_FEE_EXCEEDED:
             Untranslated("Fee exceeds maximum configured by -maxtxfee");
         // no default case, so the compiler can warn about missing cases

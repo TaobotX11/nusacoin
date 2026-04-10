@@ -39,7 +39,6 @@
         <file alias="hu">locale/nusacoin_hu.qm</file>
         <file alias="hu_HU">locale/nusacoin_hu_HU.qm</file>
         <file alias="id">locale/nusacoin_id.qm</file>
-        <file alias="id_ID">locale/nusacoin_id_ID.qm</file>
         <file alias="is">locale/nusacoin_is.qm</file>
         <file alias="it">locale/nusacoin_it.qm</file>
         <file alias="it_IT">locale/nusacoin_it_IT.qm</file>

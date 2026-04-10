@@ -263,6 +263,121 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
 </context>
 <context>
+    <name>PSBTOperationsDialog</name>
+    <message>
+        <source>Sign Tx</source>
+        <translation>Tandatangani Tx</translation>
+    </message>
+    <message>
+        <source>Broadcast Tx</source>
+        <translation>Siarkan Tx</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation>Salin ke Papanklip</translation>
+    </message>
+    <message>
+        <source>Save...</source>
+        <translation>Simpan...</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Tutup</translation>
+    </message>
+    <message>
+        <source>Transaction still needs signature(s).</source>
+        <translation>Transaksi membutuhkan tandatangan digital</translation>
+    </message>
+    <message>
+        <source>Transaction is fully signed and ready for broadcast.</source>
+        <translation>Transaksi tertandatangani dan siap disiarkan</translation>
+    </message>
+    <message>
+        <source>Transaction status is unknown.</source>
+        <translation>Status transaksi tidak diketahui</translation>
+    </message>
+    <message>
+        <source>(But this wallet cannot sign transactions.)</source>
+        <translation>(Dompet ini tak dapat menandatangani transaksi)</translation>
+    </message>
+    <message>
+        <source>(But this wallet does not have the right keys.)</source>
+        <translation>(Dompet ini tidak memuat kunci pribadi yang dibutuhkan)</translation>
+    </message>
+    <message>
+        <source>Transaction is missing some information about inputs.</source>
+        <translation>Transaksi tidak menyediakan cukup informasi tentang masukkan</translation>
+    </message>
+    <message>
+        <source>PSBT Operations</source>
+        <translation>Kelola PSBT</translation>
+    </message>
+    <message>
+        <source>Transaction broadcast failed: %1</source>
+        <translation>Penyiaran Transaksi gagal: %1</translation>
+    </message>
+    <message>
+        <source>Transaction broadcast successfully! Transaction ID: %1</source>
+        <translation>Penyiaran Transaksi berhasil! ID Transaksi: %1</translation>
+    </message>
+    <message>
+        <source>Transaction broadcast successfully! Transaction ID: %1</source>
+        <translation>Penyiaran Transaksi berhasil! ID Transaksi: %1</translation>
+    </message>
+    <message>
+        <source>Unknown error processing transaction.</source>
+        <translation>Kesalahan tidak diketahui dalam memproses transaksi</translation>
+    </message>
+    <message>
+        <source>Signed transaction successfully. Transaction is ready to broadcast.</source>
+        <translation>Penandatanganan transaksi berhasil. Transaksi siap disiarkan</translation>
+    </message>
+    <message>
+        <source>Signed %1 inputs, but more signatures are still required.</source>
+        <translation>Menandatangani %1 masukkan, masih membutuhkan tandatangan lainnya.</translation>
+    </message>
+    <message>
+        <source>Failed to sign transaction: %1</source>
+        <translation>Gagal menandatangani transaksi: %1</translation>
+    </message>
+    <message>
+        <source>Could not sign any more inputs.</source>
+        <translation>Tidak dapat menandatangani masukkan lebih lanjut.</translation>
+    </message>
+    <message>
+        <source>Save Transaction Data</source>
+        <translation>Simpan Data Transaksi</translation>
+    </message>
+    <message>
+        <source>PSBT saved to disk.</source>
+        <translation>PSBT disimpan ke media</translation>
+    </message>
+    <message>
+        <source> * Sends %1 to %2</source>
+        <translation> * Kirim %1 ke %2</translation>
+    </message>
+    <message>
+        <source>Unable to calculate transaction fee or total transaction amount.</source>
+        <translation>Gagal menghitung biaya dan jumlah transaksi</translation>
+    </message>
+    <message>
+        <source>Pays transaction fee: </source>
+        <translation>Biaya transaksi: </translation>
+    </message>
+    <message>
+        <source>Total Amount</source>
+        <translation>Jumlah Seluruh</translation>
+    </message>
+    <message>
+        <source>Transaction has %1 unsigned inputs.</source>
+        <translation>Transaksi memuat %1 masukkan belum tertandatangani</translation>
+    </message>
+    <message>
+        <source>or</source>
+        <translation>atau</translation>
+    </message>
+</context>
+<context>
     <name>NusacoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
@@ -389,8 +504,16 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>&amp;Verifikasi pesan...</translation>
     </message>
     <message>
-        <source>Load PSBT...</source>
-        <translation>Muat PSBT...</translation>
+        <source>&amp;Load PSBT from file...</source>
+        <translation>Muat PSBT dari berkas...</translation>
+    </message>
+    <message>
+        <source>Load PSBT from &amp;clipboard...</source>
+        <translation>Muat PSBT dari papanklip...</translation>
+    </message>
+    <message>
+        <source>Load Partially Signed Nusacoin Transaction from clipboard</source>
+        <translation>Memuat Transaksi PSBT dari papanklip</translation>
     </message>
     <message>
         <source>&amp;Send</source>
@@ -3510,6 +3633,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>PSBT is incomplete. Copy to clipboard for manual inspection?</source>
         <translation>PSBT tidak lengkap. Salin ke papanklip untuk pemeriksaan manual?</translation>
+    </message>
+    <message>
+        <source>PSBT file must be smaller than 100 MiB</source>
+        <translation>berkas PSBT harus lebih kecil dari 100 MiB</translation>
+    </message>
+    <message>
+        <source>Unable to decode PSBT from clipboard (invalid base64)</source>
+        <translation>Tak dapat mengenali PSBT dari papanklip (base64)</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
