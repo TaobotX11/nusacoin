@@ -97,6 +97,11 @@ P2P and network changes
 Updated RPCs
 ------------
 
+- `getnetworkinfo` now returns two new fields, `connections_in` and
+  `connections_out`, that provide the number of inbound and outbound peer
+  connections. These new fields are in addition to the existing `connections`
+  field, which returns the total number of peer connections. (#19405)
+
 - The `getpeerinfo` RPC now has additional `last_block` and `last_transaction`
   fields that return the UNIX epoch time of the last block and the last valid 
   transaction received from each peer. (#19731)
@@ -111,6 +116,11 @@ Updated RPCs
   whether initial broadcast of the transaction has been acknowledged by a
   peer. `getmempoolancestors` and `getmempooldescendants` are also updated.
 
+## CLI
+
+- The `connections` field of `bitcoin-cli -getinfo` is expanded to return a JSON
+  object with `in`, `out` and `total` numbers of peer connections. It previously
+  returned a single integer value for the total number of peer connections. (#19405)
 
 Note: some low-level RPC changes mainly useful for testing are described in the
 Low-level Changes section below.
