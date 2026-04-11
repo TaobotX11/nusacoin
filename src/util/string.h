@@ -6,6 +6,8 @@
 #define BITCOIN_UTIL_STRING_H
 
 #include <string>
+#include <locale>
+#include <sstream>
 #include <vector>
 
 /**
@@ -36,6 +38,18 @@ T Join(const std::vector<T>& list, const T& separator)
 inline std::string Join(const std::vector<std::string>& list, const std::string& separator)
 {
     return Join<std::string>(list, separator);
+}
+
+/**
+ * Locale-independent version of std::to_string
+ */
+template <typename T>
+std::string ToString(const T& t)
+{
+    std::ostringstream oss;
+    oss.imbue(std::locale::classic());
+    oss << t;
+    return oss.str();
 }
 
 #endif // BITCOIN_UTIL_STRENCODINGS_H
