@@ -73,6 +73,7 @@ class TestNusacoinCli(NusacoinTestFramework):
         if self.is_wallet_compiled():
             assert_equal(cli_get_info['walletversion'], wallet_info['walletversion'])
             assert_equal(cli_get_info['balance'], wallet_info['balance'])
+            assert 'balances' not in cli_get_info.keys()
             assert_equal(cli_get_info['keypoololdest'], wallet_info['keypoololdest'])
             assert_equal(cli_get_info['keypoolsize'], wallet_info['keypoolsize'])
             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])
