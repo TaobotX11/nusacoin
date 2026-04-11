@@ -97,6 +97,10 @@ P2P and network changes
 Updated RPCs
 ------------
 
+- The `getpeerinfo` RPC now has additional `last_block` and `last_transaction`
+  fields that return the UNIX epoch time of the last block and the last valid 
+  transaction received from each peer. (#19731)
+
 - `getmempoolinfo` now returns an additional `unbroadcastcount` field. The
   mempool tracks locally submitted transactions until their initial broadcast
   is acknowledged by a peer. This field returns the count of transactions
