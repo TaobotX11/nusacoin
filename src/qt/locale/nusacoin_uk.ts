@@ -350,6 +350,18 @@
         <translation>П&amp;еревірити повідомлення...</translation>
     </message>
     <message>
+        <source>&amp;Load PSBT from file...</source>
+        <translation>&amp;Завантажити PSBT з файлу...</translation>
+    </message>
+    <message>
+        <source>Load PSBT from &amp;clipboard...</source>
+        <translation>Завантажити PSBT з &amp;буфера обміну...</translation>
+    </message>
+    <message>
+        <source>Load Partially Signed Nusacoin Transaction from clipboard</source>
+        <translation>Завантажити частково підписану транзакцію Nusacoin з буфера обміну</translation>
+    </message>
+    <message>
         <source>&amp;Send</source>
         <translation>&amp;Відправити</translation>
     </message>
@@ -413,6 +425,14 @@
         <source>&amp;Command-line options</source>
         <translation>П&amp;араметри командного рядка</translation>
     </message>
+    <message>
+        <source>&amp;Mask values</source>
+        <translation>&amp;Датчик балансу</translation>
+    </message>
+    <message>
+        <source>Mask the values in the Overview tab</source>
+        <translation>Маскування значень на вкладці «Огляд»</translation>
+    </message>
     <message numerus="yes">
         <source>%n active connection(s) to Nusacoin network</source>
         <translation><numerusform>%n активне з'єднання з мережею Nusacoin</numerusform><numerusform>%n активні з'єднання з мережею Nusacoin</numerusform><numerusform>%n активних з'єднань з мережею Nusacoin</numerusform><numerusform>%n активних з'єднань з мережею Nusacoin</numerusform></translation>
@@ -464,6 +484,10 @@
     <message>
         <source>&amp;Receiving addresses</source>
         <translation>&amp;Адреси для отримання</translation>
+    </message>
+    <message>
+        <source>Create Wallet...</source>
+        <translation>Створити гаманець...</translation>
     </message>
     <message>
         <source>Open Wallet</source>
@@ -1294,7 +1318,7 @@
         <translation>Тільки спостереження:</translation>
     </message>
     <message>
-        <source>Available:</source>
+        <source>Available:  </source>
         <translation>Наявно:</translation>
     </message>
     <message>
@@ -1302,7 +1326,7 @@
         <translation>Ваш поточний підтверджений баланс</translation>
     </message>
     <message>
-        <source>Pending:</source>
+        <source>Pending:  </source>
         <translation>Очікується:</translation>
     </message>
     <message>
@@ -1310,7 +1334,7 @@
         <translation>Сума монет у непідтверджених транзакціях</translation>
     </message>
     <message>
-        <source>Immature:</source>
+        <source>Immature:  </source>
         <translation>Незрілі:</translation>
     </message>
     <message>
@@ -1322,7 +1346,7 @@
         <translation>Баланси</translation>
     </message>
     <message>
-        <source>Total:</source>
+        <source>Total:  </source>
         <translation>Всього:</translation>
     </message>
     <message>
@@ -1352,6 +1376,10 @@
     <message>
         <source>Current total balance in watch-only addresses</source>
         <translation>Поточний сукупний баланс в адресах для спостереження</translation>
+    </message>
+    <message>
+        <source>Privacy mode activated for the Overview tab. To unmask the values, uncheck Settings-&gt;Mask values.</source>
+        <translation>Режим конфіденційності активовано для вкладки «Огляд». Щоб розкрити значення, зніміть позначку з пункту «Налаштування».-&gt;Значення маски.</translation>
     </message>
 </context>
 <context>

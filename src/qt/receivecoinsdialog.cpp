@@ -101,7 +101,7 @@ void ReceiveCoinsDialog::setModel(WalletModel *_model)
             const auto index = ui->addressType->count();
             ui->addressType->addItem(text, (int) type);
             ui->addressType->setItemData(index, tooltip, Qt::ToolTipRole);
-            ui->addressType->setStyleSheet("selection-background-color: #018f01; selection-color:white;background-color: white;");
+            ui->addressType->setStyleSheet("selection-background-color: #018f01; selection-color:white;");
             if (model->wallet().getDefaultAddressType() == type) ui->addressType->setCurrentIndex(index);
         };
         add_address_type(OutputType::LEGACY, "Base58 (Legacy)", tr("Not recommended due to higher fees and less protection against typos."));

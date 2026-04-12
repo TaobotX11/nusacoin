@@ -231,7 +231,7 @@ NusacoinAmountField::NusacoinAmountField(QWidget *parent) :
     layout->addWidget(unit);
     layout->addStretch(1);
     layout->setContentsMargins(0,0,0,0);
-    unit->setStyleSheet("selection-background-color: #018f01; selection-color:white;background-color: white;");
+    unit->setStyleSheet("selection-background-color: #018f01; selection-color:white;");
 
     setLayout(layout);
 
@@ -269,7 +269,7 @@ bool NusacoinAmountField::validate()
 void NusacoinAmountField::setValid(bool valid)
 {
     if (valid)
-        amount->setStyleSheet("background-color: white;");
+        amount->setStyleSheet("font-weight: bold; color: white; background-color: rgb(37, 100, 37); selection-background-color: rgb(1, 143, 1); selection-color:white;");
     else
         amount->setStyleSheet(STYLE_INVALID);
 }

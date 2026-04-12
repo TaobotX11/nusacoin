@@ -547,7 +547,7 @@ void NusacoinGUI::createToolBars()
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
         toolbar->addAction(historyAction);
-        toolbar->setStyleSheet("QToolButton:checked {background-color: #daf5da; border: none;} QToolButton:hover {background-color: #daf5da;}");
+        toolbar->setStyleSheet("QToolButton:checked {background-color: #1b881b; color: white; border: none;} QToolButton:hover {background-color: #1b881b; color: white;}");
         overviewAction->setChecked(true);
 
 #ifdef ENABLE_WALLET

@@ -17,7 +17,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(222, 222, 222);border-radius: 5px;</string>
+   <string notr="true">color: white; background-color: rgb(43, 42, 42);border-radius: 8px;</string>
   </property>
   <layout class="QVBoxLayout" name="topLayout">
    <item>
@@ -123,7 +123,7 @@
             <item row="5" column="0">
              <widget class="QLabel" name="labelTotalText">
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(244, 244, 244);</string>
+               <string notr="true">background-color: rgb(1, 105, 1);</string>
               </property>
               <property name="font">
                <font>
@@ -246,7 +246,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="labelPendingText">
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(247, 247, 220);</string>
+               <string notr="true">background-color: rgb(143, 143, 46);</string>
               </property>
               <property name="text">
                <string>Pending:  </string>
@@ -266,7 +266,7 @@
             <item row="3" column="0">
              <widget class="QLabel" name="labelImmatureText">
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(247, 236, 220);</string>
+               <string notr="true">background-color: rgb(156, 116, 57);</string>
               </property>
               <property name="font">
                <font>
@@ -366,7 +366,7 @@
                <string>Your current balance in watch-only addresses</string>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(1, 143, 1);</string>
+               <string notr="true">color: rgb(43, 167, 5);</string>
               </property>
               <property name="text">
                <string notr="true">18 000 000.00000000 NUX</string>
@@ -467,7 +467,7 @@
                <string>Current total balance in watch-only addresses</string>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(1, 143, 1); selection-background-color: rgb(1, 143, 1); selection-color:white;border-radius: 0px;</string>
+               <string notr="true">selection-background-color: rgb(1, 143, 1); selection-color:white;border-radius: 0px;</string>
               </property>
               <property name="text">
                 <string notr="true">18 000 000.00000000 NUX </string>
