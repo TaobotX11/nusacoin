@@ -410,7 +410,7 @@
                <string>Your current spendable balance</string>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: rgb(1, 143, 1); selection-background-color: rgb(1, 143, 1); selection-color:white;border-radius: 0px;</string>
+               <string notr="true">color: rgb(43, 167, 5); selection-background-color: rgb(1, 143, 1); selection-color:white;border-radius: 0px;</string>
               </property>
               <property name="text">
                <string notr="true">18 000 000.00000000 NUX </string>
