@@ -27,9 +27,11 @@
 #include <qt/walletmodel.h>
 #endif // ENABLE_WALLET
 
+#include <init.h>
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
 #include <node/context.h>
+#include <node/ui_interface.h>
 #include <noui.h>
 #include <node/ui_interface.h>
 #include <uint256.h>
@@ -37,6 +39,7 @@
 #include <util/threadnames.h>
 #include <validation.h>
 
+#include <boost/signals2/connection.hpp>
 #include <memory>
 
 #include <QApplication>
@@ -175,10 +178,9 @@ void NusacoinCore::shutdown()
 static int qt_argc = 1;
 static const char* qt_argv = "nusacoin-qt";
 
-NusacoinApplication::NusacoinApplication(interfaces::Node& node):
+NusacoinApplication::NusacoinApplication():
     QApplication(qt_argc, const_cast<char **>(&qt_argv)),
     coreThread(nullptr),
-    m_node(node),
     optionsModel(nullptr),
     clientModel(nullptr),
     window(nullptr),
@@ -229,12 +231,13 @@ void NusacoinApplication::createPaymentServer()
 
 void NusacoinApplication::createOptionsModel(bool resetSettings)
 {
-    optionsModel = new OptionsModel(m_node, nullptr, resetSettings);
+    optionsModel = new OptionsModel(this, resetSettings);
+    optionsModel->setNode(node());
 }
 
 void NusacoinApplication::createWindow(const NetworkStyle *networkStyle)
 {
-    window = new NusacoinGUI(m_node, platformStyle, networkStyle, nullptr);
+    window = new NusacoinGUI(node(), platformStyle, networkStyle, nullptr);
     //window->setStyleSheet("QMainWindow {background-color: #ffffff} QPushButton {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton:hover {background-color: #0eb5f6;color: #ffffff} QPushButton#Yes {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton#Yes:hover {background-color: #0eb5f6;color: #ffffff} QPushButton#No {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton#No:hover {background-color: #0eb5f6;color: #ffffff}");
     window->setStyleSheet("QPushButton {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton:hover {background-color: #02d902;color: #ffffff} QDialogButtonBox {background-color: rgb(1, 143, 1);color: #ffffff} QDialogButtonBox:hover {background-color: #02d902;color: #ffffff} QPushButton#Yes {background-color: rgb(1, 143, 1);color: #ffffff} QPushButton#Ok {background-color: rgb(1, 143, 1)} QPushButton#Cancel {background-color: rgb(1, 143, 1)} QPushButton#Yes:hover {background-color: #02d902;color: #ffffff} QPushButton#No {background-color: rgb(132, 10, 166);color: #ffffff} QPushButton#No:hover {background-color: #02d902;color: #ffffff} QHeaderView {font-weight:bold;} QTableView::item:selected{background-color: #018f01;color: #ffffff;} QMenuBar::item:selected {background: #018f01;color: #ffffff} QMenuBar::item:pressed {background: #018f01;color: #ffffff} QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff} QLineEdit {selection-color: #ffffff;selection-background-color: #018f01} QPlainTextEdit {selection-color: #ffffff;selection-background-color: #018f01} QAbstractSpinBox {selection-color: #ffffff;selection-background-color: #018f01;background-color: white} QToolTip {background-color: rgb(255, 255, 255);color: #018f01} QLabel {selection-background-color: #018f01; selection-color:white;}");
     pollShutdownTimer = new QTimer(window);
@@ -243,17 +246,26 @@ void NusacoinApplication::createWindow(const NetworkStyle *networkStyle)
 
 void NusacoinApplication::createSplashScreen(const NetworkStyle *networkStyle)
 {
-    SplashScreen *splash = new SplashScreen(m_node, nullptr, networkStyle);
+    assert(!m_splash);
+    m_splash = new SplashScreen(nullptr, networkStyle);
+    m_splash->setNode(node());
     // We don't hold a direct pointer to the splash screen after creation, but the splash
     // screen will take care of deleting itself when finish() happens.
-    splash->show();
-    connect(this, &NusacoinApplication::splashFinished, splash, &SplashScreen::finish);
-    connect(this, &NusacoinApplication::requestedShutdown, splash, &QWidget::close);
+    m_splash->show();
+    connect(this, &NusacoinApplication::requestedInitialize, m_splash, &SplashScreen::handleLoadWallet);
+    connect(this, &NusacoinApplication::splashFinished, m_splash, &SplashScreen::finish);
+    connect(this, &NusacoinApplication::requestedShutdown, m_splash, &QWidget::close);
+}
+
+void NusacoinApplication::setNode(interfaces::Node& node)
+{
+    assert(!m_node);
+    m_node = &node;
 }
 
 bool NusacoinApplication::baseInitialize()
 {
-    return m_node.baseInitialize();
+    return node().baseInitialize();
 }
 
 void NusacoinApplication::startThread()
@@ -261,7 +273,7 @@ void NusacoinApplication::startThread()
     if(coreThread)
         return;
     coreThread = new QThread(this);
-    NusacoinCore *executor = new NusacoinCore(m_node);
+    NusacoinCore *executor = new NusacoinCore(node());
     executor->moveToThread(coreThread);
 
     /*  communication to and from thread */
@@ -282,8 +294,8 @@ void NusacoinApplication::parameterSetup()
     // print to the console unnecessarily.
     gArgs.SoftSetBoolArg("-printtoconsole", false);
 
-    m_node.initLogging();
-    m_node.initParameterInteraction();
+    InitLogging(gArgs);
+    InitParameterInteraction(gArgs);
 }
 
 void NusacoinApplication::SetPrune(bool prune, bool force) {
@@ -312,7 +324,7 @@ void NusacoinApplication::requestShutdown()
     window->unsubscribeFromCoreSignals();
     // Request node shutdown, which can interrupt long operations, like
     // rescanning a wallet.
-    m_node.startShutdown();
+    node().startShutdown();
     // Unsetting the client model can cause the current thread to wait for node
     // to complete an operation, like wait for a RPC execution to complate.
     window->setClientModel(nullptr);
@@ -334,7 +346,7 @@ void NusacoinApplication::initializeResult(bool success, interfaces::BlockAndHea
     {
         // Log this only after AppInitMain finishes, as then logging setup is guaranteed complete
         qInfo() << "Platform customization:" << platformStyle->getName();
-        clientModel = new ClientModel(m_node, optionsModel);
+        clientModel = new ClientModel(node(), optionsModel);
         window->setClientModel(clientModel, &tip_info);
 #ifdef ENABLE_WALLET
         if (WalletModel::isWalletEnabled()) {
@@ -418,9 +430,9 @@ int GuiMain(int argc, char* argv[])
     std::unique_ptr<interfaces::Node> node = interfaces::MakeNode(&node_context);
 
     // Subscribe to global signals from core
-    std::unique_ptr<interfaces::Handler> handler_message_box = node->handleMessageBox(noui_ThreadSafeMessageBox);
-    std::unique_ptr<interfaces::Handler> handler_question = node->handleQuestion(noui_ThreadSafeQuestion);
-    std::unique_ptr<interfaces::Handler> handler_init_message = node->handleInitMessage(noui_InitMessage);
+    boost::signals2::scoped_connection handler_message_box = ::uiInterface.ThreadSafeMessageBox_connect(noui_ThreadSafeMessageBox);
+    boost::signals2::scoped_connection handler_question = ::uiInterface.ThreadSafeQuestion_connect(noui_ThreadSafeQuestion);
+    boost::signals2::scoped_connection handler_init_message = ::uiInterface.InitMessage_connect(noui_InitMessage);
 
     // Do not refer to data directory yet, this can be overridden by Intro::pickDataDirectory
 
@@ -434,7 +446,8 @@ int GuiMain(int argc, char* argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-    NusacoinApplication app(*node);
+    NusacoinApplication app;
+    app.setNode(*node);
 
     // Register meta types used for QMetaObject::invokeMethod and Qt::QueuedConnection
     qRegisterMetaType<bool*>();
@@ -452,11 +465,11 @@ int GuiMain(int argc, char* argv[])
     qRegisterMetaType<interfaces::BlockAndHeaderTipInfo>("interfaces::BlockAndHeaderTipInfo");
     /// 2. Parse command-line options. We do this after qt in order to show an error if there are problems parsing these
     // Command-line options take precedence:
-    node->setupServerArgs();
+    SetupServerArgs(node_context);
     SetupUIArgs(gArgs);
     std::string error;
-    if (!node->parseParameters(argc, argv, error)) {
-        node->initError(strprintf(Untranslated("Error parsing command line arguments: %s\n"), error));
+    if (!gArgs.ParseParameters(argc, argv, error)) {
+        InitError(strprintf(Untranslated("Error parsing command line arguments: %s\n"), error));
         // Create a message box, because the gui has neither been created nor has subscribed to core signals
         QMessageBox::critical(nullptr, PACKAGE_NAME,
             // message can not be translated because translations have not been initialized
@@ -497,13 +510,13 @@ int GuiMain(int argc, char* argv[])
     /// 6. Determine availability of data directory and parse nusacoin.conf
     /// - Do not call GetDataDir(true) before this step finishes
     if (!CheckDataDirOption()) {
-        node->initError(strprintf(Untranslated("Specified data directory \"%s\" does not exist.\n"), gArgs.GetArg("-datadir", "")));
+        InitError(strprintf(Untranslated("Specified data directory \"%s\" does not exist.\n"), gArgs.GetArg("-datadir", "")));
         QMessageBox::critical(nullptr, PACKAGE_NAME,
             QObject::tr("Error: Specified data directory \"%1\" does not exist.").arg(QString::fromStdString(gArgs.GetArg("-datadir", ""))));
         return EXIT_FAILURE;
     }
-    if (!node->readConfigFiles(error)) {
-        node->initError(strprintf(Untranslated("Error reading configuration file: %s\n"), error));
+    if (!gArgs.ReadConfigFiles(error, true)) {
+        InitError(strprintf(Untranslated("Error reading configuration file: %s\n"), error));
         QMessageBox::critical(nullptr, PACKAGE_NAME,
             QObject::tr("Error: Cannot parse configuration file: %1.").arg(QString::fromStdString(error)));
         return EXIT_FAILURE;
@@ -517,9 +530,9 @@ int GuiMain(int argc, char* argv[])
 
     // Check for -chain, -testnet or -regtest parameter (Params() calls are only valid after this clause)
     try {
-        node->selectParams(gArgs.GetChainName());
+        SelectParams(gArgs.GetChainName());
     } catch(std::exception &e) {
-        node->initError(Untranslated(strprintf("%s\n", e.what())));
+        InitError(Untranslated(strprintf("%s\n", e.what())));
         QMessageBox::critical(nullptr, PACKAGE_NAME, QObject::tr("Error: %1").arg(e.what()));
         return EXIT_FAILURE;
     }
@@ -527,8 +540,8 @@ int GuiMain(int argc, char* argv[])
     // Parse URIs on command line -- this can affect Params()
     PaymentServer::ipcParseCommandLine(*node, argc, argv);
 #endif
-    if (!node->initSettings(error)) {
-        node->initError(Untranslated(error));
+    if (!gArgs.InitSettings(error)) {
+        InitError(Untranslated(error));
         QMessageBox::critical(nullptr, PACKAGE_NAME, QObject::tr("Error initializing settings: %1").arg(QString::fromStdString(error)));
         return EXIT_FAILURE;
     }
@@ -603,10 +616,10 @@ int GuiMain(int argc, char* argv[])
         }
     } catch (const std::exception& e) {
         PrintExceptionContinue(&e, "Runaway exception");
-        app.handleRunawayException(QString::fromStdString(node->getWarnings()));
+        app.handleRunawayException(QString::fromStdString(app.node().getWarnings()));
     } catch (...) {
         PrintExceptionContinue(nullptr, "Runaway exception");
-        app.handleRunawayException(QString::fromStdString(node->getWarnings()));
+        app.handleRunawayException(QString::fromStdString(app.node().getWarnings()));
     }
     return rv;
 }

@@ -6,6 +6,7 @@
 #define BITCOIN_NODE_CONTEXT_H
 
 #include <cassert>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -46,6 +47,7 @@ struct NodeContext {
     //! opened by the gui.
     interfaces::WalletClient* wallet_client{nullptr};
     std::unique_ptr<CScheduler> scheduler;
+    std::function<void()> rpc_interruption_point = [] {};
 
     //! Declare default constructor and destructor that are not inline, so code
     //! instantiating the NodeContext struct doesn't need to #include class

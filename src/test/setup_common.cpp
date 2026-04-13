@@ -69,8 +69,8 @@ BasicTestingSetup::BasicTestingSetup(const std::string& chainName, const std::ve
     }
     SelectParams(chainName);
     gArgs.ForceSetArg("-printtoconsole", "0");
-    InitLogging();
-    AppInitParameterInteraction();
+    InitLogging(*m_node.args);
+    AppInitParameterInteraction(*m_node.args);
     LogInstance().StartLogging();
     SHA256AutoDetect();
     ECC_Start();
