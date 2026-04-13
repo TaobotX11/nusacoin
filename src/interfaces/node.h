@@ -28,14 +28,13 @@ class RPCTimerInterface;
 class UniValue;
 class proxyType;
 enum class SynchronizationState;
-enum class WalletCreationStatus;
 struct CNodeStateStats;
 struct NodeContext;
 struct bilingual_str;
 
 namespace interfaces {
 class Handler;
-class Wallet;
+class WalletClient;
 struct BlockTip;
 
 //! Block and header tip information
@@ -246,10 +245,6 @@ public:
     //! Register handler for progress messages.
     using ShowProgressFn = std::function<void(const std::string& title, int progress, bool resume_possible)>;
     virtual std::unique_ptr<Handler> handleShowProgress(ShowProgressFn fn) = 0;
-
-    //! Register handler for load wallet messages.
-    using LoadWalletFn = std::function<void(std::unique_ptr<Wallet> wallet)>;
-    virtual std::unique_ptr<Handler> handleLoadWallet(LoadWalletFn fn) = 0;
 
     //! Register handler for number of connections changed messages.
     using NotifyNumConnectionsChangedFn = std::function<void(int new_num_connections)>;
