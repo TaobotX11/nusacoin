@@ -175,7 +175,7 @@
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">background-color: rgb(1, 143, 1);color: rgb(255, 255, 255);</string>
+               <string notr="true">background-color: rgb(43, 167, 5);color: rgb(255, 255, 255);</string>
               </property>
               <property name="text">
                <string>Available:  </string>
