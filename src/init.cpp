@@ -782,7 +782,7 @@ static bool AppInitServers(const util::Ref& context, NodeContext& node)
     if (!InitHTTPServer())
         return false;
     StartRPC();
-    //node.rpc_interruption_point = RpcInterruptionPoint; TO DO:
+    node.rpc_interruption_point = RpcInterruptionPoint;
     if (!StartHTTPRPC(context))
         return false;
     if (args.GetBoolArg("-rest", DEFAULT_REST_ENABLE)) StartREST(context);
