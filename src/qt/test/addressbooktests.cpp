@@ -106,7 +106,7 @@ void TestAddAddressesToSendBook(interfaces::Node& node)
     OptionsModel optionsModel;
     AddWallet(wallet);
     WalletModel walletModel(interfaces::MakeWallet(wallet), node, platformStyle.get(), &optionsModel);
-    RemoveWallet(wallet);
+    RemoveWallet(wallet, nullopt);
     EditAddressDialog editAddressDialog(EditAddressDialog::NewSendingAddress);
     editAddressDialog.setModel(walletModel.getAddressTableModel());
 
