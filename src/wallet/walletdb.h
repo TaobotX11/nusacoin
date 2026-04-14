@@ -297,10 +297,19 @@ private:
 //! Compacts BDB state so that wallet.dat is self-contained (if there are changes)
 void MaybeCompactWalletDB();
 
+//! Unserialize a given Key-Value pair and load it into the wallet
+bool ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue, std::string& strType, std::string& strErr);
+
 /** Return whether a wallet database is currently loaded. */
 bool IsWalletLoaded(const fs::path& wallet_path);
 
-//! Unserialize a given Key-Value pair and load it into the wallet
-bool ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue, std::string& strType, std::string& strErr);
+/** Return object for accessing database at specified path. */
+std::unique_ptr<BerkeleyDatabase> CreateWalletDatabase(const fs::path& path);
+
+/** Return object for accessing dummy database with no read/write capabilities. */
+std::unique_ptr<BerkeleyDatabase> CreateDummyWalletDatabase();
+
+/** Return object for accessing temporary in-memory database. */
+std::unique_ptr<BerkeleyDatabase> CreateMockWalletDatabase();
 
 #endif // BITCOIN_WALLET_WALLETDB_H

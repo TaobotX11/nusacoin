@@ -321,10 +321,6 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Penyiaran Transaksi berhasil! ID Transaksi: %1</translation>
     </message>
     <message>
-        <source>Transaction broadcast successfully! Transaction ID: %1</source>
-        <translation>Penyiaran Transaksi berhasil! ID Transaksi: %1</translation>
-    </message>
-    <message>
         <source>Unknown error processing transaction.</source>
         <translation>Kesalahan tidak diketahui dalam memproses transaksi</translation>
     </message>
