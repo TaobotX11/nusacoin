@@ -128,13 +128,6 @@ bool RemoveWallet(const std::shared_ptr<CWallet>& wallet, Optional<bool> load_on
     return RemoveWallet(wallet, load_on_start, warnings);
 }
 
-
-bool HasWallets()
-{
-    LOCK(cs_wallets);
-    return !vpwallets.empty();
-}
-
 std::vector<std::shared_ptr<CWallet>> GetWallets()
 {
     LOCK(cs_wallets);
