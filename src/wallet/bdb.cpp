@@ -325,7 +325,7 @@ void BerkeleyEnvironment::CheckpointLSN(const std::string& strFile)
 }
 
 
-BerkeleyBatch::BerkeleyBatch(BerkeleyDatabase& database, const char* pszMode, bool fFlushOnCloseIn) : pdb(nullptr), activeTxn(nullptr)
+BerkeleyBatch::BerkeleyBatch(BerkeleyDatabase& database, const char* pszMode, bool fFlushOnCloseIn) : pdb(nullptr), activeTxn(nullptr), m_cursor(nullptr)
 {
     fReadOnly = (!strchr(pszMode, '+') && !strchr(pszMode, 'w'));
     fFlushOnClose = fFlushOnCloseIn;
@@ -432,6 +432,7 @@ void BerkeleyBatch::Close()
         activeTxn->abort();
     activeTxn = nullptr;
     pdb = nullptr;
+    CloseCursor();
 
     if (fFlushOnClose)
         Flush();
@@ -517,17 +518,15 @@ bool BerkeleyDatabase::Rewrite(const char* pszSkip)
                         fSuccess = false;
                     }
 
-                    Dbc* pcursor = db.GetCursor();
-                    if (pcursor)
+                    if (db.StartCursor()) {
                         while (fSuccess) {
                             CDataStream ssKey(SER_DISK, CLIENT_VERSION);
                             CDataStream ssValue(SER_DISK, CLIENT_VERSION);
-                            int ret1 = db.ReadAtCursor(pcursor, ssKey, ssValue);
-                            if (ret1 == DB_NOTFOUND) {
-                                pcursor->close();
+                            bool complete;
+                            bool ret1 = db.ReadAtCursor(ssKey, ssValue, complete);
+                            if (complete) {
                                 break;
-                            } else if (ret1 != 0) {
-                                pcursor->close();
+                            } else if (!ret1) {
                                 fSuccess = false;
                                 break;
                             }
@@ -545,6 +544,8 @@ bool BerkeleyDatabase::Rewrite(const char* pszSkip)
                             if (ret2 > 0)
                                 fSuccess = false;
                         }
+                        db.CloseCursor();
+                    }
                     if (fSuccess) {
                         db.Close();
                         env->CloseDb(strFile);
@@ -711,27 +712,30 @@ void BerkeleyDatabase::ReloadDbEnv()
     }
 }
 
-Dbc* BerkeleyBatch::GetCursor()
+bool BerkeleyBatch::StartCursor()
 {
+    assert(!m_cursor);
     if (!pdb)
-        return nullptr;
-    Dbc* pcursor = nullptr;
-    int ret = pdb->cursor(nullptr, &pcursor, 0);
-    if (ret != 0)
-        return nullptr;
-    return pcursor;
+        return false;
+    int ret = pdb->cursor(nullptr, &m_cursor, 0);
+    return ret == 0;
 }
 
-int BerkeleyBatch::ReadAtCursor(Dbc* pcursor, CDataStream& ssKey, CDataStream& ssValue)
+bool BerkeleyBatch::ReadAtCursor(CDataStream& ssKey, CDataStream& ssValue, bool& complete)
 {
+    complete = false;
+    if (m_cursor == nullptr) return false;
     // Read at cursor
     SafeDbt datKey;
     SafeDbt datValue;
-    int ret = pcursor->get(datKey, datValue, DB_NEXT);
+    int ret = m_cursor->get(datKey, datValue, DB_NEXT);
+    if (ret == DB_NOTFOUND) {
+        complete = true;
+    }
     if (ret != 0)
-        return ret;
+        return false;
     else if (datKey.get_data() == nullptr || datValue.get_data() == nullptr)
-        return 99999;
+        return false;
 
     // Convert to streams
     ssKey.SetType(SER_DISK);
@@ -740,7 +744,14 @@ int BerkeleyBatch::ReadAtCursor(Dbc* pcursor, CDataStream& ssKey, CDataStream& s
     ssValue.SetType(SER_DISK);
     ssValue.clear();
     ssValue.write((char*)datValue.get_data(), datValue.get_size());
-    return 0;
+    return true;
+}
+
+void BerkeleyBatch::CloseCursor()
+{
+    if (!m_cursor) return;
+    m_cursor->close();
+    m_cursor = nullptr;
 }
 
 bool BerkeleyBatch::TxnBegin()
