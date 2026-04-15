@@ -52,18 +52,6 @@ bool WalletDatabaseFileId::operator==(const WalletDatabaseFileId& rhs) const
     return memcmp(value, &rhs.value, sizeof(value)) == 0;
 }
 
-bool IsBDBWalletLoaded(const fs::path& wallet_path)
-{
-    fs::path env_directory;
-    std::string database_filename;
-    SplitWalletPath(wallet_path, env_directory, database_filename);
-    LOCK(cs_db);
-    auto env = g_dbenvs.find(env_directory.string());
-    if (env == g_dbenvs.end()) return false;
-    auto database = env->second.lock();
-    return database && database->IsDatabaseLoaded(database_filename);
-}
-
 /**
  * @param[in] wallet_path Path to wallet directory. Or (for backwards compatibility only) a path to a berkeley btree data file inside a wallet directory.
  * @param[out] database_filename Filename of berkeley btree data file inside the wallet directory.
@@ -138,7 +126,7 @@ BerkeleyEnvironment::~BerkeleyEnvironment()
     Close();
 }
 
-bool BerkeleyEnvironment::Open(bool retry)
+bool BerkeleyEnvironment::Open(bilingual_str& err)
 {
     if (fDbEnvInit) {
         return true;
@@ -148,6 +136,7 @@ bool BerkeleyEnvironment::Open(bool retry)
     TryCreateDirectories(pathIn);
     if (!LockDirectory(pathIn, ".walletlock")) {
         LogPrintf("Cannot obtain a lock on wallet directory %s. Another instance of nusacoin may be using it.\n", strPath);
+        err = strprintf(_("Error initializing wallet database environment %s!"), Directory());
         return false;
     }
 
@@ -187,23 +176,11 @@ bool BerkeleyEnvironment::Open(bool retry)
             LogPrintf("BerkeleyEnvironment::Open: Error %d closing failed database environment: %s\n", ret2, DbEnv::strerror(ret2));
         }
         Reset();
-        if (retry) {
-            // try moving the database env out of the way
-            fs::path pathDatabaseBak = pathIn / strprintf("database.%d.bak", GetTime());
-            try {
-                fs::rename(pathLogDir, pathDatabaseBak);
-                LogPrintf("Moved old %s to %s. Retrying.\n", pathLogDir.string(), pathDatabaseBak.string());
-            } catch (const fs::filesystem_error&) {
-                // failure is ok (well, not really, but it's not worse than what we started with)
-            }
-            // try opening it again one more time
-            if (!Open(false /* retry */)) {
-                // if it still fails, it probably means we can't even create the database env
-                return false;
-            }
-        } else {
-            return false;
+        err = strprintf(_("Error initializing wallet database environment %s!"), Directory());
+        if (ret == DB_RUNRECOVERY) {
+            err += Untranslated(" ") + _("This error could occur if this wallet was not shutdown cleanly and was last loaded using a build with a newer version of Berkeley DB. If so, please use the software that last loaded this wallet");
         }
+        return false;
     }
 
     fDbEnvInit = true;
@@ -289,8 +266,7 @@ bool BerkeleyDatabase::Verify(bilingual_str& errorStr)
     LogPrintf("Using BerkeleyDB version %s\n", BerkeleyDatabaseVersion());
     LogPrintf("Using wallet %s\n", file_path.string());
 
-    if (!env->Open(true /* retry */)) {
-        errorStr = strprintf(_("Error initializing wallet database environment %s!"), walletDir);
+    if (!env->Open(errorStr)) {
         return false;
     }
 
@@ -301,7 +277,7 @@ bool BerkeleyDatabase::Verify(bilingual_str& errorStr)
         Db db(env->dbenv.get(), 0);
         int result = db.verify(strFile.c_str(), nullptr, nullptr, 0);
         if (result != 0) {
-            errorStr = strprintf(_("%s corrupt. Try using the wallet tool bitcoin-wallet to salvage or restoring a backup."), file_path);
+            errorStr = strprintf(_("%s corrupt. Try using the wallet tool nusacoin-wallet to salvage or restoring a backup."), file_path);
             return false;
         }
     }
@@ -357,7 +333,8 @@ void BerkeleyDatabase::Open(const char* pszMode)
 
     {
         LOCK(cs_db);
-        if (!env->Open(false /* retry */))
+        bilingual_str open_err;
+        if (!env->Open(open_err))
             throw std::runtime_error("BerkeleyDatabase: Failed to open database environment.");
 
         if (m_db == nullptr) {
@@ -383,7 +360,6 @@ void BerkeleyDatabase::Open(const char* pszMode)
             if (ret != 0) {
                 throw std::runtime_error(strprintf("BerkeleyDatabase: Error %d, can't open database %s", ret, strFile));
             }
-            m_file_path = (env->Directory() / strFile).string();
 
             // Call CheckUniqueFileid on the containing BDB environment to
             // avoid BDB data consistency bugs that happen when different data
@@ -474,7 +450,8 @@ void BerkeleyEnvironment::ReloadDbEnv()
     // Reset the environment
     Flush(true); // This will flush and close the environment
     Reset();
-    Open(true);
+    bilingual_str open_err;
+    Open(open_err);
 }
 
 bool BerkeleyDatabase::Rewrite(const char* pszSkip)
@@ -836,4 +813,36 @@ void BerkeleyDatabase::RemoveRef()
 std::unique_ptr<DatabaseBatch> BerkeleyDatabase::MakeBatch(const char* mode, bool flush_on_close)
 {
     return MakeUnique<BerkeleyBatch>(*this, mode, flush_on_close);
+}
+
+bool ExistsBerkeleyDatabase(const fs::path& path)
+{
+    fs::path env_directory;
+    std::string data_filename;
+    SplitWalletPath(path, env_directory, data_filename);
+    return IsBerkeleyBtree(env_directory / data_filename);
+}
+
+std::unique_ptr<BerkeleyDatabase> MakeBerkeleyDatabase(const fs::path& path, const DatabaseOptions& options, DatabaseStatus& status, bilingual_str& error)
+{
+    std::unique_ptr<BerkeleyDatabase> db;
+    {
+        LOCK(cs_db); // Lock env.m_databases until insert in BerkeleyDatabase constructor
+        std::string data_filename;
+        std::shared_ptr<BerkeleyEnvironment> env = GetWalletEnv(path, data_filename);
+        if (env->m_databases.count(data_filename)) {
+            error = Untranslated(strprintf("Refusing to load database. Data file '%s' is already loaded.", (env->Directory() / data_filename).string()));
+            status = DatabaseStatus::FAILED_ALREADY_LOADED;
+            return nullptr;
+        }
+        db = MakeUnique<BerkeleyDatabase>(std::move(env), std::move(data_filename));
+    }
+
+    if (options.verify && !db->Verify(error)) {
+        status = DatabaseStatus::FAILED_VERIFY;
+        return nullptr;
+    }
+
+    status = DatabaseStatus::SUCCESS;
+    return db;
 }
