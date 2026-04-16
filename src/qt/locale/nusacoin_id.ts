@@ -942,6 +942,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Nama Dompet</translation>
     </message>
     <message>
+        <source>Wallet</source>
+        <translation>Dompet</translation>
+    </message>
+    <message>
+        <source>Advanced Options</source>
+        <translation>Opsi Lanjutan</translation>
+    </message>
+    <message>
         <source>Encrypt the wallet. The wallet will be encrypted with a passphrase of your choice.</source>
         <translation>Enkripsi dompet. Dompet akan dienkripsi dengan sandi frasa pilihan Anda.</translation>
     </message>
