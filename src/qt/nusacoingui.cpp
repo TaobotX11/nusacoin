@@ -666,6 +666,11 @@ void NusacoinGUI::setWalletController(WalletController* wallet_controller)
     }
 }
 
+WalletController* NusacoinGUI::getWalletController()
+{
+    return m_wallet_controller;
+}
+
 void NusacoinGUI::addWallet(WalletModel* walletModel)
 {
     if (!walletFrame) return;

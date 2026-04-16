@@ -3561,8 +3561,16 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
 <context>
     <name>WalletFrame</name>
     <message>
-        <source>No wallet has been loaded.</source>
-        <translation>Tidak ada dompet yang dimuat.</translation>
+        <source>No wallet has been loaded.
+Go to File &gt; Open Wallet to load a wallet.
+- OR -</source>
+        <translation>Tidak ada dompet yang dimuat.
+Klik Berkas &gt; Buka Dompet untuk memuat dompet.
+- ATAU -</translation>
+    </message>
+    <message>
+        <source>Create a new wallet</source>
+        <translation>Buat dompet baru</translation>
     </message>
 </context>
 <context>
@@ -3797,6 +3805,14 @@ Kunjungi %s untuk informasi lebih lanjut tentang komunitas.</translation>
     <message>
         <source>Error</source>
         <translation>Gagal</translation>
+    </message>
+    <message>
+        <source>Loading P2P addresses...</source>
+        <translation>Memuat Alamat P2P...</translation>
+    </message>
+    <message>
+        <source>Starting network threads...</source>
+        <translation>Memulai rangkaian jaringan ...</translation>
     </message>
 </context>
 </TS>
