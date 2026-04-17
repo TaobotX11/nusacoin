@@ -19,7 +19,7 @@ Then install [Homebrew](https://brew.sh).
 
 ## Dependencies
 ```shell
-brew install automake berkeley-db4 libtool boost miniupnpc pkg-config python qt libevent qrencode
+brew install automake berkeley-db4 libtool boost miniupnpc pkg-config python qt libevent qrencode sqlite
 ```
 
 See [dependencies.md](dependencies.md) for a complete overview.
@@ -78,7 +78,7 @@ compiled in `disable-wallet` mode with:
 ./configure --disable-wallet
 ```
 
-In this case there is no dependency on Berkeley DB 4.8.
+In this case there is no dependency on Berkeley DB 4.8 and SQLite.
 
 Mining is also possible in disable-wallet mode using the `getblocktemplate` RPC call.
 

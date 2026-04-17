@@ -74,6 +74,10 @@ The following can be set when running make: make FOO=bar
     NO_QT: Don't download/build/cache qt and its dependencies
     NO_ZMQ: Don't download/build/cache packages needed for enabling zeromq
     NO_WALLET: Don't download/build/cache libs needed to enable the wallet
+    <dt>NO_BDB</dt>
+    <dd>Don't download/build/cache BerkeleyDB</dd>
+    <dt>NO_SQLITE</dt>
+    <dd>Don't download/build/cache SQLite</dd>
     NO_UPNP: Don't download/build/cache packages needed for enabling upnp
     DEBUG: disable some optimizations and enable more runtime checking
     RAPIDCHECK: build rapidcheck (experimental, requires cmake)

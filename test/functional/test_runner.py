@@ -78,6 +78,7 @@ BASE_SCRIPTS = [
     # Longest test should go first, to favor running tests in parallel
     'wallet_hd.py',
     'wallet_backup.py',
+    'wallet_backup.py --descriptors',
     # vv Tests less than 5m vv
     'mining_getblocktemplate_longpoll.py',
     'feature_maxuploadtarget.py',
@@ -125,6 +126,7 @@ BASE_SCRIPTS = [
     'mempool_reorg.py',
     'mempool_persist.py',
     'wallet_multiwallet.py',
+    'wallet_multiwallet.py --descriptors',
     'wallet_multiwallet.py --usecli',
     'wallet_createwallet.py',
     'wallet_createwallet.py --usecli',
