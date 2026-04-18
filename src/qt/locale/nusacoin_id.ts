@@ -298,7 +298,7 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>(But this wallet cannot sign transactions.)</source>
-        <translation>(Dompet ini tak dapat menandatangani transaksi)</translation>
+        <translation>(Dompet ini tak dapat menandatangani.)</translation>
     </message>
     <message>
         <source>(But this wallet does not have the right keys.)</source>
@@ -2342,6 +2342,26 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>Generates a native segwit address (BIP-173). Some old wallets don&apos;t support it.</source>
         <translation>Menghasilkan alamat segwit(BIP-173). Beberapa dompet lama tidak mendukungnya.</translation>
+    </message>
+    <message>
+        <source>Remove Request</source>
+        <translation>Hapus Permintaan</translation>
+    </message>
+    <message>
+        <source>Deleting this will not result in any loss of funds you have received.</source>
+        <translation>Menghapus ini tidak akan mengakibatkan hilangnya dana yang pernah Anda terima.</translation>
+    </message>
+    <message>
+        <source>Are you sure you wish to remove the request &lt;i&gt;%1&lt;/i&gt;?</source>
+        <translation>Apakah Anda yakin ingin menghapus permintaan &lt;i&gt;%1&lt;/i&gt;?</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Batal</translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>&amp;Ya</translation>
     </message>
 </context>
 <context>

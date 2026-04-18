@@ -234,6 +234,25 @@ void ReceiveCoinsDialog::on_removeRequestButton_clicked()
     QModelIndexList selection = ui->recentRequestsView->selectionModel()->selectedRows();
     if(selection.empty())
         return;
+
+    const QModelIndex sel = selectedRow();
+    if (!sel.isValid()) {
+        return;
+    }
+
+    const RecentRequestsTableModel* const submodel = model->getRecentRequestsTableModel();
+    const QString address = submodel->entry(sel.row()).recipient.address;
+
+    QMessageBox box(this);
+    box.setWindowTitle(tr("Remove Request"));
+    box.setText(tr("Are you sure you wish to remove the request <i>%1</i>?").arg(address));
+    box.setInformativeText(tr("Deleting this will not result in any loss of funds you have received."));
+    box.setStandardButtons(QMessageBox::Yes|QMessageBox::Cancel);
+    box.setDefaultButton(QMessageBox::Yes);
+    box.button(QMessageBox::Yes)->setText(tr("&Yes"));
+    box.button(QMessageBox::Cancel)->setText(tr("&Cancel"));
+    if (box.exec() != QMessageBox::Yes) return;
+
     // correct for selection mode ContiguousSelection
     QModelIndex firstIndex = selection.at(0);
     model->getRecentRequestsTableModel()->removeRows(firstIndex.row(), selection.length(), firstIndex.parent());
