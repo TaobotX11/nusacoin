@@ -92,10 +92,10 @@ class WalletBackupTest(NusacoinTestFramework):
         self.sync_blocks()
 
     # As above, this mirrors the original bash test.
-    def start_three(self):
-        self.start_node(0)
-        self.start_node(1)
-        self.start_node(2)
+    def start_three(self, args=()):
+        self.start_node(0, self.extra_args[0] + list(args))
+        self.start_node(1, self.extra_args[1] + list(args))
+        self.start_node(2, self.extra_args[2] + list(args))
         connect_nodes(self.nodes[0], 3)
         connect_nodes(self.nodes[1], 3)
         connect_nodes(self.nodes[2], 3)
@@ -110,6 +110,11 @@ class WalletBackupTest(NusacoinTestFramework):
         os.remove(os.path.join(self.nodes[0].datadir, 'regtest', 'wallets', 'wallet.dat'))
         os.remove(os.path.join(self.nodes[1].datadir, 'regtest', 'wallets', 'wallet.dat'))
         os.remove(os.path.join(self.nodes[2].datadir, 'regtest', 'wallets', 'wallet.dat'))
+
+    def init_three(self):
+        self.init_wallet(0)
+        self.init_wallet(1)
+        self.init_wallet(2)
 
     def run_test(self):
         self.log.info("Generating initial blockchain")
@@ -148,6 +153,9 @@ class WalletBackupTest(NusacoinTestFramework):
         # Generate 101 more blocks, so any fees paid mature
         self.nodes[3].generate(101)
         self.sync_all()
+
+        self.start_three(["-nowallet"])
+            self.init_three()
 
         balance0 = self.nodes[0].getbalance()
         balance1 = self.nodes[1].getbalance()
