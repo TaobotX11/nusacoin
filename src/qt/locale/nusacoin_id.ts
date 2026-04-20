@@ -2232,6 +2232,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <source>To specify a non-default location of the blocks directory use the &apos;%1&apos; option.</source>
         <translation>Untuk menentukan lokasi non-default dari direktori blok, gunakan opsi &apos;%1&apos;.</translation>
     </message>
+    <message>
+        <source>Executing command without any wallet</source>
+        <translation>Eksekusi perintah tanpa dompet</translation>
+    </message>
+    <message>
+        <source>Executing command using \"%1\" wallet</source>
+        <translation>Eksekusi perintah menggunakan dompet \"%1\"</translation>
+    </message>
 </context>
 <context>
     <name>ReceiveCoinsDialog</name>
