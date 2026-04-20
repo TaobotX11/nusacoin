@@ -430,7 +430,7 @@ void SendCoinsDialog::on_sendButton_clicked()
             std::ofstream out(filename.toLocal8Bit().data());
             out << ssTx.str();
             out.close();
-            Q_EMIT message(tr("PSBT saved"), "PSBT saved to disk", CClientUIInterface::MSG_INFORMATION);
+            Q_EMIT message(tr("PSBT saved"), tr("PSBT saved to disk"), CClientUIInterface::MSG_INFORMATION);
             break;
         }
         case QMessageBox::Discard:

@@ -2590,6 +2590,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Transaksi yang Belum Ditandatangani</translation>
     </message>
     <message>
+        <source>PSBT saved to disk</source>
+        <translation>PSBT berhasil disimpan pada media</translation>
+    </message>
+    <message>
+        <source>PSBT saved</source>
+        <translation>PSBT tersimpan</translation>
+    </message>
+    <message>
         <source>The PSBT has been copied to the clipboard. You can also save it.</source>
         <translation>PSBT telah disalin ke papanklip. Anda juga dapat menyimpannya.</translation>
     </message>
