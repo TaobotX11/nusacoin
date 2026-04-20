@@ -438,6 +438,23 @@ uint32_t CNetAddr::GetNetClass() const {
     return net_class;
 }
 
+Network CNetAddr::GetNetClassTemp() const {
+    Network net_class = NET_IPV6;
+    if (IsLocal()) {
+        net_class = NET_INTERNAL;
+    }
+    if (IsInternal()) {
+        net_class = NET_INTERNAL;
+    } else if (!IsRoutable()) {
+        net_class = NET_UNROUTABLE;
+     } else if (HasLinkedIPv4()) {
+        net_class = NET_IPV4;
+    } else if (IsTor()) {
+        net_class = NET_ONION;
+    }
+    return net_class;
+}
+
 uint32_t CNetAddr::GetMappedAS(const std::vector<bool> &asmap) const {
     uint32_t net_class = GetNetClass();
     if (asmap.size() == 0 || (net_class != NET_IPV4 && net_class != NET_IPV6)) {

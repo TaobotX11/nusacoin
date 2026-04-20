@@ -160,6 +160,7 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)
             obj.pushKV("addrlocal", stats.addrLocal);
         if (stats.addrBind.IsValid())
             obj.pushKV("addrbind", stats.addrBind.ToString());
+        obj.pushKV("network", GetNetworkName(stats.m_network));
         if (stats.m_mapped_as != 0) {
             obj.pushKV("mapped_as", uint64_t(stats.m_mapped_as));
         }

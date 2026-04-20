@@ -600,6 +600,8 @@ public:
     CAddress addr;
     // Bind address of our side of the connection
     CAddress addrBind;
+     // Name of the network the peer connected through
+    Network m_network;
     uint32_t m_mapped_as;
 };
 
@@ -733,6 +735,8 @@ public:
     const CAddress addr;
     // Bind address of our side of the connection
     const CAddress addrBind;
+    // Network the peer connected through
+    Network m_network;
     std::atomic<int> nVersion{0};
     RecursiveMutex cs_SubVer;
     /**
@@ -763,6 +767,18 @@ public:
     const uint64_t nKeyedNetGroup;
     std::atomic_bool fPauseRecv{false};
     std::atomic_bool fPauseSend{false};
+
+    /**
+     * Get network the peer connected through.
+     *
+     * Returns Network::NET_ONION for *inbound* onion connections,
+     * and CNetAddr::GetNetClass() otherwise. The latter cannot be used directly
+     * because it doesn't detect the former, and it's not the responsibility of
+     * the CNetAddr class to know the actual network a peer is connected through.
+     *
+     * @return network the peer connected through.
+     */
+    Network ConnectedThroughNetwork() const;
 
 protected:
     mapMsgCmdSize mapSendBytesPerMsgCmd;
@@ -875,6 +891,9 @@ private:
     // Our address, as reported by the peer
     CService addrLocal GUARDED_BY(cs_addrLocal);
     mutable RecursiveMutex cs_addrLocal;
+
+    //! Whether this peer connected via our Tor onion service.
+    const bool m_inbound_onion{false};
 public:
 
     NodeId GetId() const {

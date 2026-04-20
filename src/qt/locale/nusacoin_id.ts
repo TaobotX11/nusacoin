@@ -1768,7 +1768,11 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Alamat</translation>
     </message>
     <message>
-        <source>NodeId</source>
+        <source>Network</source>
+        <translation>Jaringan</translation>
+    </message>
+    <message>
+        <source>Peer Id</source>
         <translation>Id Peer</translation>
     </message>
     <message>
