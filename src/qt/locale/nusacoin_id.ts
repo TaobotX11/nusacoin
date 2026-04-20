@@ -1327,12 +1327,12 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Menggunakan proxy SOCKS5 tersendiri untuk berhubungan dengan orang lain melalui layanan Tor:</translation>
     </message>
     <message>
-        <source>Hide the icon from the system tray.</source>
-        <translation>Sembunyikan ikon dari system tray.</translation>
+        <source>Show the icon in the system tray.</source>
+        <translation>Tampilkan ikon dari system tray.</translation>
     </message>
     <message>
-        <source>&amp;Hide tray icon</source>
-        <translation>&amp;Sembunyikan ikon tray</translation>
+        <source>&amp;Show tray icon</source>
+        <translation>&amp;Tampilkan ikon tray</translation>
     </message>
     <message>
         <source>Minimize instead of exit the application when the window is closed. When this option is enabled, the application will be closed only after selecting Exit in the menu.</source>
