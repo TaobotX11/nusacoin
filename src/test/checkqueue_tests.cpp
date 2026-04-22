@@ -25,7 +25,7 @@ static const unsigned int QUEUE_BATCH_SIZE = 128;
 static const int SCRIPT_CHECK_THREADS = 3;
 
 struct FakeCheck {
-    bool operator()()
+    bool operator()() const
     {
         return true;
     }
@@ -34,7 +34,7 @@ struct FakeCheck {
 
 struct FakeCheckCheckCompletion {
     static std::atomic<size_t> n_calls;
-    bool operator()()
+    bool operator()() const
     {
         n_calls.fetch_add(1, std::memory_order_relaxed);
         return true;
@@ -46,7 +46,7 @@ struct FailingCheck {
     bool fails;
     FailingCheck(bool _fails) : fails(_fails){};
     FailingCheck() : fails(true){};
-    bool operator()()
+    bool operator()() const
     {
         return !fails;
     }
@@ -62,7 +62,7 @@ struct UniqueCheck {
     size_t check_id;
     UniqueCheck(size_t check_id_in) : check_id(check_id_in){};
     UniqueCheck() : check_id(0){};
-    bool operator()()
+    bool operator()() const
     {
         std::lock_guard<std::mutex> l(m);
         results.insert(check_id);

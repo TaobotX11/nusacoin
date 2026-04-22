@@ -594,7 +594,7 @@ void CWallet::AddToSpends(const uint256& wtxid, WalletBatch* batch)
 {
     auto it = mapWallet.find(wtxid);
     assert(it != mapWallet.end());
-    CWalletTx& thisTx = it->second;
+    const CWalletTx& thisTx = it->second;
     if (thisTx.IsCoinBase()) // Coinbases don't spend anything!
         return;
 
@@ -1078,7 +1078,7 @@ bool CWallet::AbandonTransaction(const uint256& hashTx)
     // Can't mark abandoned if confirmed or in mempool
     auto it = mapWallet.find(hashTx);
     assert(it != mapWallet.end());
-    CWalletTx& origtx = it->second;
+    const CWalletTx& origtx = it->second;
     if (origtx.GetDepthInMainChain() != 0 || origtx.InMempool()) {
         return false;
     }
@@ -2748,11 +2748,11 @@ static uint32_t GetLocktimeForNewTransaction(interfaces::Chain& chain, const uin
     return locktime;
 }
 
-OutputType CWallet::TransactionChangeType(OutputType change_type, const std::vector<CRecipient>& vecSend)
+OutputType CWallet::TransactionChangeType(const Optional<OutputType>& change_type, const std::vector<CRecipient>& vecSend) const
 {
     // If -changetype is specified, always use that change type.
-    if (change_type != OutputType::CHANGE_AUTO) {
-        return change_type;
+    if (change_type) {
+        return *change_type;
     }
 
     // if m_default_address_type is legacy, use legacy address as change (even
@@ -3878,14 +3878,20 @@ std::shared_ptr<CWallet> CWallet::Create(interfaces::Chain& chain, const std::st
         }
     }
 
-    if (!gArgs.GetArg("-addresstype", "").empty() && !ParseOutputType(gArgs.GetArg("-addresstype", ""), walletInstance->m_default_address_type)) {
-        error = strprintf(_("Unknown address type '%s'"), gArgs.GetArg("-addresstype", ""));
-        return nullptr;
+    if (!gArgs.GetArg("-addresstype", "").empty()) {
+        if (!ParseOutputType(gArgs.GetArg("-addresstype", ""), walletInstance->m_default_address_type)) {
+            error = strprintf(_("Unknown address type '%s'"), gArgs.GetArg("-addresstype", ""));
+            return nullptr;
+        }
     }
 
-    if (!gArgs.GetArg("-changetype", "").empty() && !ParseOutputType(gArgs.GetArg("-changetype", ""), walletInstance->m_default_change_type)) {
-        error = strprintf(_("Unknown change type '%s'"), gArgs.GetArg("-changetype", ""));
-        return nullptr;
+    if (!gArgs.GetArg("-changetype", "").empty()) {
+        OutputType out_type;
+        if (!ParseOutputType(gArgs.GetArg("-changetype", ""), out_type)) {
+            error = strprintf(_("Unknown change type '%s'"), gArgs.GetArg("-changetype", ""));
+            return nullptr;
+        }
+        walletInstance->m_default_change_type = out_type;
     }
 
     if (gArgs.IsArgSet("-mintxfee")) {
