@@ -889,9 +889,6 @@ CChainState& ChainstateActive();
 /** @returns the most-work chain. */
 CChain& ChainActive();
 
-/** @returns the global block index map. */
-BlockMap& BlockIndex();
-
 /** Global variable that points to the active block tree (protected by cs_main) */
 extern std::unique_ptr<CBlockTreeDB> pblocktree;
 

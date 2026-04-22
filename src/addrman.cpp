@@ -7,6 +7,8 @@
 
 #include <hash.h>
 #include <serialize.h>
+
+#include <cmath>
 #include <logging.h>
 
 int CAddrInfo::GetTriedBucket(const uint256& nKey, const std::vector<bool> &asmap) const

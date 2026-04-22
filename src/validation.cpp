@@ -1286,12 +1286,6 @@ bool CChainState::IsInitialBlockDownload() const
 
 static CBlockIndex *pindexBestForkTip = nullptr, *pindexBestForkBase = nullptr;
 
-BlockMap& BlockIndex()
-{
-    LOCK(::cs_main);
-    return g_chainman.m_blockman.m_block_index;
-}
-
 static void AlertNotify(const std::string& strMessage)
 {
     uiInterface.NotifyAlertChanged();

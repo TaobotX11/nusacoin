@@ -66,6 +66,8 @@
 #include <set>
 #include <stdint.h>
 #include <stdio.h>
+#include <thread>
+#include <vector>
 
 #ifndef WIN32
 #include <attributes.h>
@@ -76,7 +78,6 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/signals2/signal.hpp>
-#include <boost/thread/thread.hpp>
 
 #if ENABLE_ZMQ
 #include <zmq/zmqabstractnotifier.h>
@@ -157,8 +158,6 @@ static std::unique_ptr<ECCVerifyHandle> globalVerifyHandle;
 
 static std::thread g_load_block;
 
-static boost::thread_group threadGroup;
-
 void Interrupt(NodeContext& node)
 {
     InterruptHTTPServer();
@@ -220,11 +219,9 @@ void Shutdown(NodeContext& node)
     StopTorControl();
 
     // After everything has been shut down, but before things get flushed, stop the
-    // CScheduler/checkqueue, threadGroup and load block thread.
+    // CScheduler/checkqueue, scheduler and load block thread.
     if (node.scheduler) node.scheduler->stop();
     if (g_load_block.joinable()) g_load_block.join();
-    threadGroup.interrupt_all();
-    threadGroup.join_all();
     StopScriptCheckWorkerThreads();
 
     // After the threads that potentially access these pointers have been stopped,
@@ -1330,9 +1327,7 @@ bool AppInitMain(const util::Ref& context, NodeContext& node, interfaces::BlockA
 
 
     // Start the lightweight task scheduler thread
-    CScheduler::Function serviceLoop = [&node]{ node.scheduler->serviceQueue(); };
-
-    threadGroup.create_thread(std::bind(&TraceThread<CScheduler::Function>, "scheduler", serviceLoop));
+    node.scheduler->m_service_thread = std::thread([&] { TraceThread("scheduler", [&] { node.scheduler->serviceQueue(); }); });
 
     // Gather some entropy once per minute.
     node.scheduler->scheduleEvery([]{
@@ -1576,7 +1571,7 @@ bool AppInitMain(const util::Ref& context, NodeContext& node, interfaces::BlockA
 
                 // If the loaded chain has a wrong genesis, bail out immediately
                 // (we're likely using a testnet datadir, or the other way around).
-                if (!::BlockIndex().empty() &&
+                if (!chainman.BlockIndex().empty() &&
                         !LookupBlockIndex(chainparams.GetConsensus().hashGenesisBlock)) {
                     return InitError(_("Incorrect or no genesis block found. Wrong datadir for network?"));
                 }
@@ -1865,8 +1860,8 @@ bool AppInitMain(const util::Ref& context, NodeContext& node, interfaces::BlockA
     //// debug print
     {
         LOCK(cs_main);
-        LogPrintf("block tree size = %u\n", ::BlockIndex().size());
-        chain_active_height = ::ChainActive().Height();
+        LogPrintf("block tree size = %u\n", chainman.BlockIndex().size());
+        chain_active_height = chainman.ActiveChain().Height();
         if (tip_info) {
             tip_info->block_height = chain_active_height;
             tip_info->block_time = chainman.ActiveChain().Tip() ? chainman.ActiveChain().Tip()->GetBlockTime() : Params().GenesisBlock().GetBlockTime();
