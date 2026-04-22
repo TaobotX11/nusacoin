@@ -5,13 +5,12 @@
 #include <bench/bench.h>
 #include <util/system.h>
 #include <checkqueue.h>
+#include <key.h>
 #include <prevector.h>
+#include <pubkey.h>
 #include <vector>
-#include <boost/thread/thread.hpp>
 #include <random.h>
 
-
-static const int MIN_CORES = 2;
 static const size_t BATCHES = 101;
 static const size_t BATCH_SIZE = 30;
 static const int PREVECTOR_SIZE = 28;
@@ -22,6 +21,12 @@ static const unsigned int QUEUE_BATCH_SIZE = 128;
 // and there is a little bit of work done between calls to Add.
 static void CCheckQueueSpeedPrevectorJob(benchmark::State& state)
 {
+    // We shouldn't ever be running with the checkqueue on a single core machine.
+    if (GetNumCores() <= 1) return;
+
+    const ECCVerifyHandle verify_handle;
+    ECC_Start();
+
     struct PrevectorJob {
         prevector<PREVECTOR_SIZE, uint8_t> p;
         PrevectorJob(){
@@ -36,10 +41,9 @@ static void CCheckQueueSpeedPrevectorJob(benchmark::State& state)
         void swap(PrevectorJob& x){p.swap(x.p);};
     };
     CCheckQueue<PrevectorJob> queue {QUEUE_BATCH_SIZE};
-    boost::thread_group tg;
-    for (auto x = 0; x < std::max(MIN_CORES, GetNumCores()); ++x) {
-       tg.create_thread([&]{queue.Thread();});
-    }
+    // The main thread should be counted to prevent thread oversubscription, and
+    // to decrease the variance of benchmark results.
+    queue.StartWorkerThreads(GetNumCores() - 1);
     while (state.KeepRunning()) {
         // Make insecure_rand here so that each iteration is identical.
         FastRandomContext insecure_rand(true);
@@ -55,7 +59,8 @@ static void CCheckQueueSpeedPrevectorJob(benchmark::State& state)
         // it is done explicitly here for clarity
         control.Wait();
     }
-    tg.interrupt_all();
-    tg.join_all();
+    queue.StopWorkerThreads();
+    
+    ECC_Stop();
 }
 BENCHMARK(CCheckQueueSpeedPrevectorJob, 1400);
