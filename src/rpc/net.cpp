@@ -113,7 +113,6 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)
                             {RPCResult::Type::BOOL, "bip152_hb_from", "Whether peer selected us as (compact blocks) high-bandwidth peer"},
                             {RPCResult::Type::BOOL, "addnode", "Whether connection was due to addnode/-connect or if it was an automatic/inbound connection\n"
                                                                "(DEPRECATED, returned only if the config option -deprecatedrpc=getpeerinfo_addnode is passed)"},
-                            {RPCResult::Type::STR, "connection_type", "Type of connection: \n" + Join(CONNECTION_TYPE_DOC, ",\n") + "."},
                             {RPCResult::Type::NUM, "startingheight", "The starting height (block) of the peer"},
                             {RPCResult::Type::NUM, "banscore", "The ban score"},
                             {RPCResult::Type::NUM, "synced_headers", "The last header we have in common with this peer"},
@@ -136,6 +135,9 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)
                                                               "When a message type is not listed in this json object, the bytes received are 0.\n"
                                                               "Only known message types can appear as keys in the object and all bytes received of unknown message types are listed under '"+NET_MESSAGE_COMMAND_OTHER+"'."}
                             }},
+                            {RPCResult::Type::STR, "connection_type", "Type of connection: \n" + Join(CONNECTION_TYPE_DOC, ",\n") + ".\n"
+                                                                      "Please note this output is unlikely to be stable in upcoming releases as we iterate to\n"
+                                                                      "best capture connection behaviors."},
                         }},
                     }},
                 },
@@ -232,7 +234,7 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)
                 recvPerMsgCmd.pushKV(i.first, i.second);
         }
         obj.pushKV("bytesrecv_per_msg", recvPerMsgCmd);
-        obj.pushKV("connection_type", stats.m_conn_type_string);
+        obj.pushKV("connection_type", ConnectionTypeAsString(stats.m_conn_type));
 
         ret.push_back(obj);
     }

@@ -174,6 +174,9 @@ enum class ConnectionType {
     ADDR_FETCH,
 };
 
+/** Convert ConnectionType enum to a string value */
+std::string ConnectionTypeAsString(ConnectionType conn_type);
+
 class NetEventsInterface;
 class CConnman
 {
@@ -666,7 +669,7 @@ public:
      // Name of the network the peer connected through
     Network m_network;
     uint32_t m_mapped_as;
-    std::string m_conn_type_string;
+    ConnectionType m_conn_type;
 };
 
 
@@ -1131,7 +1134,7 @@ public:
     //! Sets the addrName only if it was not previously set
     void MaybeSetAddrName(const std::string& addrNameIn);
 
-    std::string ConnectionTypeAsString() const;
+    std::string ConnectionTypeAsString() const { return ::ConnectionTypeAsString(m_conn_type); }
 };
 
 /** Return a timestamp in the future (in microseconds) for exponentially distributed events. */

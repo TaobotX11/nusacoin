@@ -2049,8 +2049,12 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Whitelist</translation>
     </message>
     <message>
-        <source>Direction</source>
-        <translation>Arah</translation>
+        <source>Connection Type</source>
+        <translation>Jenis Koneksi</translation>
+    </message>
+    <message>
+        <source>The type of peer connection:&lt;ul&gt;&lt;li&gt;Inbound: initiated by peer&lt;/li&gt;&lt;li&gt;Outbound Full Relay: default&lt;/li&gt;&lt;li&gt;Outbound Block Relay: does not relay transactions or addresses&lt;/li&gt;&lt;li&gt;Outbound Manual: added using RPC %1 or %2/%3 configuration options&lt;/li&gt;&lt;li&gt;Outbound Feeler: short-lived, for testing addresses&lt;/li&gt;&lt;li&gt;Outbound Address Fetch: short-lived, for soliciting addresses&lt;/li&gt;&lt;/ul&gt;</source>
+        <translation>Jenis koneksi antar node:&lt;ul&gt;&lt;li&gt;Inbound: diinisiasi oleh rekan&lt;/li&gt;&lt;li&gt;Outbound Full Relay: standar&lt;/li&gt;&lt;li&gt;Outbound Block Relay: tidak meneruskan transaksi atau alamat&lt;/li&gt;&lt;li&gt;Outbound Manual: ditambahkan oleh RPC %1 atau %2/%3 pilihan konfigurasi&lt;/li&gt;&lt;li&gt;Outbound Feeler: jangka-pendek, untuk uji alamat&lt;/li&gt;&lt;li&gt;Outbound Address Fetch: jangka-pendek, untuk meminta alamat&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <source>Outbound</source>
