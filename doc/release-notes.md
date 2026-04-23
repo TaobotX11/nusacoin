@@ -96,6 +96,9 @@ P2P and network changes
 
 Updated RPCs
 ------------
+- `addmultisigaddress` and `createmultisig` now support up to 20 keys for
+  Segwit addresses.
+
 - The `getpeerinfo` RPC returns two new boolean fields, `bip152_hb_to` and
   `bip152_hb_from`, that respectively indicate whether we selected a peer to be
   in compact blocks high-bandwidth mode or whether a peer selected us as a
@@ -147,6 +150,8 @@ GUI changes
 
 Wallet
 ------
+- We now support up to 20 keys in `multi()` and `sortedmulti()` descriptors
+  under `wsh()`. (#20867)
 
 - A new `listdescriptors` RPC is available to inspect the contents of descriptor-enabled wallets.
   The RPC returns public versions of all imported descriptors, including their timestamp and flags.
