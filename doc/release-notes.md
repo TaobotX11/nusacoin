@@ -116,6 +116,17 @@ Updated RPCs
   whether initial broadcast of the transaction has been acknowledged by a
   peer. `getmempoolancestors` and `getmempooldescendants` are also updated.
 
+- The `getpeerinfo` RPC now returns a `connection_type` field. This indicates
+  the type of connection established with the peer. It will return one of six
+  options. For more information, see the `getpeerinfo` help documentation.
+  (#19725)
+
+- The `getpeerinfo` RPC no longer returns the `addnode` field by default. This
+  field will be fully removed in the next major release.  It can be accessed
+  with the configuration option `-deprecatedrpc=getpeerinfo_addnode`. However,
+  it is recommended to instead use the `connection_type` field (it will return
+  `manual` when addnode is true). (#19725)
+
 ## CLI
 
 - The `connections` field of `bitcoin-cli -getinfo` is expanded to return a JSON
