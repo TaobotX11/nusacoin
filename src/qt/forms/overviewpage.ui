@@ -74,7 +74,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>30</width>
+                <width>45</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -94,9 +94,6 @@
                 <width>24</width>
                 <height>24</height>
                </size>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -581,7 +578,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>30</width>
+                <width>45</width>
                 <height>16777215</height>
                </size>
               </property>
@@ -601,9 +598,6 @@
                 <width>24</width>
                 <height>24</height>
                </size>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
