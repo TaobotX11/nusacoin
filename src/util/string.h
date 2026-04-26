@@ -5,6 +5,9 @@
 #ifndef BITCOIN_UTIL_STRING_H
 #define BITCOIN_UTIL_STRING_H
 
+#include <attributes.h>
+
+#include <cstring>
 #include <string>
 #include <locale>
 #include <sstream>
@@ -33,6 +36,14 @@ template <typename T>
 T Join(const std::vector<T>& list, const T& separator)
 {
     return Join(list, separator, [](const T& i) { return i; });
+}
+
+/**
+ * Check if a string does not contain any embedded NUL (\0) characters
+ */
+NODISCARD inline bool ValidAsCString(const std::string& str) noexcept
+{
+    return str.size() == strlen(str.c_str());
 }
 
 inline std::string Join(const std::vector<std::string>& list, const std::string& separator)
