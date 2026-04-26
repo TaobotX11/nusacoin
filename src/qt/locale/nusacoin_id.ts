@@ -1768,12 +1768,16 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Alamat</translation>
     </message>
     <message>
+        <source>Direction</source>
+        <translation>Arah</translation>
+    </message>
+    <message>
         <source>Network</source>
         <translation>Jaringan</translation>
     </message>
     <message>
-        <source>Peer Id</source>
-        <translation>Id Peer</translation>
+        <source>Peer</source>
+        <translation>Peer</translation>
     </message>
     <message>
         <source>Ping</source>

@@ -223,6 +223,7 @@ NusacoinAmountField::NusacoinAmountField(QWidget *parent) :
     amount->setLocale(QLocale::c());
     amount->installEventFilter(this);
     amount->setMaximumWidth(240);
+    amount->setStyleSheet("font-weight: bold; color: black; selection-background-color: rgb(1, 143, 1);");
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(amount);

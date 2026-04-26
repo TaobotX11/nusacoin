@@ -106,14 +106,19 @@ QVariant PeerTableModel::data(const QModelIndex &index, int role) const
 
     CNodeCombinedStats *rec = static_cast<CNodeCombinedStats*>(index.internalPointer());
 
+    const auto column = static_cast<ColumnIndex>(index.column());
     if (role == Qt::DisplayRole) {
-        switch(index.column())
-        {
+        switch (column) {
         case NetNodeId:
             return (qint64)rec->nodeStats.nodeid;
         case Address:
-            // prepend to peer address down-arrow symbol for inbound connection and up-arrow for outbound connection
-            return QString(rec->nodeStats.fInbound ? "↓ " : "↑ ") + QString::fromStdString(rec->nodeStats.addrName);
+            return QString::fromStdString(rec->nodeStats.addrName);
+        case Direction:
+            return QString(rec->nodeStats.fInbound ?
+                               //: An Inbound Connection from a Peer.
+                               tr("Inbound") :
+                               //: An Outbound Connection to a Peer.
+                               tr("Outbound"));
         case ConnectionType:
             return GUIUtil::ConnectionTypeToQString(rec->nodeStats.m_conn_type, /* prepend_direction */ false);
         case Network:
@@ -126,19 +131,25 @@ QVariant PeerTableModel::data(const QModelIndex &index, int role) const
             return GUIUtil::formatBytes(rec->nodeStats.nRecvBytes);
         case Subversion:
             return QString::fromStdString(rec->nodeStats.cleanSubVer);
-        }
+        } // no default case, so the compiler can warn about missing cases
+        assert(false);
     } else if (role == Qt::TextAlignmentRole) {
-        switch (index.column()) {
-            case ConnectionType:
-            case Network:
-                return QVariant(Qt::AlignCenter);
-            case Ping:
-            case Sent:
-            case Received:
-                return QVariant(Qt::AlignRight | Qt::AlignVCenter);
-            default:
-                return QVariant();
-        }
+        switch (column) {
+        case NetNodeId:
+        case Address:
+            return {};
+        case Direction:
+        case ConnectionType:
+        case Network:
+            return QVariant(Qt::AlignCenter);
+        case Ping:
+        case Sent:
+        case Received:
+            return QVariant(Qt::AlignRight | Qt::AlignVCenter);
+        case Subversion:
+            return {};
+        } // no default case, so the compiler can warn about missing cases
+        assert(false);
     } else if (role == StatsRole) {
         return QVariant::fromValue(rec);
     }
