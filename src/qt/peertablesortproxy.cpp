@@ -33,7 +33,7 @@ bool PeerTableSortProxy::lessThan(const QModelIndex& left_index, const QModelInd
     case PeerTableModel::Network:
         return left_stats.m_network < right_stats.m_network;
     case PeerTableModel::Ping:
-        return left_stats.m_min_ping_time < right_stats.m_min_ping_time;
+        return left_stats.m_min_ping_usec < right_stats.m_min_ping_usec;
     case PeerTableModel::Sent:
         return left_stats.nSendBytes < right_stats.nSendBytes;
     case PeerTableModel::Received:
