@@ -10,9 +10,10 @@
 
 #include <net.h>
 
-#include <QWidget>
+#include <QByteArray>
 #include <QCompleter>
 #include <QThread>
+#include <QWidget>
 
 class ClientModel;
 class PlatformStyle;
@@ -117,10 +118,6 @@ public Q_SLOTS:
     void browseHistory(int offset);
     /** Scroll console view to end */
     void scrollToEnd();
-    /** Handle selection caching before update */
-    void peerLayoutAboutToChange();
-    /** Handle updated peer information */
-    void peerLayoutChanged();
     /** Disconnect a selected node on the Peers tab */
     void disconnectSelectedNode();
     /** Ban a selected node on the Peers tab */
@@ -164,6 +161,8 @@ private:
     QThread thread;
     WalletModel* m_last_wallet_model{nullptr};
     bool m_is_executing{false};
+    QByteArray m_peer_widget_header_state;
+    QByteArray m_banlist_widget_header_state;
 
     /** Update UI with latest network info from model. */
     void updateNetworkState();

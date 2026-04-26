@@ -9,13 +9,14 @@
 #include <qt/rpcconsole.h>
 #include <qt/forms/ui_debugwindow.h>
 
-#include <qt/bantablemodel.h>
-#include <qt/clientmodel.h>
-#include <qt/platformstyle.h>
-#include <qt/walletmodel.h>
 #include <chainparams.h>
 #include <interfaces/node.h>
 #include <netbase.h>
+#include <qt/bantablemodel.h>
+#include <qt/clientmodel.h>
+#include <qt/peertablesortproxy.h>
+#include <qt/platformstyle.h>
+#include <qt/walletmodel.h>
 #include <rpc/server.h>
 #include <rpc/client.h>
 #include <util/strencodings.h>
@@ -458,6 +459,9 @@ RPCConsole::RPCConsole(interfaces::Node& node, const PlatformStyle *_platformSty
         move(QGuiApplication::primaryScreen()->availableGeometry().center() - frameGeometry().center());
     }
 
+    m_peer_widget_header_state = settings.value("PeersTabPeerHeaderState").toByteArray();
+    m_banlist_widget_header_state = settings.value("PeersTabBanlistHeaderState").toByteArray();
+
     QChar nonbreaking_hyphen(8209);
     ui->dataDir->setToolTip(ui->dataDir->toolTip().arg(QString(nonbreaking_hyphen) + "datadir"));
     ui->blocksDir->setToolTip(ui->blocksDir->toolTip().arg(QString(nonbreaking_hyphen) + "blocksdir"));
@@ -501,6 +505,10 @@ RPCConsole::~RPCConsole()
 {
     QSettings settings;
     settings.setValue("RPCConsoleWindowGeometry", saveGeometry());
+
+    settings.setValue("PeersTabPeerHeaderState", m_peer_widget_header_state);
+    settings.setValue("PeersTabBanlistHeaderState", m_banlist_widget_header_state);
+
     m_node.rpcUnsetTimerInterface(rpcTimerInterface);
     delete rpcTimerInterface;
     delete ui;
@@ -584,7 +592,7 @@ void RPCConsole::setClientModel(ClientModel *model, int bestblock_height, int64_
         connect(model, &ClientModel::mempoolSizeChanged, this, &RPCConsole::setMempoolSize);
 
         // set up peer table
-        ui->peerWidget->setModel(model->getPeerTableModel());
+        ui->peerWidget->setModel(model->peerTableSortProxy());
         ui->peerWidget->verticalHeader()->hide();
         ui->peerWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
         ui->peerWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -624,13 +632,7 @@ void RPCConsole::setClientModel(ClientModel *model, int bestblock_height, int64_
         // peer table context menu signals
         connect(ui->peerWidget, &QTableView::customContextMenuRequested, this, &RPCConsole::showPeersTableContextMenu);
         connect(disconnectAction, &QAction::triggered, this, &RPCConsole::disconnectSelectedNode);
-
-        // peer table signal handling - update peer details when selecting new node
-        connect(ui->peerWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this, &RPCConsole::updateDetailWidget);
-        // peer table signal handling - update peer details when new nodes are added to the model
-        connect(model->getPeerTableModel(), &PeerTableModel::layoutChanged, this, &RPCConsole::peerLayoutChanged);
-        // peer table signal handling - cache selected node ids
-        connect(model->getPeerTableModel(), &PeerTableModel::layoutAboutToBeChanged, this, &RPCConsole::peerLayoutAboutToChange);
+        connect(model->getPeerTableModel(), &PeerTableModel::layoutChanged, this, &RPCConsole::updateDetailWidget);
 
         // set up ban table
         ui->banlistWidget->setModel(model->getBanTableModel());
@@ -1047,80 +1049,15 @@ void RPCConsole::updateTrafficStats(quint64 totalBytesIn, quint64 totalBytesOut)
     ui->lblBytesOut->setText(GUIUtil::formatBytes(totalBytesOut));
 }
 
-void RPCConsole::peerLayoutAboutToChange()
-{
-    QModelIndexList selected = ui->peerWidget->selectionModel()->selectedIndexes();
-    cachedNodeids.clear();
-    for(int i = 0; i < selected.size(); i++)
-    {
-        const CNodeCombinedStats *stats = clientModel->getPeerTableModel()->getNodeStats(selected.at(i).row());
-        cachedNodeids.append(stats->nodeStats.nodeid);
-    }
-}
-
-void RPCConsole::peerLayoutChanged()
-{
-    if (!clientModel || !clientModel->getPeerTableModel())
-        return;
-
-    bool fUnselect = false;
-    bool fReselect = false;
-
-    if (cachedNodeids.empty()) // no node selected yet
-        return;
-
-    // find the currently selected row
-    int selectedRow = -1;
-    QModelIndexList selectedModelIndex = ui->peerWidget->selectionModel()->selectedIndexes();
-    if (!selectedModelIndex.isEmpty()) {
-        selectedRow = selectedModelIndex.first().row();
-    }
-
-    // check if our detail node has a row in the table (it may not necessarily
-    // be at selectedRow since its position can change after a layout change)
-    int detailNodeRow = clientModel->getPeerTableModel()->getRowByNodeId(cachedNodeids.first());
-
-    if (detailNodeRow < 0)
-    {
-        // detail node disappeared from table (node disconnected)
-        fUnselect = true;
-    }
-    else
-    {
-        if (detailNodeRow != selectedRow)
-        {
-            // detail node moved position
-            fUnselect = true;
-            fReselect = true;
-        }
-    }
-
-    if (fUnselect && selectedRow >= 0) {
-        clearSelectedNode();
-    }
-
-    if (fReselect)
-    {
-        for(int i = 0; i < cachedNodeids.size(); i++)
-        {
-            ui->peerWidget->selectRow(clientModel->getPeerTableModel()->getRowByNodeId(cachedNodeids.at(i)));
-        }
-    }
-
-    updateDetailWidget();
-}
-
 void RPCConsole::updateDetailWidget()
 {
-    QModelIndexList selected_rows;
-    auto selection_model = ui->peerWidget->selectionModel(); 
-    if (selection_model) selected_rows = selection_model->selectedRows();
-    if (!clientModel || !clientModel->getPeerTableModel() || selected_rows.size() != 1) {
+    const QList<QModelIndex> selected_peers = GUIUtil::getEntryData(ui->peerWidget, PeerTableModel::NetNodeId);
+    if (!clientModel || !clientModel->getPeerTableModel() || selected_peers.size() != 1) {
         ui->detailWidget->hide(); 
         ui->peerHeading->setText(tr("Select a peer to view detailed information."));
         return;
     }
-    const CNodeCombinedStats *stats = clientModel->getPeerTableModel()->getNodeStats(selected_rows.first().row());
+    const auto stats = selected_peers.first().data(PeerTableModel::StatsRole).value<CNodeCombinedStats*>();
     // update the detail ui with latest node information
     QString peerAddrDetails(QString::fromStdString(stats->nodeStats.addrName) + " ");
     peerAddrDetails += tr("(peer: %1)").arg(QString::number(stats->nodeStats.nodeid));
@@ -1227,19 +1164,10 @@ void RPCConsole::banSelectedNode(int bantime)
     if (!clientModel)
         return;
 
-    // Get selected peer addresses
-    QList<QModelIndex> nodes = GUIUtil::getEntryData(ui->peerWidget, PeerTableModel::NetNodeId);
-    for(int i = 0; i < nodes.count(); i++)
-    {
-        // Get currently selected peer address
-        NodeId id = nodes.at(i).data().toLongLong();
-
-        // Get currently selected peer address
-        int detailNodeRow = clientModel->getPeerTableModel()->getRowByNodeId(id);
-        if (detailNodeRow < 0) return;
+    for (const QModelIndex& peer : GUIUtil::getEntryData(ui->peerWidget, PeerTableModel::NetNodeId)) {
 
         // Find possible nodes, ban it and clear the selected node
-        const CNodeCombinedStats *stats = clientModel->getPeerTableModel()->getNodeStats(detailNodeRow);
+        const auto stats = peer.data(PeerTableModel::StatsRole).value<CNodeCombinedStats*>();
         if (stats) {
             m_node.ban(stats->nodeStats.addr, bantime);
             m_node.disconnectByAddress(stats->nodeStats.addr);
