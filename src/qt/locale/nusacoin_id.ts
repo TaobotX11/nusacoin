@@ -1781,7 +1781,7 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation>Jenis</translation>
+        <translation>Tipe</translation>
     </message>
     <message>
         <source>Inbound</source>
@@ -2050,7 +2050,7 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>Direction/Type</source>
-        <translation>Arah/Jenis</translation>
+        <translation>Arah/Tipe</translation>
     </message>
     <message>
         <source>The type of peer connection:&lt;ul&gt;&lt;li&gt;Inbound: initiated by peer&lt;/li&gt;&lt;li&gt;Outbound Full Relay: default&lt;/li&gt;&lt;li&gt;Outbound Block Relay: does not relay transactions or addresses&lt;/li&gt;&lt;li&gt;Outbound Manual: added using RPC %1 or %2/%3 configuration options&lt;/li&gt;&lt;li&gt;Outbound Feeler: short-lived, for testing addresses&lt;/li&gt;&lt;li&gt;Outbound Address Fetch: short-lived, for soliciting addresses&lt;/li&gt;&lt;/ul&gt;</source>

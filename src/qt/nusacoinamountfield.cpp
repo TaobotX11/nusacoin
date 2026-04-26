@@ -269,7 +269,7 @@ bool NusacoinAmountField::validate()
 void NusacoinAmountField::setValid(bool valid)
 {
     if (valid)
-        amount->setStyleSheet("font-weight: bold; color: white; background-color: rgb(37, 100, 37); selection-background-color: rgb(1, 143, 1); selection-color:white;");
+        amount->setStyleSheet("font-weight: bold; color: black; selection-background-color: rgb(1, 143, 1);");
     else
         amount->setStyleSheet(STYLE_INVALID);
 }
