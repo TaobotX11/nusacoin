@@ -29,6 +29,7 @@ FUZZ_TARGETS = \
   test/fuzz/script \
   test/fuzz/script_flags \
   test/fuzz/service_deserialize \
+  test/fuzz/signet \
   test/fuzz/spanparsing \
   test/fuzz/timedata \
   test/fuzz/transaction \
@@ -376,6 +377,12 @@ test_fuzz_blocktransactionsrequest_deserialize_CPPFLAGS = $(AM_CPPFLAGS) $(BITCO
 test_fuzz_blocktransactionsrequest_deserialize_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 test_fuzz_blocktransactionsrequest_deserialize_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 test_fuzz_blocktransactionsrequest_deserialize_LDADD = $(FUZZ_SUITE_LD_COMMON)
+
+test_fuzz_signet_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+test_fuzz_signet_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+test_fuzz_signet_LDADD = $(FUZZ_SUITE_LD_COMMON)
+test_fuzz_signet_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+test_fuzz_signet_SOURCES = test/fuzz/signet.cpp
 
 test_fuzz_timedata_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 test_fuzz_timedata_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)

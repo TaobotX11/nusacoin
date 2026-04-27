@@ -46,6 +46,7 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 #define QAPP_ORG_DOMAIN "nusacoin.org"
 #define QAPP_APP_NAME_DEFAULT "Nusacoin-Qt"
 #define QAPP_APP_NAME_TESTNET "Nusacoin-Qt-testnet"
+#define QAPP_APP_NAME_SIGNET "Nusacoin-Qt-signet"
 #define QAPP_APP_NAME_REGTEST "Nusacoin-Qt-regtest"
 
 /* One gigabyte (GB) in bytes */
