@@ -2477,8 +2477,9 @@ void PeerLogicValidation::ProcessMessage(CNode& pfrom, const std::string& msg_ty
     // At this point, the outgoing message serialization version can't change.
     const CNetMsgMaker msgMaker(pfrom.GetSendVersion());
 
-    if (msg_type == NetMsgType::VERACK)
-    {
+    if (msg_type == NetMsgType::VERACK) {
+        if (pfrom.fSuccessfullyConnected) return;
+        
         pfrom.SetRecvVersion(std::min(pfrom.nVersion.load(), PROTOCOL_VERSION));
 
         if (!pfrom.IsInboundConn()) {
