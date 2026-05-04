@@ -1,30 +1,16 @@
-*After branching off for a major version release of Nusacoin Core, use this
-template to create the initial release notes draft.*
-
-*The release notes draft is a temporary file that can be added to by anyone. See
-[/doc/developer-notes.md#release-notes](/doc/developer-notes.md#release-notes)
-for the process.*
-
-*Create the draft, named* "*version* Release Notes Draft"
-*(e.g. "0.20.0 Release Notes Draft"), as a collaborative wiki in:*
-
-https://github.com/nusacoin-core/nusacoin-devwiki/wiki/
-
-*Before the final release, move the notes back to this git repository.*
-
-*version* Release Notes Draft
+0.26.50 Release Notes Draft
 ===============================
 
-Nusacoin Core version *version* is now available from:
+Nusacoin Core version 0.26.50 is now available from:
 
-  <https://nusacoincore.org/bin/nusacoin-core-*version*/>
+  <https://github.com/TaobotX11/nusacoin/releases/>
 
 This release includes new features, various bug fixes and performance
 improvements, as well as updated translations.
 
 Please report bugs using the issue tracker at GitHub:
 
-  <https://github.com/nusacoin/nusacoin/issues>
+  <https://github.com/TaobotX11/nusacoin/issues>
 
 To receive security and update notifications, please subscribe to:
 
@@ -199,7 +185,7 @@ Wallet
 
 Please note that Descriptor Wallets are still experimental and not all expected functionality
 is available. Additionally there may be some bugs and current functions may change in the future.
-Bugs and missing functionality can be reported to the [issue tracker](https://github.com/Nusacoin/Nusacoin/issues).
+Bugs and missing functionality can be reported to the [issue tracker](https://github.com/TaobotX11/Nusacoin/issues).
 
 0.26.40 introduces a new type of wallet - Descriptor Wallets. Descriptor Wallets store
 scriptPubKey information using descriptors. This is in contrast to the Legacy Wallet

@@ -5,7 +5,7 @@ P2P and network changes
 
 The command line option to enable BIP61 (`-enablebip61`) has been removed.
 
-This feature has been disabled by default since Nusacoin Core version 0.18.0.
+This feature has been disabled by default since Nusacoin Core version 26.30.0
 Nodes on the network can not generally be trusted to send valid ("reject")
 messages, so this should only ever be used when connected to a trusted node.
 Please use the recommended alternatives if you rely on this deprecated feature:
