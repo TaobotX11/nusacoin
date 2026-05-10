@@ -102,5 +102,16 @@ class HTTPBasicsTest(NusacoinTestFramework):
 
         self.test_auth(self.nodes[1], self.rpcuser, self.rpcpassword)
 
+        init_error = 'Error: Unable to start HTTP server. See debug log for details.'
+
+        self.log.info('Check -rpcauth are validated')
+        # Empty -rpcauth= are ignored
+        self.restart_node(0, extra_args=['-rpcauth='])
+        self.stop_node(0)
+        self.nodes[0].assert_start_raises_init_error(expected_msg=init_error, extra_args=['-rpcauth=foo'])
+        self.nodes[0].assert_start_raises_init_error(expected_msg=init_error, extra_args=['-rpcauth=foo:bar'])
+
+        self.log.info('Check that failure to write cookie file will abort the node gracefully')
+
 if __name__ == '__main__':
     HTTPBasicsTest ().main ()

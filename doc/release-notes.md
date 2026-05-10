@@ -82,6 +82,7 @@ New settings
 
 Updated settings
 ----------------
+- Passing an invalid `-rpcauth` argument now cause bitcoind to fail to start.  (#20461)
 
 P2P and network changes
 -----------------------
