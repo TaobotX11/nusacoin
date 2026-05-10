@@ -30,6 +30,8 @@
 #endif
 
 #include <QKeyEvent>
+#include <QLatin1String>
+#include <QLocale>
 #include <QMenu>
 #include <QMessageBox>
 #include <QScrollBar>
@@ -37,8 +39,10 @@
 #include <QSettings>
 #include <QString>
 #include <QStringList>
+#include <QStyledItemDelegate>
 #include <QTime>
 #include <QTimer>
+#include <QVariant>
 
 
 // TODO: add a scrollback limit, as there is currently none
@@ -125,6 +129,20 @@ public:
     }
 };
 
+class PeerIdViewDelegate : public QStyledItemDelegate
+{
+    Q_OBJECT
+public:
+    explicit PeerIdViewDelegate(QObject* parent = nullptr)
+        : QStyledItemDelegate(parent) {}
+
+    QString displayText(const QVariant& value, const QLocale& locale) const override
+    {
+        // Additional spaces should visually separate right-aligned content
+        // from the next column to the right.
+        return value.toString() + QLatin1String("   ");
+    }
+};
 
 #include <qt/rpcconsole.moc>
 
@@ -602,6 +620,7 @@ void RPCConsole::setClientModel(ClientModel *model, int bestblock_height, int64_
         ui->peerWidget->setColumnWidth(PeerTableModel::Subversion, SUBVERSION_COLUMN_WIDTH);
         ui->peerWidget->setColumnWidth(PeerTableModel::Ping, PING_COLUMN_WIDTH);
         ui->peerWidget->horizontalHeader()->setStretchLastSection(true);
+        ui->peerWidget->setItemDelegateForColumn(PeerTableModel::NetNodeId, new PeerIdViewDelegate(this));
         ui->peerWidget->setStyleSheet("selection-background-color: #018f01; selection-color:white;");
 
         // create peer table context menu actions
