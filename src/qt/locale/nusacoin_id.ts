@@ -252,7 +252,11 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     </message>
     <message>
         <source>Your wallet is now encrypted. </source>
-        <translation>Dompet Anda sudah dienkripsi</translation>
+        <translation>Dompet Anda sudah dienkripsi. </translation>
+    </message>
+    <message>
+        <source>Remember that encrypting your wallet cannot fully protect your nusacoins from being stolen by malware infecting your computer.</source>
+        <translation>Ingatlah bahwa mengenkripsi dompet Anda tidak dapat sepenuhnya melindungi nusacoin Anda dari pencurian oleh malware yang menginfeksi komputer Anda.</translation>
     </message>
 </context>
 <context>
