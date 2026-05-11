@@ -37,6 +37,13 @@ CreateWalletDialog::CreateWalletDialog(QWidget* parent) :
             ui->disable_privkeys_checkbox->setChecked(false);
         }
     });
+
+    connect(ui->blank_wallet_checkbox, &QCheckBox::toggled, [this](bool checked) {
+        if (!checked) {
+          ui->disable_privkeys_checkbox->setChecked(false);
+        }
+    });
+
 }
 
 CreateWalletDialog::~CreateWalletDialog()
