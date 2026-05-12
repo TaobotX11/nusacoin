@@ -11,6 +11,7 @@
 #include <string>
 
 class CBlockIndex;
+class CTransaction;
 class CZMQAbstractNotifier;
 
 using CZMQNotifierFactory = std::unique_ptr<CZMQAbstractNotifier> (*)();
