@@ -2141,6 +2141,7 @@ static UniValue lockunspent(const JSONRPCRequest& request)
                 "Temporarily lock (unlock=false) or unlock (unlock=true) specified transaction outputs.\n"
                 "If no transaction outputs are specified when unlocking then all current locked transaction outputs are unlocked.\n"
                 "A locked transaction output will not be chosen by automatic coin selection, when spending nusacoins.\n"
+                "Manually selected coins are automatically unlocked.\n"
                 "Locks are stored in memory only, unless persistent=true, in which case they will be written to the\n"
                 "wallet database and loaded on node start. Unwritten (persistent=false) locks are always cleared\n"
                 "(by virtue of process exit) when a node stops or fails. Unlocking will clear both persistent and not.\n"
