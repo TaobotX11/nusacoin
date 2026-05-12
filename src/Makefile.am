@@ -255,10 +255,10 @@ BITCOIN_CORE_H = \
   wallet/coinselection.h \
   warnings.h \
   zmq/zmqabstractnotifier.h \
-  zmq/zmqconfig.h\
   zmq/zmqnotificationinterface.h \
   zmq/zmqpublishnotifier.h \
-  zmq/zmqrpc.h
+  zmq/zmqrpc.h \
+  zmq/zmqutil.h
 
 
 obj/build.h: FORCE
@@ -338,7 +338,8 @@ libnusacoin_zmq_a_SOURCES = \
   zmq/zmqabstractnotifier.cpp \
   zmq/zmqnotificationinterface.cpp \
   zmq/zmqpublishnotifier.cpp \
-  zmq/zmqrpc.cpp
+  zmq/zmqrpc.cpp \
+  zmq/zmqutil.cpp
 endif
 
 
