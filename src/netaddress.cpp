@@ -557,7 +557,7 @@ std::vector<unsigned char> CNetAddr::GetAddrBytes() const
 
 uint64_t CNetAddr::GetHash() const
 {
-    uint256 hash = Hash(&m_addr[0], &m_addr[16]);
+    uint256 hash = Hash(m_addr);
     uint64_t nRet;
     memcpy(&nRet, &hash, sizeof(nRet));
     return nRet;

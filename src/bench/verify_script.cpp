@@ -31,7 +31,7 @@ static void VerifyScriptBench(benchmark::State& state)
     key.Set(vchKey.begin(), vchKey.end(), false);
     CPubKey pubkey = key.GetPubKey();
     uint160 pubkeyHash;
-    CHash160().Write(pubkey.begin(), pubkey.size()).Finalize(pubkeyHash.begin());
+    CHash160().Write(pubkey).Finalize(pubkeyHash);
 
     // Script.
     CScript scriptPubKey = CScript() << witnessversion << ToByteVector(pubkeyHash);
