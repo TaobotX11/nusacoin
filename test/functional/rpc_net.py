@@ -108,12 +108,14 @@ class NetTest(NusacoinTestFramework):
         assert_equal(info['connections_in'], 1)
         assert_equal(info['connections_out'], 1)
 
-        self.nodes[0].setnetworkactive(state=False)
+        with self.nodes[0].assert_debug_log(expected_msgs=['SetNetworkActive: false\n']):
+            self.nodes[0].setnetworkactive(state=False)
         assert_equal(self.nodes[0].getnetworkinfo()['networkactive'], False)
         # Wait a bit for all sockets to close
         wait_until(lambda: self.nodes[0].getnetworkinfo()['connections'] == 0, timeout=3)
 
-        self.nodes[0].setnetworkactive(state=True)
+        with self.nodes[0].assert_debug_log(expected_msgs=['SetNetworkActive: true\n']):
+            self.nodes[0].setnetworkactive(state=True)
         # Connect nodes both ways.
         connect_nodes(self.nodes[0], 1)
         connect_nodes(self.nodes[1], 0)
