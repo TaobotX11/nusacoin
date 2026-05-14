@@ -11,6 +11,7 @@
 #define BITCOIN_PROTOCOL_H
 
 #include <netaddress.h>
+#include <primitives/transaction.h>
 #include <serialize.h>
 #include <uint256.h>
 #include <version.h>
@@ -274,7 +275,7 @@ const std::vector<std::string> &getAllNetMessageTypes();
 
 /** nServices flags */
 enum ServiceFlags : uint64_t {
-    // NOTE: When adding here, be sure to update qt/guiutil.cpp's formatServicesStr too
+    // NOTE: When adding here, be sure to update serviceFlagToStr too
     // Nothing
     NODE_NONE = 0,
     // NODE_NETWORK means that the node is capable of serving the complete block chain. It is currently
@@ -304,6 +305,13 @@ enum ServiceFlags : uint64_t {
     // do not actually support. Other service bits should be allocated via the
     // BIP process.
 };
+
+/**
+ * Convert service flags (a bitmask of NODE_*) to human readable strings.
+ * It supports unknown service flags which will be returned as "UNKNOWN[...]".
+ * @param[in] flags multiple NODE_* bitwise-OR-ed together
+ */
+std::vector<std::string> serviceFlagsToStr(uint64_t flags);
 
 /**
  * Gets the set of service flags which are "desirable" for a given peer.
@@ -418,9 +426,19 @@ public:
     std::string GetCommand() const;
     std::string ToString() const;
 
-public:
+    // Single-message helper methods
+    bool IsMsgTx()        const { return type == MSG_TX; }
+    bool IsMsgWtx()       const { return type == MSG_WTX; }
+    bool IsMsgWitnessTx() const { return type == MSG_WITNESS_TX; }
+
+    // Combined-message helper methods
+    bool IsGenTxMsg()     const { return type == MSG_TX || type == MSG_WTX || type == MSG_WITNESS_TX; }
+
     int type;
     uint256 hash;
 };
+
+/** Convert a TX/WITNESS_TX/WTX CInv to a GenTxid. */
+GenTxid ToGenTxid(const CInv& inv);
 
 #endif // BITCOIN_PROTOCOL_H
