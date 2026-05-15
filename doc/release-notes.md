@@ -88,6 +88,11 @@ Updated settings
   the left side, e.g. 255.0.255.255) are no longer accepted. They are invalid
   according to RFC 4632.
 
+- A `download` permission has been extracted from the `noban` permission. For
+  compatibility, `noban` implies the `download` permission, but this may change
+  in future releases. Refer to the help of the affected settings `-whitebind`
+  and `-whitelist` for more details. (#19191)
+
 
 P2P and network changes
 -----------------------
