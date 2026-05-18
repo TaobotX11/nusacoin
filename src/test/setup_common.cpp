@@ -151,8 +151,8 @@ TestingSetup::~TestingSetup()
     m_node.connman.reset();
     m_node.banman.reset();
     m_node.args = nullptr;
+    UnloadBlockIndex(m_node.mempool);
     m_node.mempool = nullptr;
-    UnloadBlockIndex();
     g_chainman.Reset();
     pblocktree.reset();
 }

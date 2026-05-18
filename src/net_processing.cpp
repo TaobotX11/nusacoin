@@ -1712,7 +1712,7 @@ void static ProcessGetBlockData(CNode& pfrom, const CChainParams& chainparams, c
 }
 
 //! Determine whether or not a peer can request a transaction, and return it (or nullptr if not found or not allowed).
-CTransactionRef static FindTxForGetData(const CNode& peer, const GenTxid& gtxid, const std::chrono::seconds mempool_req, const std::chrono::seconds now) LOCKS_EXCLUDED(cs_main)
+static CTransactionRef FindTxForGetData(const CTxMemPool& mempool, const CNode& peer, const GenTxid& gtxid, const std::chrono::seconds mempool_req, const std::chrono::seconds now) LOCKS_EXCLUDED(cs_main)
 {
     auto txinfo = mempool.info(gtxid);
     if (txinfo.tx) {
@@ -1767,7 +1767,7 @@ void static ProcessGetData(CNode& pfrom, const CChainParams& chainparams, CConnm
             continue;
         }
 
-        CTransactionRef tx = FindTxForGetData(pfrom, ToGenTxid(inv), mempool_req, now);
+        CTransactionRef tx = FindTxForGetData(m_mempool, pfrom, ToGenTxid(inv), mempool_req, now);
         if (tx) {
             // WTX and WITNESS_TX imply we serialize with witness
             int nSendFlags = (inv.IsMsgTx() ? SERIALIZE_TRANSACTION_NO_WITNESS : 0);
@@ -1776,10 +1776,10 @@ void static ProcessGetData(CNode& pfrom, const CChainParams& chainparams, CConnm
             // As we're going to send tx, make sure its unconfirmed parents are made requestable.
             std::vector<uint256> parent_ids_to_add;
             {
-                LOCK(mempool.cs);
-                auto txiter = mempool.GetIter(tx->GetHash());
+                LOCK(m_mempool.cs);
+                auto txiter = m_mempool.GetIter(tx->GetHash());
                 if (txiter) {
-                    const CTxMemPool::setEntries& parents = mempool.GetMemPoolParents(*txiter);
+                    const CTxMemPool::setEntries& parents = m_mempool.GetMemPoolParents(*txiter);
                     parent_ids_to_add.reserve(parents.size());
                     for (CTxMemPool::txiter parent_iter : parents) {
                         if (parent_iter->GetTime() > now - UNCONDITIONAL_RELAY_DELAY) {
@@ -2717,7 +2717,7 @@ void PeerLogicValidation::ProcessMessage(CNode& pfrom, const std::string& msg_ty
                 }
             } else if (inv.IsGenTxMsg()) {
                 const GenTxid gtxid = ToGenTxid(inv);
-                const bool fAlreadyHave = AlreadyHaveTx(gtxid, mempool);
+                const bool fAlreadyHave = AlreadyHaveTx(gtxid, m_mempool);
                 LogPrint(BCLog::NET, "got inv: %s  %s peer=%d\n", inv.ToString(), fAlreadyHave ? "have" : "new", pfrom.GetId());
 
                 pfrom.AddKnownTx(inv.hash);
@@ -2725,7 +2725,7 @@ void PeerLogicValidation::ProcessMessage(CNode& pfrom, const std::string& msg_ty
                     LogPrint(BCLog::NET, "transaction (%s) inv sent in violation of protocol, disconnecting peer=%d\n", inv.hash.ToString(), pfrom.GetId());
                     pfrom.fDisconnect = true;
                     return;
-                } else if (!fAlreadyHave && !fImporting && !fReindex && !::ChainstateActive().IsInitialBlockDownload()) {
+                } else if (!fAlreadyHave && !m_chainman.ActiveChainstate().IsInitialBlockDownload()) {
                     RequestTx(State(pfrom.GetId()), gtxid, current_time);
                 }
             } else {
@@ -2987,7 +2987,7 @@ void PeerLogicValidation::ProcessMessage(CNode& pfrom, const std::string& msg_ty
 
         std::list<CTransactionRef> lRemovedTxn;
 
-        // We do the AlreadyHave() check using wtxid, rather than txid - in the
+        // We do the AlreadyHaveTx() check using wtxid, rather than txid - in the
         // absence of witness malleation, this is strictly better, because the
         // recent rejects filter may contain the wtxid but will never contain
         // the txid of a segwit transaction that has been rejected.
@@ -4656,10 +4656,21 @@ bool PeerLogicValidation::SendMessages(CNode* pto)
             !pto->HasPermission(PF_FORCERELAY)) {
             CAmount currentFilter = m_mempool.GetMinFee(gArgs.GetArg("-maxmempool", DEFAULT_MAX_MEMPOOL_SIZE) * 1000000).GetFeePerK();
             int64_t timeNow = GetTimeMicros();
+            static FeeFilterRounder g_filter_rounder{CFeeRate{DEFAULT_MIN_RELAY_TX_FEE}};
+            if (m_chainman.ActiveChainstate().IsInitialBlockDownload()) {
+                // Received tx-inv messages are discarded when the active
+                // chainstate is in IBD, so tell the peer to not send them.
+                currentFilter = MAX_MONEY;
+            } else {
+                static const CAmount MAX_FILTER{g_filter_rounder.round(MAX_MONEY)};
+                if (pto->m_tx_relay->lastSentFeeFilter == MAX_FILTER) {
+                    // Send the current filter if we sent MAX_FILTER previously
+                    // and made it out of IBD.
+                    pto->m_tx_relay->nextSendTimeFeeFilter = timeNow - 1;
+                }
+            }
             if (timeNow > pto->m_tx_relay->nextSendTimeFeeFilter) {
-                static CFeeRate default_feerate(DEFAULT_MIN_RELAY_TX_FEE);
-                static FeeFilterRounder filterRounder(default_feerate);
-                CAmount filterToSend = filterRounder.round(currentFilter);
+                CAmount filterToSend = g_filter_rounder.round(currentFilter);
                 // We always have a fee filter of at least minRelayTxFee
                 filterToSend = std::max(filterToSend, ::minRelayTxFee.GetFeePerK());
                 if (filterToSend != pto->m_tx_relay->lastSentFeeFilter) {
