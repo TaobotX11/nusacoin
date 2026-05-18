@@ -84,7 +84,7 @@ void AppTests::appTests()
     // Reset global state to avoid interfering with later tests.
     LogInstance().DisconnectTestLogger();
     AbortShutdown();
-    UnloadBlockIndex();
+    UnloadBlockIndex(/* mempool */ nullptr);
 }
 
 //! Entry point for NusacoinGUI tests.
