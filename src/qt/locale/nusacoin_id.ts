@@ -3766,6 +3766,10 @@ Klik Berkas &gt; Buka Dompet untuk memuat dompet.
         <translation>mengimpor...</translation>
     </message>
     <message>
+        <source>Error: Keypool ran out, please call keypoolrefill first</source>
+        <translation>Kesalahan: Keypool habis, harap jalankan keypoolrefill terlebih dahulu</translation>
+    </message>
+    <message>
         <source>Incorrect or no genesis block found. Wrong datadir for network?</source>
         <translation>Tidak bisa cari blok pertama, atau blok pertama salah. Salah direktori untuk jaringan?</translation>
     </message>
