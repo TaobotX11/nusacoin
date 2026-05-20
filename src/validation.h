@@ -112,7 +112,6 @@ enum class SynchronizationState {
     POST_INIT
 };
 
-extern CScript COINBASE_FLAGS;
 extern RecursiveMutex cs_main;
 extern CBlockPolicyEstimator feeEstimator;
 typedef std::unordered_map<uint256, CBlockIndex*, BlockHasher> BlockMap;
