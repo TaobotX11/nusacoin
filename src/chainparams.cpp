@@ -226,7 +226,7 @@ public:
 
         checkpointData = {
             {
-                {546, uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669")},
+                {0, uint256S("0x0000017123d6f996589bc2e58bb5502218012ac7f527ab599a3be84c1951c669")},
             }};
 
         chainTxData = ChainTxData{
@@ -292,7 +292,7 @@ public:
         h << consensus.signet_challenge;
         uint256 hash = h.GetHash();
         memcpy(pchMessageStart, hash.begin(), 4);
-        LogPrintf("Signet derived magic (message start): %s\n", HexStr(pchMessageStart, pchMessageStart + 4));
+        LogPrintf("Signet derived magic (message start): %s\n", HexStr({pchMessageStart, pchMessageStart + 4}));
 
         nDefaultPort = 38773;
         nPruneAfterHeight = 1000;
