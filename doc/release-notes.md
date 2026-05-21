@@ -144,6 +144,8 @@ Updated RPCs
 
   The createmultisig and addmultisigaddress RPCs now return an output script descriptor for the newly created address. (#18032)
 
+- `walletprocesspsbt` and `walletcreatefundedpsbt` now include BIP 32 derivation paths by default for public keys if we know them. This can be disabled by setting `bip32derivs` to `false`.
+
 - `addmultisigaddress` and `createmultisig` now support up to 20 keys for
   Segwit addresses.
 
