@@ -209,6 +209,7 @@ Low-level Changes section below.
 
 GUI changes
 -----------
+- The "Start Nusacoin Core on system login" option has been removed on macOS.
 
 - #277 Do not use QClipboard::Selection on Windows and macOS.
 - #280 Remove user input from URI error message
