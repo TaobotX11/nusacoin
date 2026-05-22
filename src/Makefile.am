@@ -88,14 +88,21 @@ endif
 if BUILD_BITCOIN_CLI
   bin_PROGRAMS += nusacoin-cli
 endif
+
 if BUILD_BITCOIN_TX
   bin_PROGRAMS += nusacoin-tx
 endif
+
 if ENABLE_WALLET
 if BUILD_BITCOIN_WALLET
   bin_PROGRAMS += nusacoin-wallet
 endif
 endif
+
+if BUILD_BITCOIN_UTIL
+  bin_PROGRAMS += nusacoin-util
+endif
+
 
 .PHONY: FORCE check-symbols check-security
 # nusacoin core #
@@ -673,6 +680,27 @@ nusacoin_wallet_LDADD = \
   $(LIBUNIVALUE)
 
 nusacoin_wallet_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(MINIUPNPC_LIBS) $(ZMQ_LIBS)
+#
+
+# nusacoin-util binary #
+nusacoin_util_SOURCES = nusacoin-util.cpp
+nusacoin_util_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+nusacoin_util_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+nusacoin_util_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+
+if TARGET_WINDOWS
+nusacoin_util_SOURCES += nusacoin-util-res.rc
+endif
+
+nusacoin_util_LDADD = \
+  $(LIBBITCOIN_COMMON) \
+  $(LIBBITCOIN_UTIL) \
+  $(LIBUNIVALUE) \
+  $(LIBBITCOIN_CONSENSUS) \
+  $(LIBBITCOIN_CRYPTO) \
+  $(LIBSECP256K1)
+
+nusacoin_util_LDADD += $(BOOST_LIBS)
 #
 
 # nusacoinconsensus library #

@@ -19,6 +19,7 @@ BITCOIN_DAEMON_NAME=nusacoind
 BITCOIN_GUI_NAME=nusacoin-qt
 BITCOIN_CLI_NAME=nusacoin-cli
 BITCOIN_TX_NAME=nusacoin-tx
+BITCOIN_UTIL_NAME=nusacoin-util
 BITCOIN_WALLET_TOOL_NAME=nusacoin-wallet
 
 dnl Unless the user specified ARFLAGS, force it to be cr
@@ -454,7 +455,7 @@ CPPFLAGS="$CPPFLAGS -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS"
 
 AC_ARG_WITH([utils],
   [AS_HELP_STRING([--with-utils],
-  [build nusacoin-cli nusacoin-tx nusacoin-wallet (default=yes)])],
+  [build nusacoin-cli nusacoin-tx nusacoin-util nusacoin-wallet (default=yes)])],
   [build_nusacoin_utils=$withval],
   [build_nusacoin_utils=yes])
 
@@ -463,6 +464,12 @@ AC_ARG_ENABLE([util-cli],
   [build nusacoin-cli])],
   [build_nusacoin_cli=$enableval],
   [build_nusacoin_cli=$build_nusacoin_utils])
+
+AC_ARG_ENABLE([util-util],
+  [AS_HELP_STRING([--enable-util-util],
+  [build nusacoin-util])],
+  [build_nusacoin_util=$enableval],
+  [build_nusacoin_util=$build_nusacoin_utils])
 
 AC_ARG_ENABLE([util-tx],
   [AS_HELP_STRING([--enable-util-tx],
@@ -1015,6 +1022,7 @@ if test "x$enable_fuzz" = "xyes"; then
   build_nusacoin_utils=no
   build_nusacoin_cli=no
   build_nusacoin_tx=no
+  build_nusacoin_util=no
   build_nusacoin_wallet=no
   build_nusacoind=no
   build_nusacoin_libs=no
@@ -1279,7 +1287,7 @@ dnl univalue check
 
 need_bundled_univalue=yes
 
-if test x$build_nusacoin_wallet$build_nusacoin_cli$build_nusacoin_tx$build_nusacoind$nusacoin_enable_qt$use_tests$use_bench = xnonononononono; then
+if test x$build_nusacoin_wallet$build_nusacoin_cli$build_nusacoin_tx$build_nusacoin_util$build_nusacoind$nusacoin_enable_qt$use_tests$use_bench = xnononononononono; then
   need_bundled_univalue=no
 else
 
@@ -1338,6 +1346,10 @@ AC_MSG_RESULT($build_nusacoin_tx)
 AC_MSG_CHECKING([whether to build nusacoin-wallet])
 AM_CONDITIONAL([BUILD_BITCOIN_WALLET], [test x$build_nusacoin_wallet = xyes])
 AC_MSG_RESULT($build_nusacoin_wallet)
+
+AC_MSG_CHECKING([whether to build nusacoin-util])
+AM_CONDITIONAL([BUILD_BITCOIN_UTIL], [test x$build_nusacoin_util = xyes])
+AC_MSG_RESULT($build_nusacoin_util)
 
 AC_MSG_CHECKING([whether to build libraries])
 AM_CONDITIONAL([BUILD_BITCOIN_LIBS], [test x$build_nusacoin_libs = xyes])
@@ -1510,6 +1522,7 @@ AC_SUBST(BITCOIN_DAEMON_NAME)
 AC_SUBST(BITCOIN_GUI_NAME)
 AC_SUBST(BITCOIN_CLI_NAME)
 AC_SUBST(BITCOIN_TX_NAME)
+AC_SUBST(BITCOIN_UTIL_NAME)
 AC_SUBST(BITCOIN_WALLET_TOOL_NAME)
 
 AC_SUBST(RELDFLAGS)

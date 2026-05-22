@@ -6,6 +6,7 @@ src/nusacoin
 src/nusacoind
 src/nusacoin-cli
 src/nusacoin-tx
+src/nusacoin-util
 src/nusacoin-wallet
 src/test/test_nusacoin
 src/test/test_nusacoin_fuzzy
