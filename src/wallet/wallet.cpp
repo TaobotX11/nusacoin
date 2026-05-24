@@ -2665,7 +2665,8 @@ bool CWallet::FundTransaction(CMutableTransaction& tx, CAmount& nFeeRet, int& nC
     LOCK(cs_wallet);
 
     CTransactionRef tx_new;
-    if (!CreateTransaction(vecSend, tx_new, nFeeRet, nChangePosInOut, error, coinControl, false)) {
+    FeeCalculation fee_calc_out;
+    if (!CreateTransaction(vecSend, tx_new, nFeeRet, nChangePosInOut, error, coinControl, fee_calc_out, false)) {
         return false;
     }
 
@@ -2781,8 +2782,15 @@ OutputType CWallet::TransactionChangeType(const Optional<OutputType>& change_typ
     return m_default_address_type;
 }
 
-bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransactionRef& tx, CAmount& nFeeRet,
-                         int& nChangePosInOut, bilingual_str& error, const CCoinControl& coin_control, bool sign)
+bool CWallet::CreateTransactionInternal(
+        const std::vector<CRecipient>& vecSend,
+        CTransactionRef& tx,
+        CAmount& nFeeRet,
+        int& nChangePosInOut,
+        bilingual_str& error,
+        const CCoinControl& coin_control,
+        FeeCalculation& fee_calc_out,
+        bool sign)
 {
     CAmount nValue = 0;
     const OutputType change_type = TransactionChangeType(coin_control.m_change_type ? *coin_control.m_change_type : m_default_change_type, vecSend);
@@ -3118,6 +3126,7 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransac
     // Before we return success, we assume any change key will be used to prevent
     // accidental re-use.
     reservedest.KeepDestination();
+    fee_calc_out = feeCalc;
 
     WalletLogPrintf("Fee Calculation: Fee:%d Bytes:%u Needed:%d Tgt:%d (requested %d) Reason:\"%s\" Decay %.5f: Estimation: (%g - %g) %.2f%% %.1f/(%.1f %d mem %.1f out) Fail: (%g - %g) %.2f%% %.1f/(%.1f %d mem %.1f out)\n",
               nFeeRet, nBytes, nFeeNeeded, feeCalc.returnedTarget, feeCalc.desiredTarget, StringForFeeReason(feeCalc.reason), feeCalc.est.decay,
@@ -3128,6 +3137,40 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransac
               100 * feeCalc.est.fail.withinTarget / (feeCalc.est.fail.totalConfirmed + feeCalc.est.fail.inMempool + feeCalc.est.fail.leftMempool),
               feeCalc.est.fail.withinTarget, feeCalc.est.fail.totalConfirmed, feeCalc.est.fail.inMempool, feeCalc.est.fail.leftMempool);
     return true;
+}
+
+bool CWallet::CreateTransaction(
+        const std::vector<CRecipient>& vecSend,
+        CTransactionRef& tx,
+        CAmount& nFeeRet,
+        int& nChangePosInOut,
+        bilingual_str& error,
+        const CCoinControl& coin_control,
+        FeeCalculation& fee_calc_out,
+        bool sign)
+{
+    int nChangePosIn = nChangePosInOut;
+    CTransactionRef tx2 = tx;
+    bool res = CreateTransactionInternal(vecSend, tx, nFeeRet, nChangePosInOut, error, coin_control, fee_calc_out, sign);
+    // try with avoidpartialspends unless it's enabled already
+    if (res && nFeeRet > 0 /* 0 means non-functional fee rate estimation */ && m_max_aps_fee > -1 && !coin_control.m_avoid_partial_spends) {
+        CCoinControl tmp_cc = coin_control;
+        tmp_cc.m_avoid_partial_spends = true;
+        CAmount nFeeRet2;
+        int nChangePosInOut2 = nChangePosIn;
+        bilingual_str error2; // fired and forgotten; if an error occurs, we discard the results 
+        if (CreateTransactionInternal(vecSend, tx2, nFeeRet2, nChangePosInOut2, error2, tmp_cc, fee_calc_out, sign)) {
+            // if fee of this alternative one is within the range of the max fee, we use this one
+            const bool use_aps = nFeeRet2 <= nFeeRet + m_max_aps_fee;
+            WalletLogPrintf("Fee non-grouped = %lld, grouped = %lld, using %s\n", nFeeRet, nFeeRet2, use_aps ? "grouped" : "non-grouped");
+            if (use_aps) {
+                tx = tx2;
+                nFeeRet = nFeeRet2;
+                nChangePosInOut = nChangePosInOut2;
+            }
+        }
+    }
+    return res;
 }
 
 void CWallet::CommitTransaction(CTransactionRef tx, mapValue_t mapValue, std::vector<std::pair<std::string, std::string>> orderForm)
@@ -3909,6 +3952,21 @@ std::shared_ptr<CWallet> CWallet::Create(interfaces::Chain& chain, const std::st
                                _("This is the minimum transaction fee you pay on every transaction."));
         }
         walletInstance->m_min_fee = CFeeRate(n);
+    }
+
+    if (gArgs.IsArgSet("-maxapsfee")) {
+        CAmount n = 0;
+        if (gArgs.GetArg("-maxapsfee", "") == "-1") { 
+            n = -1;
+        } else if (!ParseMoney(gArgs.GetArg("-maxapsfee", ""), n)) {
+            error = AmountErrMsg("maxapsfee", gArgs.GetArg("-maxapsfee", "")); 
+            return nullptr;
+        }
+        if (n > HIGH_APS_FEE) {
+            warnings.push_back(AmountHighWarn("-maxapsfee") + Untranslated(" ") +
+                              _("This is the maximum transaction fee you pay to prioritize partial spend avoidance over regular coin selection.")); 
+        }
+        walletInstance->m_max_aps_fee = n;
     }
 
     if (gArgs.IsArgSet("-fallbackfee")) {
