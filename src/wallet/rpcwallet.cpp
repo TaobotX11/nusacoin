@@ -28,6 +28,7 @@
 #include <util/translation.h>
 #include <util/url.h>
 #include <util/vector.h>
+#include <validation.h>
 #include <wallet/coincontrol.h>
 #include <wallet/context.h>
 #include <wallet/feebumper.h>
@@ -3379,6 +3380,7 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)
 static UniValue bumpfee(const JSONRPCRequest& request)
 {
     bool want_psbt = request.strMethod == "psbtbumpfee";
+    const std::string incremental_fee{CFeeRate(DEFAULT_MIN_RELAY_TX_FEE).ToString(FeeEstimateMode::NU_VB)};
 
     RPCHelpMan{request.strMethod,
         "\nBumps the fee of an opt-in-RBF transaction T, replacing it with a new transaction B.\n"
@@ -3401,7 +3403,7 @@ static UniValue bumpfee(const JSONRPCRequest& request)
                     {"conf_target", RPCArg::Type::NUM, /* default */ "wallet -txconfirmtarget", "Confirmation target in blocks\n"},
                     {"fee_rate", RPCArg::Type::AMOUNT, /* default */ "not set, fall back to wallet fee estimation",
                              "\nSpecify a fee rate in " + CURRENCY_ATOM + "/vB instead of relying on the built-in fee estimator.\n"
-                             "Must be at least 1 " + CURRENCY_ATOM + "/vB higher than the current transaction fee rate.\n"
+                             "Must be at least " + incremental_fee + " " + CURRENCY_ATOM + "/vB higher than the current transaction fee rate.\n"
                              "WARNING: before version 0.21, fee_rate was in " + CURRENCY_UNIT + "/kvB. As of 0.21, fee_rate is in " + CURRENCY_ATOM + "/vB.\n"},
                     {"replaceable", RPCArg::Type::BOOL, /* default */ "true", "Whether the new transaction should still be\n"
     "                         marked bip-125 replaceable. If true, the sequence numbers in the transaction will\n"
