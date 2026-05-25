@@ -21,6 +21,8 @@ enum class FeeEstimateMode {
     CONSERVATIVE, //!< Force estimateSmartFee to use conservative estimates
     NUX_KB,       //!< Use explicit BTC/kB fee given in coin control
     NU_B,        //!< Use explicit sat/B fee given in coin control
+    NUX_KVB,      //!< Use BTC/kvB fee rate unit
+    NU_VB,       //!< Use sat/vB fee rate unit
 };
 
 /**
@@ -65,7 +67,7 @@ public:
     friend bool operator>=(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK >= b.nSatoshisPerK; }
     friend bool operator!=(const CFeeRate& a, const CFeeRate& b) { return a.nSatoshisPerK != b.nSatoshisPerK; }
     CFeeRate& operator+=(const CFeeRate& a) { nSatoshisPerK += a.nSatoshisPerK; return *this; }
-    std::string ToString(const FeeEstimateMode& fee_estimate_mode = FeeEstimateMode::NUX_KB) const;
+    std::string ToString(const FeeEstimateMode& fee_estimate_mode = FeeEstimateMode::NUX_KVB) const;
 
     SERIALIZE_METHODS(CFeeRate, obj) { READWRITE(obj.nSatoshisPerK); }
 };
