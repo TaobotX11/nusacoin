@@ -9,6 +9,7 @@
 #include <string>
 #include <boost/test/unit_test.hpp>
 #include <serialize.h>
+#include <span.h>
 #include <streams.h>
 #include <net.h>
 #include <netbase.h>
@@ -16,6 +17,7 @@
 #include <util/memory.h>
 #include <util/system.h>
 
+#include <ios>
 #include <memory>
 
 class CAddrManSerializationMock : public CAddrMan
