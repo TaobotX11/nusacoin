@@ -45,12 +45,17 @@ const std::vector<std::pair<std::string, FeeEstimateMode>>& FeeModeMap()
     return FEE_MODES;
 }
 
-    std::string FeeModes(const std::string& delimiter)
+std::string FeeModes(const std::string& delimiter)
 {
     return Join(FeeModeMap(), delimiter, [&](const std::pair<std::string, FeeEstimateMode>& i) { return i.first; });
 }
 
-    bool FeeModeFromString(const std::string& mode_string, FeeEstimateMode& fee_estimate_mode)
+const std::string InvalidEstimateModeErrorMessage()
+{
+    return "Invalid estimate_mode parameter, must be one of: \"" + FeeModes("\", \"") + "\"";
+}
+
+bool FeeModeFromString(const std::string& mode_string, FeeEstimateMode& fee_estimate_mode)
 {
     auto searchkey = ToUpper(mode_string);
     for (const auto& pair : FeeModeMap()) {
