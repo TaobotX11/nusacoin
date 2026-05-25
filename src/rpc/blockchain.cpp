@@ -16,6 +16,7 @@
 #include <index/blockfilterindex.h>
 #include <node/coinstats.h>
 #include <node/utxo_snapshot.h>
+#include <policy/fees.h>
 #include <node/context.h>
 #include <policy/feerate.h>
 #include <policy/policy.h>
@@ -82,6 +83,14 @@ ChainstateManager& EnsureChainman(const util::Ref& context)
     return *node.chainman;
 }
 
+CBlockPolicyEstimator& EnsureFeeEstimator(const util::Ref& context)
+{
+    NodeContext& node = EnsureNodeContext(context);
+    if (!node.fee_estimator) {
+        throw JSONRPCError(RPC_INTERNAL_ERROR, "Fee estimation disabled");
+    }
+    return *node.fee_estimator;
+}
 
 /* Calculate the difficulty for a given block index.
  */

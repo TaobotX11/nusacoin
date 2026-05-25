@@ -2726,6 +2726,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Kustom:</translation>
     </message>
     <message>
+        <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
+        <translation>(Biaya belum diinisialisasi. Ini biasanya membutuhkan beberapa blok...)</translation>
+    </message>
+    <message>
         <source>Send to multiple recipients at once</source>
         <translation>Kirim ke beberapa penerima sekaligus</translation>
     </message>
@@ -3746,6 +3750,10 @@ Klik Berkas &gt; Buka Dompet untuk memuat dompet.
         <translation>Apakah Anda ingin coba membangun kembali database blok sekarang?</translation>
     </message>
     <message>
+        <source>Fee estimation failed. Fallbackfee is disabled. Wait a few blocks or enable -fallbackfee.</source>
+        <translation>Gagal estimasi biaya. Fallbackfee dinonaktifkan. Tunggu beberapa blok atau aktifkan opsi -fallbackfee.</translation>
+    </message>
+    <message>
         <source>Error initializing block database</source>
         <translation>Kesalahan menginisialisasi database blok</translation>
     </message>
@@ -3784,6 +3792,10 @@ Klik Berkas &gt; Buka Dompet untuk memuat dompet.
     <message>
         <source>Signing transaction failed</source>
         <translation>Penandatanganan transaksi gagal</translation>
+    </message>
+    <message>
+        <source>The transaction amount is too small to pay the fee</source>
+        <translation>Jumlah transaksi terlalu kecil untuk membayar biaya</translation>
     </message>
     <message>
         <source>Transaction amount too small</source>
@@ -3865,6 +3877,14 @@ Kunjungi %s untuk informasi lebih lanjut tentang komunitas.</translation>
     <message>
         <source>Error</source>
         <translation>Gagal</translation>
+    </message>
+    <message>
+        <source>Transaction amounts must not be negative</source>
+        <translation>Jumlah transaksi tidak boleh negatif</translation>
+    </message>
+    <message>
+        <source>Transaction must have at least one recipient</source>
+        <translation>Transaksi harus memiliki setidaknya satu penerima.</translation>
     </message>
     <message>
         <source>Loading P2P addresses...</source>
