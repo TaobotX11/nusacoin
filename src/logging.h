@@ -80,7 +80,7 @@ namespace BCLog {
         std::string LogTimestampStr(const std::string& str);
 
         /** Slots that connect to the print signal */
-        std::list<std::function<void(const std::string&)>> m_print_callbacks /* GUARDED_BY(m_cs) */ {};
+        std::list<std::function<void(const std::string&)>> m_print_callbacks GUARDED_BY(m_cs) {};
 
     public:
         bool m_print_to_console = false;
@@ -106,7 +106,7 @@ namespace BCLog {
         /** Connect a slot to the print signal and return the connection */
         std::list<std::function<void(const std::string&)>>::iterator PushBackCallback(std::function<void(const std::string&)> fun)
         {
-            std::lock_guard<std::mutex> scoped_lock(m_cs);
+            LockGuard scoped_lock(m_cs);
             m_print_callbacks.push_back(std::move(fun));
             return --m_print_callbacks.end();
         }
@@ -114,7 +114,7 @@ namespace BCLog {
         /** Delete a connection */
         void DeleteCallback(std::list<std::function<void(const std::string&)>>::iterator it)
         {
-            std::lock_guard<std::mutex> scoped_lock(m_cs);
+            LockGuard scoped_lock(m_cs);
             m_print_callbacks.erase(it);
         }
 
