@@ -152,7 +152,6 @@ BITCOIN_CORE_H = \
   key.h \
   key_io.h \
   dbwrapper.h \
-  limitedmap.h \
   logging.h \
   memusage.h \
   merkleblock.h \
@@ -214,6 +213,7 @@ BITCOIN_CORE_H = \
   timedata.h \
   torcontrol.h \
   txdb.h \
+  txrequest.h \
   txmempool.h \
   node/ui_interface.h \
   undo.h \
@@ -325,6 +325,7 @@ libnusacoin_server_a_SOURCES = \
   timedata.cpp \
   torcontrol.cpp \
   txdb.cpp \
+  txrequest.cpp \
   txmempool.cpp \
   validation.cpp \
   validationinterface.cpp \
