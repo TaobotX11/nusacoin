@@ -150,8 +150,9 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)
             }.Check(request);
 
     NodeContext& node = EnsureNodeContext(request.context);
-    if(!node.connman)
+    if(!node.connman || !node.peerman) {
         throw JSONRPCError(RPC_CLIENT_P2P_DISABLED, "Error: Peer-to-peer functionality missing or disabled");
+    }
 
     std::vector<CNodeStats> vstats;
     node.connman->GetNodeStats(vstats);
@@ -161,7 +162,7 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)
     for (const CNodeStats& stats : vstats) {
         UniValue obj(UniValue::VOBJ);
         CNodeStateStats statestats;
-        bool fStateStats = GetNodeStateStats(stats.nodeid, statestats);
+        bool fStateStats = node.peerman->GetNodeStateStats(stats.nodeid, statestats);
         obj.pushKV("id", stats.nodeid);
         obj.pushKV("addr", stats.addrName);
         if (!(stats.addrLocal.empty()))
