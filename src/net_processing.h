@@ -163,6 +163,9 @@ struct CNodeStateStats {
 /** Get statistics from node state */
 bool GetNodeStateStats(NodeId nodeid, CNodeStateStats &stats);
 
+/** Whether this node ignores txs received over p2p. */
+bool IgnoresIncomingTxs() {return !::g_relay_txes;};
+
 /** Relay transaction to every node */
 void RelayTransaction(const uint256& txid, const uint256& wtxid, const CConnman& connman) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 
