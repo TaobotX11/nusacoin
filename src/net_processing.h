@@ -38,7 +38,8 @@ class PeerManager final : public CValidationInterface, public NetEventsInterface
 
 public:
     PeerManager(const CChainParams& chainparams, CConnman& connman, BanMan* banman,
-                CScheduler& scheduler, ChainstateManager& chainman, CTxMemPool& pool);
+                CScheduler& scheduler, ChainstateManager& chainman, CTxMemPool& pool,
+                bool ignore_incoming_txs);
 
     /**
      * Overridden from CValidationInterface.
@@ -151,6 +152,9 @@ private:
     TxRequestTracker m_txrequest GUARDED_BY(::cs_main);
 
     int64_t m_stale_tip_check_time; //!< Next time to check for stale tip 
+
+    //* Whether this node is running in blocks only mode */
+    const bool m_ignore_incoming_txs;
 };
 
 struct CNodeStateStats {
@@ -164,7 +168,7 @@ struct CNodeStateStats {
 bool GetNodeStateStats(NodeId nodeid, CNodeStateStats &stats);
 
 /** Whether this node ignores txs received over p2p. */
-bool IgnoresIncomingTxs() {return !::g_relay_txes;};
+bool IgnoresIncomingTxs() {return m_ignore_incoming_txs;};
 
 /** Relay transaction to every node */
 void RelayTransaction(const uint256& txid, const uint256& wtxid, const CConnman& connman) EXCLUSIVE_LOCKS_REQUIRED(cs_main);

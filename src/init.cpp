@@ -1395,7 +1395,8 @@ bool AppInitMain(const util::Ref& context, NodeContext& node, interfaces::BlockA
     ChainstateManager& chainman = *Assert(node.chainman);
 
     assert(!node.peerman);
-    node.peerman = MakeUnique<PeerManager>(chainparams, *node.connman, node.banman.get(), *node.scheduler, chainman, *node.mempool);
+    node.peerman = std::make_unique<PeerManager>(chainparams, *node.connman, node.banman.get(),
+                                                 *node.scheduler, chainman, *node.mempool, !g_relay_txes);
     RegisterValidationInterface(node.peerman.get());
 
 
