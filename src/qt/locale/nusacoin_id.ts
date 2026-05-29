@@ -595,10 +595,26 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <source>Mask the values in the Overview tab</source>
         <translation>Sensor jumlah saldo pada halaman kilasan</translation>
     </message>
+    <message>
+        <source>Show Peers tab</source>
+        <translation>Tampilkan Tab Peer</translation>
+    </message>
+    <message>
+        <source>Disable network activity</source>
+        <translation>Matikan aktifitas jaringan</translation>
+    </message>
+    <message>
+        <source>Enable network activity</source>
+        <translation>Nyalakan aktifitas jaringan</translation>
+    </message>
+    <message>
+        <source>Click for more actions.</source>
+        <translation>Klik untuk aksi lanjutan.</translation>
+    </message>
     <message numerus="yes">
-        <source>%n active connection(s) to Nusacoin network</source>
+        <source>%n active connection(s) to Nusacoin network.</source>
         <translation>
-            <numerusform>%n koneksi aktif ke jaringan Nusacoin</numerusform>
+            <numerusform>%n koneksi aktif ke jaringan Nusacoin.</numerusform>
         </translation>
     </message>
     <message>
