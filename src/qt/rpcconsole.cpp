@@ -29,13 +29,14 @@
 #include <wallet/wallet.h>
 #endif
 
+#include <QFont>
 #include <QKeyEvent>
 #include <QLatin1String>
 #include <QLocale>
 #include <QMenu>
 #include <QMessageBox>
-#include <QScrollBar>
 #include <QScreen>
+#include <QScrollBar>
 #include <QSettings>
 #include <QString>
 #include <QStringList>
@@ -516,7 +517,7 @@ RPCConsole::RPCConsole(interfaces::Node& node, const PlatformStyle *_platformSty
 
     updateDetailWidget();
 
-    consoleFontSize = settings.value(fontSizeSettingsKey, QFontInfo(QFont()).pointSize()).toInt();
+    consoleFontSize = settings.value(fontSizeSettingsKey, QFont().pointSize()).toInt();
     clear();
 }
 
