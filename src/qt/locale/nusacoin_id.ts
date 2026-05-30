@@ -1443,6 +1443,14 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>&amp;Belanjakan kembalian yang belum terkonfirmasi</translation>
     </message>
     <message>
+        <source>Enable &amp;PSBT controls</source>
+        <translation>Aktifkan &amp;kontrol PSBT</translation>
+    </message>
+    <message>
+        <source>Whether to show PSBT controls.</source>
+        <translation>Tampilkan kontrol PSBT atau tidak</translation>
+    </message>
+    <message>
         <source>Automatically open the Nusacoin client port on the router. This only works when your router supports UPnP and it is enabled.</source>
         <translation>Otomatis membuka port client Nusacoin di router. Hanya berjalan apabila router anda mendukung UPnP dan di-enable.</translation>
     </message>
@@ -2624,6 +2632,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
     <message>
         <source>Please, review your transaction proposal. This will produce a Partially Signed Bitcoin Transaction (PSBT) which you can copy and then sign with e.g. an offline %1 wallet, or a PSBT-compatible hardware wallet.</source>
         <translation>Silakan tinjau kembali proposal transaksi Anda. Ini akan menghasilkan Transaksi Nusacoin yang Ditandatangani Sebagian (PSBT) yang dapat Anda salin dan kemudian tandatangani dengan misalnya dompet %1 offline, atau dompet perangkat keras yang kompatibel dengan PSBT.</translation>
+    </message>
+    <message>
+        <source>Please, review your transaction. You can create and send this transaction or create a Partially Signed Bitcoin Transaction (PSBT), which you can save or copy and then sign with, e.g., an offline %1 wallet, or a PSBT-compatible hardware wallet.</source>
+        <translation>Mohon tinjau transaksi Anda. Anda dapat membuat dan mengirim transaksi ini atau membuat Transaksi Bitcoin yang Ditandatangani Sebagian (PSBT), yang dapat Anda simpan atau salin dan kemudian tandatangani, misalnya dengan, dompet %1 offline, atau dompet perangkat keras yang kompatibel dengan PSBT.</translation>
     </message>
     <message>
         <source>Do you want to draft this transaction?</source>
