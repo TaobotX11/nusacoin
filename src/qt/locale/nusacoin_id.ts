@@ -2610,8 +2610,8 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Fitur Pengaturan Koin</translation>
     </message>
     <message>
-        <source>Are you sure you want to send?</source>
-        <translation>Apakah Anda yakin ingin mengirim?</translation>
+        <source>Do you want to create this transaction?</source>
+        <translation>Apakah Anda ingin membuat transaksi ini?</translation>
     </message>
     <message>
         <source>or</source>
