@@ -3030,6 +3030,10 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Kirim</translation>
     </message>
     <message>
+        <source>Create Unsigned</source>
+        <translation>Tanpa Tandatangan</translation>
+    </message>
+    <message>
         <source>Cancel</source>
         <translation>Batal</translation>
     </message>
