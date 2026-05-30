@@ -688,8 +688,16 @@ Signing is only possible with addresses of the type &apos;legacy&apos;.</source>
         <translation>Tutup Dompet...</translation>
     </message>
     <message>
+        <source>Close All Wallets...</source>
+        <translation>Tutup Semua Dompet...</translation>
+    </message>
+    <message>
         <source>Close wallet</source>
         <translation>Tutup dompet</translation>
+    </message>
+    <message>
+        <source>Close all wallets</source>
+        <translation>Tutup semua dompet</translation>
     </message>
     <message>
         <source>Show the %1 help message to get a list with possible Nusacoin command-line options</source>
