@@ -25,6 +25,8 @@
 #include <QDebug>
 #include <QIcon>
 #include <QList>
+#include <QPixmap>
+#include <QPainter>
 
 
 // Amount column is right-aligned it contains numbers
@@ -373,6 +375,17 @@ QString TransactionTableModel::lookupAddress(const std::string &address, bool to
     return description;
 }
 
+QIcon makeIconWhite(const QString &iconPath, int size = 128) {
+    QPixmap pixmap = QIcon(iconPath).pixmap(size, size);
+    
+    QPainter painter(&pixmap);
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.fillRect(pixmap.rect(), Qt::white);
+    painter.end();
+    
+    return QIcon(pixmap);
+}
+
 QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
 {
     switch(wtx->type)
@@ -398,15 +411,15 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord *wtx
     switch(wtx->type)
     {
     case TransactionRecord::Generated:
-        return QIcon(":/icons/tx_mined");
+        return makeIconWhite(":/icons/tx_mined");
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
-        return QIcon(":/icons/tx_input");
+        return makeIconWhite(":/icons/tx_input");
     case TransactionRecord::SendToAddress:
     case TransactionRecord::SendToOther:
-        return QIcon(":/icons/tx_output");
+        return makeIconWhite(":/icons/tx_output");
     default:
-        return QIcon(":/icons/tx_inout");
+        return makeIconWhite(":/icons/tx_inout");
     }
 }
 
