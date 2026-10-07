@@ -1,0 +1,43 @@
+name: Notify Telegram on PR merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  telegram-notify:
+    # Fire only when a PR is actually merged, not when it is merely closed.
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_TOPIC_ID: ${{ secrets.TELEGRAM_TOPIC_ID }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          MERGED_BY: ${{ github.event.pull_request.merged_by.login }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "::warning::Telegram secrets are not configured; skipping notification."
+            exit 0
+          fi
+          TEXT=$(printf '✅ PR #%s merged: %s → %s\n\n%s\n\nOleh: %s\n%s' \
+            "$PR_NUMBER" "$HEAD_REF" "$BASE_REF" "$PR_TITLE" "$MERGED_BY" "$PR_URL")
+          ARGS=(--data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+                --data-urlencode "text=${TEXT}" \
+                --data-urlencode "disable_web_page_preview=true")
+          if [ -n "$TELEGRAM_TOPIC_ID" ]; then
+            ARGS+=(--data-urlencode "message_thread_id=${TELEGRAM_TOPIC_ID}")
+          fi
+          RESPONSE=$(curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" "${ARGS[@]}")
+          if printf '%s' "$RESPONSE" | grep -q '"ok":true'; then
+            echo "Telegram notification sent."
+          else
+            echo "::error::Failed to send Telegram notification: $RESPONSE"
+            exit 1
+          fi
