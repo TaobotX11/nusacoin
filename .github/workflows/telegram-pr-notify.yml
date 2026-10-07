@@ -18,6 +18,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           MERGED_BY: ${{ github.event.pull_request.merged_by.login }}
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
@@ -26,8 +27,8 @@ jobs:
             echo "::warning::Telegram secrets are not configured; skipping notification."
             exit 0
           fi
-          TEXT=$(printf '✅ PR #%s merged: %s → %s\n\n%s\n\nOleh: %s\n%s' \
-            "$PR_NUMBER" "$HEAD_REF" "$BASE_REF" "$PR_TITLE" "$MERGED_BY" "$PR_URL")
+          TEXT=$(printf '✅ PR #%s merged: %s → %s\n\n%s\n\nPembuat PR: %s\nDi-merge oleh: %s\n%s' \
+            "$PR_NUMBER" "$HEAD_REF" "$BASE_REF" "$PR_TITLE" "$PR_AUTHOR" "$MERGED_BY" "$PR_URL")
           ARGS=(--data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
                 --data-urlencode "text=${TEXT}" \
                 --data-urlencode "disable_web_page_preview=true")
