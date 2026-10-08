@@ -1185,7 +1185,7 @@ void PeerManager::BlockConnected(const std::shared_ptr<const CBlock>& pblock, co
     }
     {
         LOCK(g_cs_recent_confirmed_transactions);
-        for (const auto ptx : pblock->vtx) {
+        for (const auto& ptx : pblock->vtx) {
             g_recent_confirmed_transactions->insert(ptx->GetHash());
             if (ptx->GetHash() != ptx->GetWitnessHash()) {
                 g_recent_confirmed_transactions->insert(ptx->GetWitnessHash());
