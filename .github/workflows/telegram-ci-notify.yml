@@ -1,0 +1,32 @@
+name: CI failure notify
+
+# Sends a personal Telegram DM when the build check fails.
+# Failure-only on purpose: no spam on successful runs.
+on:
+  workflow_run:
+    workflows: ["Build check"]
+    types: [completed]
+
+jobs:
+  notify-failure:
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram DM
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          DM_CHAT_ID: ${{ secrets.TELEGRAM_DM_CHAT_ID }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          if [ -z "$BOT_TOKEN" ] || [ -z "$DM_CHAT_ID" ]; then
+            echo "Telegram DM secrets not configured, skipping."
+            exit 0
+          fi
+          TEXT=$(printf '🔴 Build check GAGAL\n\nBranch: %s\nCommit: %s\n\nLog: %s' \
+            "$HEAD_BRANCH" "${HEAD_SHA:0:7}" "$RUN_URL")
+          curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${DM_CHAT_ID}" \
+            --data-urlencode "text=${TEXT}" \
+            -d "disable_web_page_preview=true"
