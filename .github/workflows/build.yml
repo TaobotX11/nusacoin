@@ -1,0 +1,50 @@
+name: Build check
+
+# Compile-check every pull request (and every push to main) so broken
+# code is caught before merge, not after release.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  build-ubuntu:
+    name: Build on Ubuntu (Qt GUI)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config \
+            bsdmainutils python3 ccache \
+            libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev \
+            libboost-chrono-dev libboost-test-dev libboost-thread-dev \
+            libdb-dev libdb++-dev libminiupnpc-dev libzmq3-dev \
+            libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools \
+            libqrencode-dev
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: ccache-${{ runner.os }}-build
+          restore-keys: |
+            ccache-${{ runner.os }}-build
+
+      - name: Configure
+        run: |
+          ccache --max-size=2G
+          ccache --zero-stats
+          ./autogen.sh
+          ./configure --with-incompatible-bdb --disable-tests --disable-bench --disable-gui-tests CC="ccache gcc" CXX="ccache g++"
+
+      - name: Build
+        run: make -j$(nproc)
+
+      - name: Show ccache stats
+        run: ccache --show-stats
