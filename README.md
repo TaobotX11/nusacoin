@@ -1,3 +1,5 @@
+[![Build check](https://github.com/TaobotX11/nusacoin/actions/workflows/build.yml/badge.svg)](https://github.com/TaobotX11/nusacoin/actions/workflows/build.yml)
+
 Development is now occurring on the Nusacoin-Core repo
 As of 2025, development has now moved to the KMKS organization, under the Nusacoin repo
 
