@@ -10,6 +10,7 @@
 #include <util/macros.h>
 
 #include <condition_variable>
+#include <string>
 #include <thread>
 #include <mutex>
 

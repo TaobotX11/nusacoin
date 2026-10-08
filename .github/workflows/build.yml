@@ -41,7 +41,7 @@ jobs:
           ccache --max-size=2G
           ccache --zero-stats
           ./autogen.sh
-          ./configure --with-incompatible-bdb CC="ccache gcc" CXX="ccache g++"
+          ./configure --with-incompatible-bdb --disable-tests --disable-bench --disable-gui-tests CC="ccache gcc" CXX="ccache g++"
 
       - name: Build
         run: make -j$(nproc)

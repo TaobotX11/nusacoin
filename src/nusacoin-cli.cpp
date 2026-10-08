@@ -23,6 +23,7 @@
 #include <memory>
 #include <stdio.h>
 #include <string>
+#include <array>
 #include <tuple>
 
 #include <event2/buffer.h>
