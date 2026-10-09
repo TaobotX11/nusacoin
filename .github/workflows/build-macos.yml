@@ -24,14 +24,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install automake berkeley-db@4 boost ccache libevent libtool \
+          brew install automake berkeley-db@5 boost ccache libevent libtool \
             miniupnpc pkg-config python qrencode qt@5 zeromq
 
       - name: Set up build environment
         run: |
           echo "$(brew --prefix qt@5)/bin" >> "$GITHUB_PATH"
           {
-            echo "BDB_PREFIX=$(brew --prefix berkeley-db@4)"
+            echo "BDB_PREFIX=$(brew --prefix berkeley-db@5)"
             echo "PKG_CONFIG_PATH=$(brew --prefix qt@5)/lib/pkgconfig:${PKG_CONFIG_PATH}"
           } >> "$GITHUB_ENV"
           ccache --max-size=2G
@@ -49,7 +49,7 @@ jobs:
         run: |
           ./autogen.sh
           ./configure --with-incompatible-bdb --disable-tests --disable-bench --disable-gui-tests \
-            BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" \
+            BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-5.3" \
             BDB_CFLAGS="-I${BDB_PREFIX}/include" \
             CC="ccache clang" CXX="ccache clang++"
 
