@@ -1,0 +1,66 @@
+name: Build macOS DMG (Qt)
+
+# Builds Nusacoin-Qt for macOS and uploads the .dmg as a workflow artifact.
+# Run it on demand from the repository's "Actions" tab (workflow_dispatch).
+# macOS runners consume minutes at a higher rate than Linux ones, so this
+# workflow is manual-only by default. Add push/pull_request triggers if you
+# want it as part of CI.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    name: Build macOS DMG (Qt)
+    runs-on: macos-latest
+    timeout-minutes: 240
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install automake berkeley-db@4 boost ccache libevent libtool \
+            miniupnpc pkg-config python qrencode qt@5 zeromq
+
+      - name: Set up build environment
+        run: |
+          echo "$(brew --prefix qt@5)/bin" >> "$GITHUB_PATH"
+          {
+            echo "BDB_PREFIX=$(brew --prefix berkeley-db@4)"
+            echo "PKG_CONFIG_PATH=$(brew --prefix qt@5)/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          } >> "$GITHUB_ENV"
+          ccache --max-size=2G
+          ccache --zero-stats
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: ccache-macos-${{ github.ref_name }}
+          restore-keys: |
+            ccache-macos-
+
+      - name: Configure
+        run: |
+          ./autogen.sh
+          ./configure --with-incompatible-bdb --disable-tests --disable-bench --disable-gui-tests \
+            BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" \
+            BDB_CFLAGS="-I${BDB_PREFIX}/include" \
+            CC="ccache clang" CXX="ccache clang++"
+
+      - name: Build
+        run: make -j"$(sysctl -n hw.ncpu)"
+
+      - name: Create DMG
+        run: make deploy
+
+      - name: Show ccache stats
+        run: ccache --show-stats
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nusacoin-qt-macos
+          path: "*.dmg"
+          if-no-files-found: error
