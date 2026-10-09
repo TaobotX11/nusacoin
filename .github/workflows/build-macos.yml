@@ -8,6 +8,10 @@ name: Build macOS DMG (Qt)
 
 on:
   workflow_dispatch:
+  push:
+    # Only this working branch: keeps macOS runner minutes under control
+    # and keeps the main branch workflow untouched.
+    branches: [remy/build-macos-dmg]
 
 jobs:
   build-macos:
