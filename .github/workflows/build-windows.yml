@@ -32,6 +32,22 @@ jobs:
           restore-keys: |
             depends-mingw32-
 
+      - name: Pre-extract and patch Qt 5.9.8 for GCC 13
+        run: |
+          cd depends
+          # Qt 5.9.8's qbytearraymatcher.h uses std::numeric_limits without
+          # including <limits>; GCC 13's headers no longer pull it in
+          # transitively, so the depends Qt configure step fails. Extract the
+          # sources with depends' own machinery, then patch the header.
+          make HOST=x86_64-w64-mingw32 qt_extracted
+          HDR=$(echo work/build/x86_64-w64-mingw32/qt/*/qtbase/src/corelib/tools/qbytearraymatcher.h)
+          if [ ! -f "$HDR" ]; then
+            echo "ERROR: Qt header not found after extraction: $HDR" >&2
+            exit 1
+          fi
+          grep -q '#include <limits>' "$HDR" || sed -i '1i #include <limits>' "$HDR"
+          grep -n 'include <limits>' "$HDR" | head -2
+
       - name: Build dependencies
         run: |
           cd depends
