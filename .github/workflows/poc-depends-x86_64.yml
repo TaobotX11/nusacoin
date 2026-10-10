@@ -1,0 +1,98 @@
+name: "PoC: depends cross-compile x86_64"
+
+# Proof of concept for the universal-binary plan.
+# Validates ONLY that the `depends` stack (esp. Qt 5.9.8) cross-compiles
+# for Intel (x86_64) on a free Apple Silicon runner.
+# It does NOT build nusacoin itself yet — that comes after this is green.
+#
+# Fixes vs the first draft:
+#  - depends/builders/darwin.mk is included AFTER hosts/darwin.mk when
+#    building ON a Mac, and it overrides darwin_CC/darwin_CXX WITHOUT
+#    `-target $(host)`. Without re-adding the target flag, clang defaults
+#    to the build machine arch (arm64), so the "x86_64" tree would silently
+#    come out arm64. Fixed via darwin_CC/darwin_CXX make overrides below
+#    (CI-side shim, no repo changes).
+#  - Qt 5.9.8's configure compiles AND runs test binaries; on an arm64
+#    runner those x86_64 binaries need Rosetta 2 (not pre-installed).
+#  - OSX_MIN_VERSION=10.10 is no longer accepted by the modern Xcode SDK;
+#    overridden to 11.0 (team decision: minimum supported macOS for Intel).
+#
+# Remaining known risks this PoC is meant to surface:
+#  - The repo's old config.guess may not recognise the runner's macOS
+#    version (fix: refresh config.guess/config.sub from upstream savannah).
+#  - Modern Xcode SDK vs Qt 5.9.8 (2019-era) quirks.
+
+on:
+  workflow_dispatch: # manual only; macOS minutes are precious (10x multiplier)
+  # TEMPORARY PoC trigger: GitHub cannot API-dispatch a workflow that only
+  # exists on a non-default branch (HTTP 404), so this runs the PoC once
+  # the PR is opened. Remove after the PoC phase; keep workflow_dispatch.
+  pull_request:
+
+jobs:
+  depends-x86_64:
+    name: depends HOST=x86_64-apple-darwin
+    runs-on: macos-latest
+    timeout-minutes: 360 # GitHub-hosted max; Qt-from-source needs it
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show toolchain versions (debug)
+        run: |
+          xcrun clang --version | head -2
+          xcrun --show-sdk-path
+          xcrun --show-sdk-version
+          ./depends/config.guess
+
+      - name: Install Rosetta 2 (runs x86_64 test binaries)
+        run: |
+          if ! /usr/bin/arch -x86_64 /usr/bin/true 2>/dev/null; then
+            sudo softwareupdate --install-rosetta --agree-to-license
+          fi
+          /usr/bin/arch -x86_64 /usr/bin/uname -m
+
+      - name: Cache depends build output
+        uses: actions/cache@v4
+        with:
+          # `built` holds per-package tarballs keyed by build-id (which
+          # already includes compiler versions); `sources` holds downloads.
+          path: |
+            depends/built
+            depends/sources
+          key: depends-x86_64-${{ hashFiles('depends/packages/**', 'depends/hosts/**', 'depends/builders/**', 'depends/funcs.mk', 'depends/Makefile', 'depends/config.guess', 'depends/config.sub') }}
+          restore-keys: |
+            depends-x86_64-
+
+      - name: Build depends for x86_64
+        env:
+          MACOSX_DEPLOYMENT_TARGET: "11.0"
+        run: |
+          SDK_PATH="$(xcrun --show-sdk-path)"
+          CC_WRAPPER="$(xcrun -f clang) -target x86_64-apple-darwin -mmacosx-version-min=11.0 --sysroot ${SDK_PATH}"
+          CXX_WRAPPER="$(xcrun -f clang++) -target x86_64-apple-darwin -mmacosx-version-min=11.0 --sysroot ${SDK_PATH} -stdlib=libc++"
+          make -C depends -j"$(sysctl -n hw.ncpu)" \
+            HOST=x86_64-apple-darwin \
+            OSX_MIN_VERSION=11.0 \
+            "darwin_CC=${CC_WRAPPER}" \
+            "darwin_CXX=${CXX_WRAPPER}"
+
+      - name: Verify the output is really x86_64
+        run: |
+          PREFIX="$PWD/depends/x86_64-apple-darwin"
+          test -d "$PREFIX" || { echo "::error::prefix dir missing: $PREFIX"; exit 1; }
+          # QtCore may be a framework binary or a dylib depending on the Qt build.
+          QTBIN=$(find "$PREFIX" \( -name "QtCore" -o -name "libQtCore*" \) -type f | head -1)
+          if [ -z "$QTBIN" ]; then
+            echo "::error::no QtCore binary under $PREFIX"
+            find "$PREFIX" -maxdepth 3 | head -30
+            exit 1
+          fi
+          echo "QtCore binary: $QTBIN"
+          file "$QTBIN"
+          ARCHS=$(lipo -archs "$QTBIN")
+          echo "architectures: $ARCHS"
+          case "$ARCHS" in
+            *x86_64*) echo "OK: x86_64 present" ;;
+            *) echo "::error::x86_64 NOT present in $QTBIN"; exit 1 ;;
+          esac
