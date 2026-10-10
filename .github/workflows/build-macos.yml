@@ -148,7 +148,7 @@ jobs:
           # Homebrew qt@5 layout (translations ship under share/translations).
           # Ask Qt itself where they are and pass it via a make command-line
           # variable override (overrides are honored by the deploy rule).
-          QT_TR_DIR="$(brew --prefix qt@5)/bin/qtpaths --query QT_INSTALL_TRANSLATIONS"
+          QT_TR_DIR="$($(brew --prefix qt@5)/bin/qtpaths --query QT_INSTALL_TRANSLATIONS)"
           test -d "$QT_TR_DIR"
           make deploy QT_TRANSLATION_DIR="$QT_TR_DIR"
 
