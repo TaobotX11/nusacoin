@@ -1,0 +1,54 @@
+name: Build Windows EXE (Qt)
+
+# Cross-compile Nusacoin-Qt for Windows (x86_64) using the depends system.
+# Produces nusacoin-qt.exe and uploads it as a workflow artifact.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [remy/build-windows-exe]
+
+jobs:
+  build:
+    name: Cross-compile for Windows (x86_64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install host build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config \
+            bsdmainutils python3 curl git \
+            g++-mingw-w64-x86-64
+
+      - name: Cache depends build
+        uses: actions/cache@v4
+        with:
+          path: depends
+          key: depends-mingw32-${{ hashFiles('depends/packages/*.mk', 'depends/hosts/mingw32.mk', 'depends/Makefile', 'depends/config.guess') }}
+          restore-keys: |
+            depends-mingw32-
+
+      - name: Build dependencies
+        run: |
+          cd depends
+          make HOST=x86_64-w64-mingw32 -j$(nproc)
+
+      - name: Configure
+        run: |
+          ./autogen.sh
+          CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site \
+            ./configure --prefix=/ --disable-tests --disable-bench
+
+      - name: Build
+        run: make -j$(nproc)
+
+      - name: Upload nusacoin-qt.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: nusacoin-qt-windows
+          path: src/qt/nusacoin-qt.exe
+          if-no-files-found: error
