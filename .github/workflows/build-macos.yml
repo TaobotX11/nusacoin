@@ -60,6 +60,10 @@ jobs:
           # rejects as a hard error ("'short type-name' is invalid"). Patch
           # the working-tree checkout only; repo sources stay untouched.
           sed -i '' 's/uint16_t short randv/uint16_t randv/' src/addrdb.cpp
+          # Homebrew ships miniupnpc 2.2, whose UPNP_GetValidIGD takes 7
+          # arguments (the old 5-argument call no longer compiles). Patch the
+          # working-tree checkout only; repo sources stay untouched.
+          sed -i '' 's/UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));/UPNP_GetValidIGD(devlist, \&urls, \&data, lanaddr, sizeof(lanaddr), nullptr, 0);/' src/net.cpp
 
       - name: Configure
         run: |
