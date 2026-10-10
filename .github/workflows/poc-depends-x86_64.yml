@@ -100,7 +100,15 @@ jobs:
           PREFIX="$PWD/depends/x86_64-apple-darwin"
           test -d "$PREFIX" || { echo "::error::prefix dir missing: $PREFIX"; exit 1; }
           # QtCore may be a framework binary or a dylib depending on the Qt build.
-          QTBIN=$(find "$PREFIX" \( -name "QtCore" -o -name "libQtCore*" \) -type f | head -1)
+          # Skip the installed headers ($PREFIX/include/QtCore/QtCore is a C++\
+          # header that matches -name "QtCore"), and only accept a real Mach-O
+          # binary — that's what lipo can actually read.
+          QTBIN=""
+          while IFS= read -r cand; do
+            if file "$cand" | grep -q "Mach-O"; then
+              QTBIN="$cand"; break
+            fi
+          done < <(find "$PREFIX" \( -name "QtCore" -o -name "libQtCore*" \) -type f)
           if [ -z "$QTBIN" ]; then
             echo "::error::no QtCore binary under $PREFIX"
             find "$PREFIX" -maxdepth 3 | head -30
