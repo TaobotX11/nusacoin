@@ -11,6 +11,12 @@ $(package)_config_opts_mingw32=--enable-mingw
 $(package)_config_opts_linux=--with-pic
 $(package)_cxxflags=-std=c++11
 $(package)_cppflags_mingw32=-DUNICODE -D_UNICODE
+# Berkeley DB 4.8's configure probes mutex support with test programs that
+# call exit() without including <stdlib.h>. Clang 16+ (Xcode 16+) turns that
+# into a hard error, so every probe fails and configure falls through to the
+# unsupported UNIX/fcntl backend ("Unable to find a mutex implementation").
+# Downgrading it to a warning restores the historical detection path.
+$(package)_cflags_darwin=-Wno-error=implicit-function-declaration
 endef
 
 define $(package)_preprocess_cmds
