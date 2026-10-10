@@ -1,0 +1,91 @@
+name: Build Windows EXE (Qt)
+
+# Cross-compile Nusacoin-Qt for Windows (x86_64) using the depends system.
+# Produces nusacoin-qt.exe and uploads it as a workflow artifact.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [remy/build-windows-exe]
+
+jobs:
+  build:
+    name: Cross-compile for Windows (x86_64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install host build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config \
+            bsdmainutils python3 curl git \
+            g++-mingw-w64-x86-64
+
+      - name: Cache depends build
+        uses: actions/cache@v4
+        with:
+          path: depends
+          key: depends-mingw32-${{ hashFiles('depends/packages/*.mk', 'depends/hosts/mingw32.mk', 'depends/Makefile', 'depends/config.guess') }}
+          restore-keys: |
+            depends-mingw32-
+
+      - name: Pre-extract and patch Qt 5.9.8 for modern toolchain
+        run: |
+          cd depends
+          # Extract the Qt sources with depends' own machinery, then apply
+          # compatibility patches for the 2026 toolchain. The depends dir is
+          # cached between runs, so extraction is a no-op when already done.
+          make HOST=x86_64-w64-mingw32 qt_extracted
+          QTBASE=$(echo work/build/x86_64-w64-mingw32/qt/*/qtbase)
+          if [ ! -d "$QTBASE" ]; then
+            echo "ERROR: Qt sources not found after extraction: $QTBASE" >&2
+            exit 1
+          fi
+          # 1. qbytearraymatcher.h uses std::numeric_limits without including
+          #    <limits>; GCC 13's headers no longer pull it in transitively,
+          #    so the Qt configure step fails without this.
+          HDR="$QTBASE/src/corelib/tools/qbytearraymatcher.h"
+          grep -q '#include <limits>' "$HDR" || sed -i '1i #include <limits>' "$HDR"
+          grep -n 'include <limits>' "$HDR" | head -2
+          # 2. qwindowsmousehandler.cpp unconditionally redefines
+          #    tagTOUCHINPUT/TOUCHINPUT for MinGW, but mingw-w64 >= 8 already
+          #    defines them in winuser.h. Keep Qt's copies only as a fallback
+          #    when the SDK headers lack TOUCHEVENTF_MOVE.
+          MH="$QTBASE/src/plugins/platforms/windows/qwindowsmousehandler.cpp"
+          sed -i 's/#if defined(Q_CC_MINGW) || !defined(TOUCHEVENTF_MOVE)/#if !defined(TOUCHEVENTF_MOVE)/' "$MH"
+          grep -n 'defined(TOUCHEVENTF_MOVE)' "$MH" | head -3
+
+      - name: Build dependencies
+        run: |
+          cd depends
+          make HOST=x86_64-w64-mingw32 -j$(nproc)
+
+      - name: Patch repo sources for modern toolchain
+        run: |
+          # src/fs.cpp uses std::numeric_limits without including <limits>;
+          # the modern mingw-w64 GCC headers no longer pull it in
+          # transitively, so the build fails with
+          # "'numeric_limits' is not a member of 'std'". Patch on the
+          # CI side; the repo sources stay untouched.
+          grep -q '#include <limits>' src/fs.cpp || \
+            sed -i 's|#include <windows.h>|#include <windows.h>\n#include <limits>|' src/fs.cpp
+          grep -n 'include <limits>' src/fs.cpp
+
+      - name: Configure
+        run: |
+          ./autogen.sh
+          CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site \
+            ./configure --prefix=/ --disable-tests --disable-bench
+
+      - name: Build
+        run: make -j$(nproc)
+
+      - name: Upload nusacoin-qt.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: nusacoin-qt-windows
+          path: src/qt/nusacoin-qt.exe
+          if-no-files-found: error
