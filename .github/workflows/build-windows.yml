@@ -63,6 +63,17 @@ jobs:
           cd depends
           make HOST=x86_64-w64-mingw32 -j$(nproc)
 
+      - name: Patch repo sources for modern toolchain
+        run: |
+          # src/fs.cpp uses std::numeric_limits without including <limits>;
+          # the modern mingw-w64 GCC headers no longer pull it in
+          # transitively, so the build fails with
+          # "'numeric_limits' is not a member of 'std'". Patch on the
+          # CI side; the repo sources stay untouched.
+          grep -q '#include <limits>' src/fs.cpp || \
+            sed -i 's|#include <windows.h>|#include <windows.h>\n#include <limits>|' src/fs.cpp
+          grep -n 'include <limits>' src/fs.cpp
+
       - name: Configure
         run: |
           ./autogen.sh
