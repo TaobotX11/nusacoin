@@ -67,6 +67,8 @@ jobs:
           # Boost >= 1.89 removed the old Filesystem v2 enum
           # fs::copy_option::overwrite_if_exists (singular). Use the v3 enum
           # class name instead: copy_options::overwrite_existing.
+          # Patch the working-tree checkout only; repo sources stay untouched.
+          sed -i '' 's/fs::copy_option::overwrite_if_exists/fs::copy_options::overwrite_existing/' src/wallet/bdb.cpp
           # Boost >= 1.80 removed the deprecated Filesystem v2 method
           # recursive_directory_iterator::level() (deprecated since 1.72);
           # use depth(), which has been the documented name since 1.72.
