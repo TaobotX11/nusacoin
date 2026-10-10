@@ -157,7 +157,20 @@ jobs:
           # so use qmake -query instead.
           QT_TR_DIR="$($(brew --prefix qt@5)/bin/qmake -query QT_INSTALL_TRANSLATIONS)"
           test -d "$QT_TR_DIR"
-          make deploy QT_TRANSLATION_DIR="$QT_TR_DIR"
+          # macdeployqtplus hard-fails if any requested -add-qt-tr language
+          # file is missing, and Homebrew's qt@5 ships few or no qt_<lang>.qm
+          # files (qt_id.qm is absent, for example). Keep only the languages
+          # whose .qm file actually exists in the translations dir; an empty
+          # list is fine (Qt framework translations are optional for the app).
+          # This overrides the OSX_QT_TRANSLATIONS make variable CI-side only.
+          AVAIL=""
+          for lng in ar bg ca cs da de es fa fi fr gd gl he hu id it ja ko lt lv pl pt ru sk sl sv uk zh_CN zh_TW; do
+            if [ -f "$QT_TR_DIR/qt_${lng}.qm" ]; then
+              AVAIL="${AVAIL:+$AVAIL,}$lng"
+            fi
+          done
+          echo "Qt translations dir: $QT_TR_DIR (available: ${AVAIL:-none})"
+          make deploy QT_TRANSLATION_DIR="$QT_TR_DIR" OSX_QT_TRANSLATIONS="$AVAIL"
 
       - name: Show ccache stats
         run: ccache --show-stats
