@@ -58,9 +58,9 @@ jobs:
           # (its ez_setup fallback no longer works). The runner's Python
           # 3.12+ does not bundle setuptools, so install it up front for
           # the same python3 that `depends` will invoke.
-          # If pip refuses with "externally-managed-environment", add
-          # --break-system-packages to the install command.
-          python3 -m pip install setuptools
+          # --break-system-packages: the runner's python3 is Homebrew-managed
+          # (PEP 668); safe here because the runner is an ephemeral VM.
+          python3 -m pip install --break-system-packages setuptools
           python3 -c "import setuptools; print(setuptools.__version__)"
 
       - name: Cache depends build output
