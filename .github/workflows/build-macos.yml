@@ -141,6 +141,11 @@ jobs:
         run: make -j"$(sysctl -n hw.ncpu)"
 
       - name: Create DMG
+        env:
+          # Unbuffered Python stdout: the previous attempt's macdeployqtplus
+          # died with a silent exit code 1 (no traceback, no error line),
+          # so force unbuffered output to pinpoint exactly where it stops.
+          PYTHONUNBUFFERED: "1"
         run: |
           # Makefile.am's deploy rule passes -translations-dir=$(QT_TRANSLATION_DIR),
           # but configure never sets QT_TRANSLATION_DIR, so macdeployqtplus falls
