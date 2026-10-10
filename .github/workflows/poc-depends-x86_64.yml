@@ -52,6 +52,17 @@ jobs:
           fi
           /usr/bin/arch -x86_64 /usr/bin/uname -m
 
+      - name: Install setuptools for the build python
+        run: |
+          # native_biplist's 2020-era setup.py does `import setuptools`
+          # (its ez_setup fallback no longer works). The runner's Python
+          # 3.12+ does not bundle setuptools, so install it up front for
+          # the same python3 that `depends` will invoke.
+          # If pip refuses with "externally-managed-environment", add
+          # --break-system-packages to the install command.
+          python3 -m pip install setuptools
+          python3 -c "import setuptools; print(setuptools.__version__)"
+
       - name: Cache depends build output
         uses: actions/cache@v4
         with:
