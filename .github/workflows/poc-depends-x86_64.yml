@@ -105,10 +105,10 @@ jobs:
           # binary — that's what lipo can actually read.
           QTBIN=""
           while IFS= read -r cand; do
-            if file "$cand" | grep -q "Mach-O"; then
+            if file "$cand" | grep -qE "Mach-O|ar archive"; then
               QTBIN="$cand"; break
             fi
-          done < <(find "$PREFIX" \( -name "QtCore" -o -name "libQtCore*" \) -type f)
+          done < <(find "$PREFIX" \( -name "QtCore" -o -name "libQtCore*" -o -name "Qt5Core" -o -name "libQt5Core*" \) -type f)
           if [ -z "$QTBIN" ]; then
             echo "::error::no QtCore binary under $PREFIX"
             find "$PREFIX" -maxdepth 3 | head -30
