@@ -49,9 +49,14 @@ jobs:
       - name: Configure
         run: |
           ./autogen.sh
+          # CPPFLAGS/LDFLAGS point at Homebrew's include/lib so configure and
+          # the compiler both find keg-only and versioned formulae (boost,
+          # berkeley-db, libevent, ...) on Apple Silicon runners.
           ./configure --with-incompatible-bdb --disable-tests --disable-bench --disable-gui-tests \
             BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-5.3" \
             BDB_CFLAGS="-I${BDB_PREFIX}/include" \
+            CPPFLAGS="-I$(brew --prefix)/include" \
+            LDFLAGS="-L$(brew --prefix)/lib" \
             CC="ccache clang" CXX="ccache clang++"
 
       - name: Build
