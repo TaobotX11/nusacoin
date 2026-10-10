@@ -24,8 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install automake berkeley-db@5 boost ccache libevent libtool \
-            miniupnpc pkg-config python qrencode qt@5 zeromq
+          brew install automake berkeley-db@5 boost ccache libevent librsvg \
+            libtool miniupnpc pkg-config python qrencode qt@5 zeromq
 
       - name: Set up build environment
         run: |
@@ -74,6 +74,49 @@ jobs:
           # use depth(), which has been the documented name since 1.72.
           # Patch the working-tree checkout only; repo sources stay untouched.
           sed -i '' 's/it.level()/it.depth()/' src/wallet/walletutil.cpp
+          # Makefile.am still references contrib/macdeploy/fancy.plist as a
+          # dmg prerequisite, but the file is missing from the repo (it
+          # exists upstream; this fork lost it). Generate a minimal plist in
+          # the working tree only; repo sources stay untouched. All keys are
+          # optional for macdeployqtplus; background_picture is omitted on
+          # purpose (the generated background.tiff does not live next to the
+          # plist, so the script's path resolution would fail on it).
+          cat > contrib/macdeploy/fancy.plist <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+          	<key>window_bounds</key>
+          	<array>
+          		<integer>100</integer>
+          		<integer>100</integer>
+          		<integer>540</integer>
+          		<integer>380</integer>
+          	</array>
+          	<key>icon_size</key>
+          	<integer>128</integer>
+          	<key>applications_symlink</key>
+          	<true/>
+          	<key>items_position</key>
+          	<dict>
+          		<key>Nusacoin-Qt.app</key>
+          		<array>
+          			<integer>120</integer>
+          			<integer>150</integer>
+          		</array>
+          		<key>Applications</key>
+          		<array>
+          			<integer>420</integer>
+          			<integer>150</integer>
+          		</array>
+          	</dict>
+          </dict>
+          </plist>
+          PLIST
+          # macdeployqtplus calls plistlib.readPlist, removed in Python 3.9
+          # (the script runs under python3). Use plistlib.load instead.
+          # Patch the working-tree checkout only; repo sources stay untouched.
+          sed -i '' 's/plistlib.readPlist(p)/plistlib.load(open(p, "rb"))/' contrib/macdeploy/macdeployqtplus
 
       - name: Configure
         run: |
