@@ -35,6 +35,12 @@ jobs:
             echo "BOOST_ROOT=$(brew --prefix boost)"
             echo "PKG_CONFIG_PATH=$(brew --prefix qt@5)/lib/pkgconfig:${PKG_CONFIG_PATH}"
           } >> "$GITHUB_ENV"
+          # Boost >= 1.89 no longer ships a libboost_system binary (Boost.System
+          # is header-only now), but this autotools build still probes for it
+          # ("Could not find a version of the Boost::System library!"). Drop an
+          # empty static archive into the Boost lib dir so the configure probe
+          # and the final link both succeed; nothing needs its symbols.
+          ar rcs "$(brew --prefix boost)/lib/libboost_system.a"
           ccache --max-size=2G
           ccache --zero-stats
 
