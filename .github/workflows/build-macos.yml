@@ -146,9 +146,11 @@ jobs:
           # but configure never sets QT_TRANSLATION_DIR, so macdeployqtplus falls
           # back to <qt prefix>/translations — which does not exist in the
           # Homebrew qt@5 layout (translations ship under share/translations).
-          # Ask Qt itself where they are and pass it via a make command-line
+          # Ask qmake where they are and pass it via a make command-line
           # variable override (overrides are honored by the deploy rule).
-          QT_TR_DIR="$($(brew --prefix qt@5)/bin/qtpaths --query QT_INSTALL_TRANSLATIONS)"
+          # Note: qtpaths --query is not supported by Homebrew's qt@5 build,
+          # so use qmake -query instead.
+          QT_TR_DIR="$($(brew --prefix qt@5)/bin/qmake -query QT_INSTALL_TRANSLATIONS)"
           test -d "$QT_TR_DIR"
           make deploy QT_TRANSLATION_DIR="$QT_TR_DIR"
 
