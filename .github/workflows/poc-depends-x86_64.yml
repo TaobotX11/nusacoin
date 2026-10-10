@@ -24,6 +24,10 @@ name: "PoC: depends cross-compile x86_64"
 
 on:
   workflow_dispatch: # manual only; macOS minutes are precious (10x multiplier)
+  # TEMPORARY PoC trigger: GitHub cannot API-dispatch a workflow that only
+  # exists on a non-default branch (HTTP 404), so this runs the PoC once
+  # the PR is opened. Remove after the PoC phase; keep workflow_dispatch.
+  pull_request:
 
 jobs:
   depends-x86_64:
