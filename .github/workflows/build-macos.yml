@@ -64,6 +64,11 @@ jobs:
           # arguments (the old 5-argument call no longer compiles). Patch the
           # working-tree checkout only; repo sources stay untouched.
           sed -i '' 's/UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));/UPNP_GetValidIGD(devlist, \&urls, \&data, lanaddr, sizeof(lanaddr), nullptr, 0);/' src/net.cpp
+          # Boost >= 1.89 removed the old Filesystem v2 enum
+          # fs::copy_option::overwrite_if_exists (singular). Use the v3 enum
+          # class name instead: copy_options::overwrite_existing.
+          # Patch the working-tree checkout only; repo sources stay untouched.
+          sed -i '' 's/fs::copy_option::overwrite_if_exists/fs::copy_options::overwrite_existing/' src/wallet/bdb.cpp
 
       - name: Configure
         run: |
