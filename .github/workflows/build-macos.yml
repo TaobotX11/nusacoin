@@ -40,7 +40,9 @@ jobs:
           # ("Could not find a version of the Boost::System library!"). Drop an
           # empty static archive into the Boost lib dir so the configure probe
           # and the final link both succeed; nothing needs its symbols.
-          ar rcs "$(brew --prefix boost)/lib/libboost_system.a"
+          # ar needs at least one member file to create the archive.
+          echo "int boost_system_stub;" | c++ -x c++ -c -o /tmp/boost_system_stub.o -
+          ar rcs "$(brew --prefix boost)/lib/libboost_system.a" /tmp/boost_system_stub.o
           ccache --max-size=2G
           ccache --zero-stats
 
