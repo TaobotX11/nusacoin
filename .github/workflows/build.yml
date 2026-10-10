@@ -5,8 +5,19 @@ name: Build check
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    # Skip the build for changes that cannot affect compilation
+    # (docs, helper scripts, markdown). A PR touching both code and
+    # these paths still triggers the build.
+    paths-ignore:
+      - 'doc/**'
+      - 'contrib/**'
+      - '**.md'
   push:
     branches: [main]
+    paths-ignore:
+      - 'doc/**'
+      - 'contrib/**'
+      - '**.md'
 
 jobs:
   build-ubuntu:
