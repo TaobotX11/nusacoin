@@ -60,7 +60,13 @@ jobs:
           # CPPFLAGS/LDFLAGS point at Homebrew's include/lib so configure and
           # the compiler both find keg-only and versioned formulae (boost,
           # berkeley-db, libevent, ...) on Apple Silicon runners.
-          ./configure --with-incompatible-bdb --disable-tests --disable-bench --disable-gui-tests \
+          # --with-boost=<prefix> is required: the BOOST_ROOT env var is only
+          # honored by AX_BOOST_BASE for staged (unbuilt) Boost trees, so with
+          # an installed Homebrew prefix BOOST_LDFLAGS stayed empty and the
+          # ax_boost_* macros scanned the wrong directory for libboost_*
+          # ("Could not find a version of the Boost::System library!").
+          ./configure --with-incompatible-bdb --with-boost="$(brew --prefix boost)" \
+            --disable-tests --disable-bench --disable-gui-tests \
             BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-5.3" \
             BDB_CFLAGS="-I${BDB_PREFIX}/include" \
             CPPFLAGS="-I$(brew --prefix)/include" \
