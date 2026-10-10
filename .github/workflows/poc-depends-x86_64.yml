@@ -71,7 +71,7 @@ jobs:
           path: |
             depends/built
             depends/sources
-          key: depends-x86_64-${{ hashFiles('depends/packages/**', 'depends/hosts/**', 'depends/builders/**', 'depends/funcs.mk', 'depends/Makefile', 'depends/config.guess', 'depends/config.sub') }}
+          key: depends-x86_64-${{ hashFiles('depends/packages/**', 'depends/hosts/**', 'depends/builders/**', 'depends/patches/**', 'depends/funcs.mk', 'depends/Makefile', 'depends/config.guess', 'depends/config.sub') }}
           restore-keys: |
             depends-x86_64-
 
