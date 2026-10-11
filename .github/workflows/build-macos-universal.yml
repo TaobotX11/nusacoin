@@ -113,10 +113,11 @@ jobs:
           # rejects as a hard error ("'short type-name' is invalid"). Patch
           # the working-tree checkout only; repo sources stay untouched.
           sed -i '' 's/uint16_t short randv/uint16_t randv/' src/addrdb.cpp
-          # Homebrew ships miniupnpc 2.2, whose UPNP_GetValidIGD takes 7
-          # arguments (the old 5-argument call no longer compiles). Patch the
-          # working-tree checkout only; repo sources stay untouched.
-          sed -i '' 's/UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));/UPNP_GetValidIGD(devlist, \&urls, \&data, lanaddr, sizeof(lanaddr), nullptr, 0);/' src/net.cpp
+          # NOTE: src/net.cpp calls UPNP_GetValidIGD with the 5-argument
+          # form. That matches the depends-bundled miniupnpc 2.0.20180203
+          # used by the Intel (x86_64) build, so leave it as-is here. The
+          # 7-argument form needed by Homebrew's miniupnpc (2.2+) is applied
+          # later, just before the ARM64 build.
           # Boost >= 1.89 removed the old Filesystem v2 enum
           # fs::copy_option::overwrite_if_exists (singular). Use the v3 enum
           # class name instead: copy_options::overwrite_existing.
@@ -189,6 +190,14 @@ jobs:
       - name: Clean tree for the ARM64 build
         run: |
           make distclean
+
+      - name: Switch net.cpp to the 7-argument UPNP_GetValidIGD
+        run: |
+          # Homebrew ships miniupnpc 2.2+, whose UPNP_GetValidIGD takes 7
+          # arguments (the 5-argument call used by depends' miniupnpc 2.0
+          # for the Intel build no longer compiles here). Patch the
+          # working-tree checkout only; repo sources stay untouched.
+          sed -i '' 's/UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));/UPNP_GetValidIGD(devlist, \&urls, \&data, lanaddr, sizeof(lanaddr), nullptr, 0);/' src/net.cpp
 
       - name: Build ARM64 app (Homebrew)
         run: |
