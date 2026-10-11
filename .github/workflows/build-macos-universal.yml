@@ -252,17 +252,18 @@ jobs:
           p = 'contrib/macdeploy/macdeployqtplus'
           s = open(p).read()
           old = '''        # Note: line must be trimmed
-          if line == "":
-              return None
+                  if line == "":
+                      return None
           '''
           new = '''        # Note: line must be trimmed
-          if line == "":
-              return None
+                  if line == "":
+                      return None
 
-          # Modern otool prints a header line per architecture for universal
-          # binaries ("<path> (architecture <arch>):"); skip those.
-          if " (architecture " in line and line.endswith("):"):
-              return None
+                  # Modern otool prints a header line per architecture for
+                  # universal binaries ("<path> (architecture <arch>):");
+                  # skip those.
+                  if " (architecture " in line and line.endswith("):"):
+                      return None
           '''
           assert s.count(old) == 1, "anchor not unique, aborting"
           open(p, 'w').write(s.replace(old, new))
