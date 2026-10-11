@@ -67,6 +67,34 @@ jobs:
           sed -i 's/#if defined(Q_CC_MINGW) || !defined(TOUCHEVENTF_MOVE)/#if !defined(TOUCHEVENTF_MOVE)/' "$MH"
           grep -n 'defined(TOUCHEVENTF_MOVE)' "$MH" | head -3
 
+      - name: Pre-extract boost and apply enum range guards (GNU patch workaround)
+        run: |
+          cd depends
+          # depends/patches/boost/clang-mpl-enum-range.patch carries a malformed
+          # hunk (a context line was dropped, so the @@ line counts are off by
+          # one). BSD patch (macOS PoC) tolerates it, but GNU patch 2.7 on Linux
+          # rejects it, failing the depends build. Apply the identical change
+          # with sed instead, and neutralize the patch invocation below. All in
+          # the CI working tree; the repo sources stay untouched.
+          make HOST=x86_64-w64-mingw32 boost_extracted
+          BDIR=$(echo work/build/x86_64-w64-mingw32/boost/1_70_0-*)
+          for spec in \
+            "udt_builtin_mixture_enum.hpp:udt_builtin_mixture:udt_to_udt" \
+            "int_float_mixture_enum.hpp:int_float_mixture:float_to_float" \
+            "sign_mixture_enum.hpp:sign_mixture:unsigned_to_signed"; do
+            HDR="$BDIR/boost/numeric/conversion/${spec%%:*}"
+            rest="${spec#*:}"; prefix="${rest%%:*}"; last="${rest##*:}"
+            if grep -q "${prefix}_range_min" "$HDR"; then
+              echo "already patched: $HDR"
+            else
+              sed -i "/^    ,${last}$/a \    // Range guards for Clang >= 16: mpl::integral_c<T>::prior/next compute\n    // (value -/+ 1) as this enum type, and an out-of-range enum cast is not\n    // a valid constant expression (\"non-type template argument is not a\n    // constant expression\"). Keep the range wide enough on both sides.\n    ,${prefix}_range_min = -16\n    ,${prefix}_range_max =  16" "$HDR"
+              echo "patched: $HDR"
+            fi
+          done
+          # Neutralize the in-depends `patch -p1` invocation (working tree only).
+          sed -i 's|patch -p1 < \$((package)_patch_dir)/clang-mpl-enum-range.patch|true # shim: enum guards applied above via sed|' packages/boost.mk
+          grep -n "shim: enum guards applied above" packages/boost.mk
+
       - name: Build dependencies
         run: |
           cd depends

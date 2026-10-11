@@ -43,8 +43,11 @@ jobs:
           sed -i 's/it\.level()/it.depth()/' src/wallet/walletutil.cpp
           # 2. 'uint16_t short' is rejected by modern GCC.
           sed -i 's/uint16_t short/uint16_t/' src/addrdb.cpp
-          # 3. System miniupnpc is 2.2.x, whose UPNP_GetValidIGD takes 7 args.
-          sed -i 's/UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))/UPNP_GetValidIGD(devlist, \&urls, \&data, lanaddr, sizeof(lanaddr), 0, 0)/' src/net.cpp
+          # 3. miniupnpc: NO shim needed. The pristine 5-argument call
+          #    UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))
+          #    in src/net.cpp already matches the 5-parameter declaration in
+          #    the system miniupnpc 2.2.x header. (An earlier revision of this
+          #    shim rewrote the call to 7 arguments, which broke the build.)
           grep -n 'copy_options::overwrite_existing' src/wallet/bdb.cpp | head -1
           grep -n 'it.depth()' src/wallet/walletutil.cpp | head -1
 
