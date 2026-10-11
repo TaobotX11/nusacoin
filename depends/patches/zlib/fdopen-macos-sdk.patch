@@ -1,0 +1,16 @@
+--- a/zutil.h
++++ b/zutil.h
+@@ -136,9 +136,10 @@
+ #    if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
+ #      include <unix.h> /* for fdopen */
+ #    else
+-#      ifndef fdopen
+-#        define fdopen(fd,mode) NULL /* No fdopen() */
+-#      endif
++      /* fdopen() has always existed on Apple platforms, so there is no
++         need to define it away. Worse, the NULL define breaks the Xcode 26
++         SDK's stdio.h, whose fdopen declaration gets macro-expanded into
++         garbage ("expected identifier or '('"). Leave the real function. */
+ #    endif
+ #  endif
+ #endif

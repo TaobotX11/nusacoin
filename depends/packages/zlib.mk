@@ -3,6 +3,7 @@ $(package)_version=1.2.11
 $(package)_download_path=https://www.zlib.net
 $(package)_file_name=$(package)-$($(package)_version).tar.gz
 $(package)_sha256_hash=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
+$(package)_patches=fdopen-macos-sdk.patch
 
 define $(package)_set_vars
 $(package)_config_opts= CC="$($(package)_cc)"
@@ -16,6 +17,10 @@ endef
 # zlib has its own custom configure script that takes in options like CC,
 # CFLAGS, RANLIB, AR, and ARFLAGS from the environment rather than from
 # command-line arguments.
+define $(package)_preprocess_cmds
+  patch -p1 < $($(package)_patch_dir)/fdopen-macos-sdk.patch
+endef
+
 define $(package)_config_cmds
   env $($(package)_config_opts) ./configure --static --prefix=$(host_prefix)
 endef

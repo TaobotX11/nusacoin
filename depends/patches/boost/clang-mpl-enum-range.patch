@@ -1,0 +1,57 @@
+--- a/boost/numeric/conversion/udt_builtin_mixture_enum.hpp
++++ b/boost/numeric/conversion/udt_builtin_mixture_enum.hpp
+@@ -13,9 +13,15 @@ namespace boost { namespace numeric
+ {
+   enum udt_builtin_mixture_enum
+   {
+      builtin_to_builtin
+     ,builtin_to_udt
+     ,udt_to_builtin
+     ,udt_to_udt
++    // Range guards for Clang >= 16: mpl::integral_c<T>::prior/next compute
++    // (value -/+ 1) as this enum type, and an out-of-range enum cast is not
++    // a valid constant expression ("non-type template argument is not a
++    // constant expression"). Keep the range wide enough on both sides.
++    ,udt_builtin_mixture_range_min = -16
++    ,udt_builtin_mixture_range_max =  16
+   } ;
+ 
+ } } // namespace boost::numeric
+--- a/boost/numeric/conversion/int_float_mixture_enum.hpp
++++ b/boost/numeric/conversion/int_float_mixture_enum.hpp
+@@ -13,9 +13,15 @@ namespace boost { namespace numeric
+ {
+   enum int_float_mixture_enum
+   {
+      integral_to_integral
+     ,integral_to_float
+     ,float_to_integral
+     ,float_to_float
++    // Range guards for Clang >= 16: mpl::integral_c<T>::prior/next compute
++    // (value -/+ 1) as this enum type, and an out-of-range enum cast is not
++    // a valid constant expression ("non-type template argument is not a
++    // constant expression"). Keep the range wide enough on both sides.
++    ,int_float_mixture_range_min = -16
++    ,int_float_mixture_range_max =  16
+   } ;
+ 
+ } } // namespace boost::numeric
+--- a/boost/numeric/conversion/sign_mixture_enum.hpp
++++ b/boost/numeric/conversion/sign_mixture_enum.hpp
+@@ -13,9 +13,15 @@ namespace boost { namespace numeric
+ {
+   enum sign_mixture_enum
+   {
+      unsigned_to_unsigned
+     ,signed_to_signed
+     ,signed_to_unsigned
+     ,unsigned_to_signed
++    // Range guards for Clang >= 16: mpl::integral_c<T>::prior/next compute
++    // (value -/+ 1) as this enum type, and an out-of-range enum cast is not
++    // a valid constant expression ("non-type template argument is not a
++    // constant expression"). Keep the range wide enough on both sides.
++    ,sign_mixture_range_min = -16
++    ,sign_mixture_range_max =  16
+   } ;
+ 
+ } } // namespace boost::numeric

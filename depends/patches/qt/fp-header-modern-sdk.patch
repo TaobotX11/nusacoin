@@ -1,0 +1,24 @@
+--- old/qtbase/src/3rdparty/libpng/pngpriv.h
++++ new/qtbase/src/3rdparty/libpng/pngpriv.h
+@@ -526,7 +526,20 @@
+     * <fp.h> if possible.
+     */
+ #    if !defined(__MATH_H__) && !defined(__MATH_H) && !defined(__cmath__)
+-#      include <fp.h>
++      /* <fp.h> is a classic-Mac header (pre-OS X era) that Apple removed
++       * from modern macOS SDKs, so it cannot be included when building
++       * against them. On compilers without __has_include (the vintage
++       * toolchains this branch was written for) keep the old behavior;
++       * on modern compilers, include <fp.h> only when it actually exists
++       * and fall back to <math.h> otherwise.
++       */
++#      if !defined(__has_include)
++#        include <fp.h>
++#      elif __has_include(<fp.h>)
++#        include <fp.h>
++#      else
++#        include <math.h>
++#      endif
+ #    endif
+ #  else
+ #    include <math.h>
