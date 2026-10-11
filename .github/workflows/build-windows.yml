@@ -135,8 +135,11 @@ jobs:
         run: |
           # `make deploy` strips all binaries, stages them in release/ and
           # builds the NSIS installer from share/setup.nsi, Bitcoin-style.
-          # Produces nusacoin-<version>-win64-setup.exe in the build root.
+          # NSIS writes the installer as *-win64-setup-unsigned.exe (no
+          # code-signing cert in CI); rename to the expected artifact name.
           make deploy
+          mv "nusacoin-${PKG_VERSION}-win64-setup-unsigned.exe" \
+             "nusacoin-${PKG_VERSION}-win64-setup.exe"
           ls -la nusacoin-*-win64-setup.exe
 
       - name: Create portable zip
