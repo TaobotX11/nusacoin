@@ -92,7 +92,7 @@ jobs:
             fi
           done
           # Neutralize the in-depends `patch -p1` invocation (working tree only).
-          sed -i 's|patch -p1 < \$((package)_patch_dir)/clang-mpl-enum-range.patch|true # shim: enum guards applied above via sed|' packages/boost.mk
+          sed -i 's|patch -p1 < .*/clang-mpl-enum-range\.patch|true # shim: enum guards applied above via sed|' packages/boost.mk
           grep -n "shim: enum guards applied above" packages/boost.mk
 
       - name: Build dependencies
