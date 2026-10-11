@@ -1,0 +1,81 @@
+name: Build Linux release (tar.gz)
+
+# Native Ubuntu build of all Nusacoin Core binaries (x86_64), packaged as a
+# tar.gz with the beginner guides (README / README_ID), Bitcoin-style.
+#
+# CI-side shims only; repo sources stay untouched (2020-era sources vs the
+# 2026 Ubuntu toolchain).
+
+on:
+  workflow_dispatch: # manual only; release-style workflow
+  push:
+    branches: [remy/release-packaging] # TEMPORARY for development; remove before merge
+
+env:
+  PKG_VERSION: "0.26.60"
+
+jobs:
+  build:
+    name: Build for Linux (x86_64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config \
+            bsdmainutils python3 curl git \
+            libboost-all-dev libssl-dev libevent-dev libdb5.3++-dev \
+            qtbase5-dev qttools5-dev qttools5-dev-tools \
+            libqrencode-dev libzmq3-dev libminiupnpc-dev
+
+      - name: Apply toolchain compatibility shims
+        run: |
+          # 2020-era sources vs the 2026 toolchain. All patches are applied
+          # to the CI working tree; the repo sources stay untouched.
+          #
+          # 1. System Boost (>= 1.83) only ships the v3 filesystem API, but
+          #    the sources use the v2 names.
+          sed -i 's/fs::copy_option::overwrite_if_exists/fs::copy_options::overwrite_existing/' src/wallet/bdb.cpp
+          sed -i 's/it\.level()/it.depth()/' src/wallet/walletutil.cpp
+          # 2. 'uint16_t short' is rejected by modern GCC.
+          sed -i 's/uint16_t short/uint16_t/' src/addrdb.cpp
+          # 3. System miniupnpc is 2.2.x, whose UPNP_GetValidIGD takes 7 args.
+          sed -i 's/UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))/UPNP_GetValidIGD(devlist, \&urls, \&data, lanaddr, sizeof(lanaddr), 0, 0)/' src/net.cpp
+          grep -n 'copy_options::overwrite_existing' src/wallet/bdb.cpp | head -1
+          grep -n 'it.depth()' src/wallet/walletutil.cpp | head -1
+
+      - name: Configure
+        run: |
+          ./autogen.sh
+          # Ubuntu ships Berkeley DB 5.3, not 4.8: the wallet built against it
+          # is incompatible with 4.8 wallets (same caveat as the macOS ARM64
+          # build). This is expected for a native distro build.
+          ./configure --with-incompatible-bdb --disable-tests --disable-bench
+
+      - name: Build
+        run: make -j$(nproc)
+
+      - name: Create release tarball
+        run: |
+          # Release artifacts should not carry debug symbols.
+          STAGE="pkg/nusacoin-${PKG_VERSION}-linux64"
+          mkdir -p "$STAGE"
+          for bin in src/qt/nusacoin-qt src/nusacoind src/nusacoin-cli \
+                     src/nusacoin-tx src/nusacoin-wallet; do
+            strip "$bin"
+            cp "$bin" "$STAGE/"
+          done
+          cp contrib/release/README.md contrib/release/README_ID.md "$STAGE/"
+          (cd pkg && tar -czf "nusacoin-${PKG_VERSION}-linux64.tar.gz" "nusacoin-${PKG_VERSION}-linux64")
+          ls -la "pkg/nusacoin-${PKG_VERSION}-linux64.tar.gz"
+
+      - name: Upload Linux tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: nusacoin-linux64
+          path: pkg/nusacoin-*-linux64.tar.gz
+          if-no-files-found: error
