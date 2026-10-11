@@ -171,6 +171,12 @@ jobs:
 
       - name: Build Intel (x86_64) app against depends
         run: |
+          # depends bundles boost 1.70, whose Filesystem API still uses the
+          # v2 enum name fs::copy_option::overwrite_if_exists (the compiler's
+          # own suggestion). The compatibility patch above switched
+          # wallet/bdb.cpp to the v3 enum class needed by Homebrew's boost;
+          # switch it back for the Intel build only.
+          sed -i '' 's/fs::copy_options::overwrite_existing/fs::copy_option::overwrite_if_exists/' src/wallet/bdb.cpp
           ./autogen.sh
           # Cross-compile the app against the PoC-proven depends prefix.
           # config.site wires CC/CXX at -target x86_64-apple-darwin; pin
@@ -190,6 +196,9 @@ jobs:
       - name: Clean tree for the ARM64 build
         run: |
           make distclean
+          # Restore the v3 enum-class name for the ARM64 build (Homebrew's
+          # boost >= 1.89 removed the v2 enum used by the Intel step above).
+          sed -i '' 's/fs::copy_option::overwrite_if_exists/fs::copy_options::overwrite_existing/' src/wallet/bdb.cpp
 
       - name: Switch net.cpp to the 7-argument UPNP_GetValidIGD
         run: |
