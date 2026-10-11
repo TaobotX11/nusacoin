@@ -114,6 +114,25 @@ tail -f $HOME/Library/Application\ Support/Nusacoin/debug.log
 processors only.
 * Building with downloaded Qt binaries is not officially supported. See the notes in [#7714](https://github.com/nusacoin/nusacoin/issues/7714).
 
+## CI-built universal DMG and Berkeley DB versions
+
+The `build-macos-universal.yml` workflow produces a single universal DMG
+whose `nusacoin-qt` binary contains both an Intel (x86_64) and an Apple
+Silicon (ARM64) slice, merged with `lipo`:
+
+* The Intel slice is built against the `depends` tree and links Berkeley
+  DB 4.8. It targets macOS 11.0 or later.
+* The ARM64 slice is built natively with Homebrew dependencies and links
+  Homebrew `berkeley-db@5` (Berkeley DB 5.3).
+
+Because the two slices use different Berkeley DB versions, wallet files are
+not freely interchangeable between them. A wallet created or upgraded by
+the ARM64 slice (BDB 5.3) may not open in the Intel slice (BDB 4.8), while
+a wallet from the Intel slice can generally be opened by the ARM64 slice.
+Back up `wallet.dat` before moving a wallet between Intel and Apple
+Silicon machines. The DMG is unsigned, so Gatekeeper will warn on first
+launch.
+
 ## Deterministic macOS DMG Notes
 Working macOS DMGs are created in Linux by combining a recent `clang`, the Apple
 `binutils` (`ld`, `ar`, etc) and DMG authoring tools.

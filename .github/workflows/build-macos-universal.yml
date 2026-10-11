@@ -5,9 +5,9 @@ name: "Build macOS universal DMG (Intel + ARM64)"
 # the PoC, builds it again natively for ARM64 (Homebrew, as in build-macos.yml),
 # merges the two binaries with lipo, and packages a universal DMG.
 #
-# BDB version split (for the release notes): the Intel slice links depends'
-# Berkeley DB 4.8; the ARM64 slice links Homebrew berkeley-db@5 (5.3).
-# Wallet files are not interchangeable between the two without care —
+# BDB version split (documented in doc/build-osx.md): the Intel slice links
+# depends' Berkeley DB 4.8; the ARM64 slice links Homebrew berkeley-db@5
+# (5.3). Wallet files are not interchangeable between the two without care —
 # same caveat as the standalone ARM64 DMG.
 #
 # CI-side shims only; repo sources stay untouched:
@@ -19,7 +19,6 @@ name: "Build macOS universal DMG (Intel + ARM64)"
 
 on:
   workflow_dispatch: # manual only; macOS minutes are precious (10x multiplier)
-  pull_request: # TEMPORARY for development; remove before merge
 
 jobs:
   build-universal:
