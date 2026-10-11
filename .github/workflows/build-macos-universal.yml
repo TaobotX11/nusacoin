@@ -241,6 +241,34 @@ jobs:
           # `make deploy`; must run before any code-signing step.
           strip src/qt/nusacoin-qt
 
+      - name: Shim macdeployqtplus for universal otool output
+        run: |
+          # Modern otool prints one header line per architecture for universal
+          # binaries ("<path> (architecture <arch>):"). The 2020-era
+          # contrib/macdeploy/macdeployqtplus pops only the first header line
+          # and dies on the second ("otool line could not be parsed"). Skip
+          # those headers in the checkout copy only (repo sources untouched).
+          python3 - <<'EOF'
+          p = 'contrib/macdeploy/macdeployqtplus'
+          s = open(p).read()
+          old = '''        # Note: line must be trimmed
+          if line == "":
+              return None
+          '''
+          new = '''        # Note: line must be trimmed
+          if line == "":
+              return None
+
+          # Modern otool prints a header line per architecture for universal
+          # binaries ("<path> (architecture <arch>):"); skip those.
+          if " (architecture " in line and line.endswith("):"):
+              return None
+          '''
+          assert s.count(old) == 1, "anchor not unique, aborting"
+          open(p, 'w').write(s.replace(old, new))
+          print("macdeployqtplus shimmed for universal otool output")
+          EOF
+
       - name: Create universal DMG
         env:
           PYTHONUNBUFFERED: "1"
