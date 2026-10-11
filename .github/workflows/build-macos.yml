@@ -140,6 +140,13 @@ jobs:
       - name: Build
         run: make -j"$(sysctl -n hw.ncpu)"
 
+      - name: Strip binaries
+        run: |
+          # Release artifacts should not carry debug symbols (default
+          # autotools CFLAGS include -g). Strip before `make deploy`;
+          # stripping must happen before any code-signing step.
+          strip src/qt/nusacoin-qt
+
       - name: Create DMG
         env:
           # Unbuffered Python stdout: the previous attempt's macdeployqtplus
