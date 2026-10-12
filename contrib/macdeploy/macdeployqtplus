@@ -648,6 +648,16 @@ if verbose >= 3:
 os.mkdir("dist")
 shutil.copytree(app_bundle, target, symlinks=True)
 
+# Copy the macOS install guide into the disk image root, next to the app
+# bundle, when present in the source tree.
+macdeploy_dir = os.path.dirname(os.path.abspath(__file__))
+for readme_name in ("README-macOS.md", "README-macOS_ID.md"):
+    readme_src = os.path.normpath(os.path.join(macdeploy_dir, "..", "release", readme_name))
+    if os.path.isfile(readme_src):
+        if verbose >= 2:
+            print("+ Copying " + readme_name + " into the disk image +")
+        shutil.copy(readme_src, "dist")
+
 applicationBundle = ApplicationBundleInfo(target)
 
 # ------------------------------------------------
