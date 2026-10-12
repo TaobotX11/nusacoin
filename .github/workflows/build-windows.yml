@@ -1,12 +1,21 @@
-name: Build Windows EXE (Qt)
+name: Build Windows release (installer + portable)
 
-# Cross-compile Nusacoin-Qt for Windows (x86_64) using the depends system.
-# Produces nusacoin-qt.exe and uploads it as a workflow artifact.
+# Cross-compile Nusacoin Core for Windows (x86_64) using the depends system.
+# Produces two Bitcoin-style release artifacts:
+#   - nusacoin-<version>-win64-setup.exe : NSIS installer (via `make deploy`)
+#   - nusacoin-<version>-win64.zip       : portable zip with all binaries
+# Both include the beginner guides (README / README_ID).
+#
+# CI-side shims only; repo sources stay untouched.
 
 on:
   workflow_dispatch:
   push:
-    branches: [remy/build-windows-exe]
+    # TEMPORARY dev branch for development; remove before merge
+    branches: [remy/build-windows-exe, remy/release-packaging]
+
+env:
+  PKG_VERSION: "0.26.60"
 
 jobs:
   build:
@@ -21,7 +30,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config \
-            bsdmainutils python3 curl git \
+            bsdmainutils python3 curl git zip nsis \
             g++-mingw-w64-x86-64
 
       - name: Cache depends build
@@ -58,6 +67,45 @@ jobs:
           sed -i 's/#if defined(Q_CC_MINGW) || !defined(TOUCHEVENTF_MOVE)/#if !defined(TOUCHEVENTF_MOVE)/' "$MH"
           grep -n 'defined(TOUCHEVENTF_MOVE)' "$MH" | head -3
 
+      - name: Pre-extract boost and apply enum range guards (GNU patch workaround)
+        run: |
+          cd depends
+          # depends/patches/boost/clang-mpl-enum-range.patch carries a malformed
+          # hunk (a context line was dropped, so the @@ line counts are off by
+          # one). BSD patch (macOS PoC) tolerates it, but GNU patch 2.7 on Linux
+          # rejects it, failing the depends build. Apply the identical change
+          # with sed instead, and neutralize the patch invocation below. All in
+          # the CI working tree; the repo sources stay untouched.
+          #
+          # Neutralize the patch invocation in packages/boost.mk BEFORE
+          # extracting boost: depends hashes each package recipe into its
+          # build dir, so editing boost.mk after extraction would re-extract
+          # to a new dir and the extracted tree would lose the sed patches
+          # below.
+          #
+          # The replacement is a bare `true` (no comment): the recipe line
+          # ends with `&& \`, continuing into the
+          # `echo ... > user-config.jam` line, and a `#` comment before the
+          # backslash would swallow that continuation, leaving b2 without
+          # its config file.
+          sed -i 's|patch -p1 < .*/clang-mpl-enum-range\.patch|true|' packages/boost.mk
+          grep -n '^  true &&' packages/boost.mk | head -2
+          make HOST=x86_64-w64-mingw32 boost_extracted
+          BDIR=$(echo work/build/x86_64-w64-mingw32/boost/1_70_0-*)
+          for spec in \
+            "udt_builtin_mixture_enum.hpp:udt_builtin_mixture:udt_to_udt" \
+            "int_float_mixture_enum.hpp:int_float_mixture:float_to_float" \
+            "sign_mixture_enum.hpp:sign_mixture:unsigned_to_signed"; do
+            HDR="$BDIR/boost/numeric/conversion/${spec%%:*}"
+            rest="${spec#*:}"; prefix="${rest%%:*}"; last="${rest##*:}"
+            if grep -q "${prefix}_range_min" "$HDR"; then
+              echo "already patched: $HDR"
+            else
+              sed -i "/^    ,${last}$/a \    // Range guards for Clang >= 16: mpl::integral_c<T>::prior/next compute\n    // (value -/+ 1) as this enum type, and an out-of-range enum cast is not\n    // a valid constant expression (\"non-type template argument is not a\n    // constant expression\"). Keep the range wide enough on both sides.\n    ,${prefix}_range_min = -16\n    ,${prefix}_range_max =  16" "$HDR"
+              echo "patched: $HDR"
+            fi
+          done
+
       - name: Build dependencies
         run: |
           cd depends
@@ -83,14 +131,42 @@ jobs:
       - name: Build
         run: make -j$(nproc)
 
-      - name: Strip binaries
+      - name: Build Windows installer (NSIS)
         run: |
-          # Release artifacts should not carry debug symbols.
-          x86_64-w64-mingw32-strip src/qt/nusacoin-qt.exe
+          # `make deploy` strips all binaries, stages them in release/ and
+          # builds the NSIS installer from share/setup.nsi, Bitcoin-style.
+          # NSIS writes the installer as *-win64-setup-unsigned.exe (no
+          # code-signing cert in CI); rename to the expected artifact name.
+          make deploy
+          mv "nusacoin-${PKG_VERSION}-win64-setup-unsigned.exe" \
+             "nusacoin-${PKG_VERSION}-win64-setup.exe"
+          ls -la nusacoin-*-win64-setup.exe
 
-      - name: Upload nusacoin-qt.exe
+      - name: Create portable zip
+        run: |
+          # Portable package: all five binaries, stripped, plus the beginner
+          # guides. Repo sources stay untouched; stripping is CI-side.
+          STAGE="pkg/nusacoin-${PKG_VERSION}-win64"
+          mkdir -p "$STAGE"
+          for exe in src/qt/nusacoin-qt.exe src/nusacoind.exe src/nusacoin-cli.exe \
+                     src/nusacoin-tx.exe src/nusacoin-wallet.exe; do
+            x86_64-w64-mingw32-strip "$exe"
+            cp "$exe" "$STAGE/"
+          done
+          cp contrib/release/README.md contrib/release/README_ID.md "$STAGE/"
+          (cd pkg && zip -r "nusacoin-${PKG_VERSION}-win64.zip" "nusacoin-${PKG_VERSION}-win64")
+          ls -la "pkg/nusacoin-${PKG_VERSION}-win64.zip"
+
+      - name: Upload Windows installer
         uses: actions/upload-artifact@v4
         with:
-          name: nusacoin-qt-windows
-          path: src/qt/nusacoin-qt.exe
+          name: nusacoin-win64-setup
+          path: nusacoin-*-win64-setup.exe
+          if-no-files-found: error
+
+      - name: Upload portable zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: nusacoin-win64-portable
+          path: pkg/nusacoin-*-win64.zip
           if-no-files-found: error
