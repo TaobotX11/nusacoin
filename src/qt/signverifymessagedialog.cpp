@@ -26,6 +26,10 @@ SignVerifyMessageDialog::SignVerifyMessageDialog(const PlatformStyle *_platformS
 {
     ui->setupUi(this);
 
+#ifdef Q_OS_MAC
+    GUIUtil::fixMacTabBarTextColor(ui->tabWidget);
+#endif
+
     ui->addressBookButton_SM->setIcon(platformStyle->SingleColorIcon(":/icons/address-book"));
     ui->pasteButton_SM->setIcon(platformStyle->SingleColorIcon(":/icons/editpaste"));
     ui->copySignatureButton_SM->setIcon(platformStyle->SingleColorIcon(":/icons/editcopy"));

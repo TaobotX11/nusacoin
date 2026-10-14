@@ -19,6 +19,7 @@
 #include <QProgressBar>
 #include <QString>
 #include <QTableView>
+#include <QTabWidget>
 
 class QValidatedLineEdit;
 class SendCoinsRecipient;
@@ -314,6 +315,18 @@ namespace GUIUtil
      * Call QMenu::popup() only on supported QT_QPA_PLATFORM.
      */
     void PopupMenu(QMenu* menu, const QPoint& point, QAction* at_action = nullptr);
+
+#ifdef Q_OS_MAC
+    /**
+     * Set an explicit per-tab text color on a QTabWidget's tab bar, taken
+     * from the application palette's window text color. Qt 5.9's QMacStyle
+     * forces tab labels to white unless QTabBar::tabTextColor() is set
+     * (CE_TabBarTabLabel overrides the style-option palette when it is
+     * invalid); a stylesheet color never reaches it, leaving tab labels
+     * unreadable on recent macOS versions. macOS-only.
+     */
+    void fixMacTabBarTextColor(QTabWidget *tabWidget);
+#endif
 } // namespace GUIUtil
 
 #endif // BITCOIN_QT_GUIUTIL_H

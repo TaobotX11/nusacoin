@@ -50,12 +50,15 @@
 #include <QList>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QPalette>
 #include <QProgressDialog>
 #include <QScreen>
 #include <QSettings>
 #include <QShortcut>
 #include <QSize>
 #include <QString>
+#include <QTabBar>
+#include <QTabWidget>
 #include <QTextDocument> // for Qt::mightBeRichText
 #include <QThread>
 #include <QUrlQuery>
@@ -963,5 +966,19 @@ void PopupMenu(QMenu* menu, const QPoint& point, QAction* at_action)
     if (QApplication::platformName() == "minimal") return;
     menu->popup(point, at_action);
 }
+
+#ifdef Q_OS_MAC
+void fixMacTabBarTextColor(QTabWidget *tabWidget)
+{
+    // QMacStyle forces tab labels to white unless a per-tab text color is
+    // set; take the color from the application palette so it stays
+    // consistent with all other text in the application.
+    const QColor textColor = QApplication::palette().color(QPalette::WindowText);
+    QTabBar *bar = tabWidget->tabBar();
+    for (int i = 0; i < bar->count(); ++i) {
+        bar->setTabTextColor(i, textColor);
+    }
+}
+#endif
 
 } // namespace GUIUtil
