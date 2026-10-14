@@ -35,6 +35,10 @@ OptionsDialog::OptionsDialog(QWidget *parent, bool enableWallet) :
 {
     ui->setupUi(this);
 
+#ifdef Q_OS_MAC
+    GUIUtil::fixMacTabBarTextColor(ui->tabWidget);
+#endif
+
     /* Main elements init */
     ui->databaseCache->setMinimum(nMinDbCache);
     ui->databaseCache->setMaximum(nMaxDbCache);

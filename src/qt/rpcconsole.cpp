@@ -14,6 +14,7 @@
 #include <netbase.h>
 #include <qt/bantablemodel.h>
 #include <qt/clientmodel.h>
+#include <qt/guiutil.h>
 #include <qt/peertablesortproxy.h>
 #include <qt/platformstyle.h>
 #include <qt/walletmodel.h>
@@ -470,6 +471,9 @@ RPCConsole::RPCConsole(interfaces::Node& node, const PlatformStyle *_platformSty
 {
     QString curStyleLbl = "* {selection-color: #ffffff;selection-background-color: #018f01} QLabel {selection-background-color: #018f01; selection-color:white;} QMenu::item:selected {background-color: #018f01;color: #ffffff} QMenu::indicator:checked {background-color: #018f01;color: #ffffff}";
     ui->setupUi(this);
+#ifdef Q_OS_MAC
+    GUIUtil::fixMacTabBarTextColor(ui->tabWidget);
+#endif
     ui->tab_info->setStyleSheet(curStyleLbl);
     ui->tab_peers->setStyleSheet(curStyleLbl);
     QSettings settings;
