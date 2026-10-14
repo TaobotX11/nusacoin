@@ -17,9 +17,7 @@
 #include <qt/walletmodel.h>
 
 #include <QAbstractItemDelegate>
-#include <QApplication>
 #include <QPainter>
-#include <QStatusTipEvent>
 
 #include <algorithm>
 #include <map>
@@ -191,8 +189,8 @@ void OverviewPage::setPrivacy(bool privacy)
 
     const QString status_tip = m_privacy ? tr("Privacy mode activated for the Overview tab. To unmask the values, uncheck Settings->Mask values.") : "";
     setStatusTip(status_tip);
-    QStatusTipEvent event(status_tip);
-    QApplication::sendEvent(this, &event);
+    // Deliberately not posting a QStatusTipEvent here: showing the tip as
+    // a status bar message would overlap the sync progress widgets.
 }
 
 
