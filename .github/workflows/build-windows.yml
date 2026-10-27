@@ -15,7 +15,7 @@ on:
     branches: [remy/build-windows-exe, remy/release-packaging]
 
 env:
-  PKG_VERSION: "0.26.60"
+  PKG_VERSION: "0.26.90"
 
 jobs:
   build:
