@@ -90,6 +90,10 @@ jobs:
           # its config file.
           sed -i 's|patch -p1 < .*/clang-mpl-enum-range\.patch|true|' packages/boost.mk
           grep -n '^  true &&' packages/boost.mk | head -2
+          # Keep the version string clean (see the Linux workflow): this file
+          # is patched for CI only, so hide it from git instead of committing
+          # it, or genbuild.sh stamps "-dirty" on the release binaries.
+          git update-index --assume-unchanged packages/boost.mk
           make HOST=x86_64-w64-mingw32 boost_extracted
           BDIR=$(echo work/build/x86_64-w64-mingw32/boost/1_70_0-*)
           for spec in \
@@ -121,6 +125,9 @@ jobs:
           grep -q '#include <limits>' src/fs.cpp || \
             sed -i 's|#include <windows.h>|#include <windows.h>\n#include <limits>|' src/fs.cpp
           grep -n 'include <limits>' src/fs.cpp
+          # Keep the version string clean (see above): this file is patched
+          # for CI only, so hide it from git.
+          git update-index --assume-unchanged src/fs.cpp
 
       - name: Configure
         run: |

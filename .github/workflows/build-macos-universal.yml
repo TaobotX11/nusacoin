@@ -127,6 +127,13 @@ jobs:
           # use depth(), which has been the documented name since 1.72.
           # Patch the working-tree checkout only; repo sources stay untouched.
           sed -i '' 's/it.level()/it.depth()/' src/wallet/walletutil.cpp
+          # Keep the version string clean: genbuild.sh appends "-dirty" when
+          # the tree differs from HEAD. Every patch in this workflow is
+          # CI-only, so hide all files it ever touches from git (the flag
+          # persists in the index for the rest of the job, so the later
+          # patches to src/net.cpp and contrib/macdeploy/macdeployqtplus are
+          # covered too). HEAD stays the release commit.
+          git update-index --assume-unchanged src/addrdb.cpp src/wallet/bdb.cpp src/wallet/walletutil.cpp src/net.cpp contrib/macdeploy/macdeployqtplus
           # Makefile.am still references contrib/macdeploy/fancy.plist as a
           # dmg prerequisite, but the file is missing from the repo (it
           # exists upstream; this fork lost it). Generate a minimal plist in
