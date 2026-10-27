@@ -43,6 +43,11 @@ jobs:
           sed -i 's/it\.level()/it.depth()/' src/wallet/walletutil.cpp
           # 2. 'uint16_t short' is rejected by modern GCC.
           sed -i 's/uint16_t short/uint16_t/' src/addrdb.cpp
+          # Keep the version string clean: genbuild.sh appends "-dirty" when
+          # the tree differs from HEAD. These shims are CI-only, so hide them
+          # from git instead of committing them. HEAD stays the release
+          # commit, and the built version reads exactly 0.26.90.0-<sha>.
+          git update-index --assume-unchanged src/wallet/bdb.cpp src/wallet/walletutil.cpp src/addrdb.cpp
           # 3. miniupnpc: NO shim needed. The pristine 5-argument call
           #    UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr))
           #    in src/net.cpp already matches the 5-parameter declaration in

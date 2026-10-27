@@ -192,6 +192,59 @@ class DeploymentInfo(object):
                     return True
         return False
 
+def getRPaths(binaryPath: str) -> List[str]:
+    """LC_RPATH entries of binaryPath, across all slices of a fat binary.
+
+    Returns [] when otool is unavailable, fails, or the binary carries no
+    rpaths. Only the path lines directly under an LC_RPATH command are
+    collected; other load commands (including cmdsize lines) are ignored.
+    """
+    otoolbin = os.getenv("OTOOL", "otool")
+    try:
+        proc = subprocess.Popen([otoolbin, "-l", binaryPath], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        out, _ = proc.communicate()
+    except OSError:
+        return []
+    if proc.returncode != 0:
+        return []
+    rpaths = []
+    in_rpath_cmd = False
+    for line in out.split("\n"):
+        stripped = line.strip()
+        if stripped == "cmd LC_RPATH":
+            in_rpath_cmd = True
+        elif stripped.startswith("cmd ") or stripped.startswith("Load command"):
+            in_rpath_cmd = False
+        elif in_rpath_cmd:
+            m = re.match(r"^path (.+) \(offset \d+\)$", stripped)
+            if m:
+                rpaths.append(m.group(1))
+                in_rpath_cmd = False
+    return rpaths
+
+def resolveRPath(path: str, rpaths: List[str], binaryDir: str) -> Optional[str]:
+    """Resolve an @rpath/<name> reference to an existing file, or None.
+
+    Search order: the referencing binary's LC_RPATH entries, the binary's own
+    directory, extra dirs from MACDEPLOY_RPATH_DIRS (colon-separated), then
+    the standard Homebrew lib dirs. A miss returns None so the caller keeps
+    the original reference (and fails loudly at copy time, as before).
+    """
+    if not path.startswith("@rpath/"):
+        return None
+    name = path[len("@rpath/"):]
+    candidates = [os.path.join(d, name) for d in rpaths]
+    candidates.append(os.path.join(binaryDir, name))
+    extra = os.getenv("MACDEPLOY_RPATH_DIRS", "")
+    if extra:
+        candidates.extend(os.path.join(d, name) for d in extra.split(":") if d)
+    candidates.append(os.path.join("/opt/homebrew/lib", name))
+    candidates.append(os.path.join("/usr/local/lib", name))
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate
+    return None
+
 def getFrameworks(binaryPath: str, verbose: int) -> List[FrameworkInfo]:
     if verbose >= 3:
         print("Inspecting with otool: " + binaryPath)
@@ -210,10 +263,27 @@ def getFrameworks(binaryPath: str, verbose: int) -> List[FrameworkInfo]:
         otoolLines.pop(0) # Frameworks and dylibs list themselves as a dependency.
     
     libraries = []
+    rpaths = None
     for line in otoolLines:
         line = line.replace("@loader_path", os.path.dirname(binaryPath))
         info = FrameworkInfo.fromOtoolLibraryLine(line.strip())
         if info is not None:
+            if info.installName.startswith("@rpath/"):
+                # Homebrew bottles increasingly reference their dependencies
+                # via @rpath (e.g. libbrotlidec -> @rpath/libbrotlicommon.1.dylib).
+                # The otool line alone is not a filesystem path, so resolve it
+                # against the referencing binary's LC_RPATH entries (plus the
+                # standard Homebrew lib dirs). Only sourceFilePath is rewritten:
+                # installName keeps the original @rpath form so the
+                # install_name_tool -change step still matches the load
+                # command recorded in the referencing binary.
+                if rpaths is None:
+                    rpaths = getRPaths(binaryPath)
+                resolved = resolveRPath(info.installName, rpaths, os.path.dirname(binaryPath))
+                if resolved is not None:
+                    if verbose >= 2:
+                        print("Resolved", info.installName, "to", resolved)
+                    info.sourceFilePath = resolved
             if verbose >= 3:
                 print("Found framework:")
                 print(info)
