@@ -12,7 +12,7 @@ on:
     branches: [remy/release-packaging] # TEMPORARY for development; remove before merge
 
 env:
-  PKG_VERSION: "0.26.60"
+  PKG_VERSION: "0.26.90"
 
 jobs:
   build:
