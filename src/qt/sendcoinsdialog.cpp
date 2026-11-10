@@ -643,6 +643,13 @@ static QStringList SplitCSVLine(const QString &line, QChar delimiter)
     return fields;
 }
 
+// Shorten a user-supplied value so that a message box stays readable even
+// for absurdly long input lines
+static QString ShortenValue(const QString &value)
+{
+    return value.size() > 64 ? value.left(64) + "..." : value;
+}
+
 void SendCoinsDialog::importCSV()
 {
     if (!fNewRecipientAllowed || !model || !model->getOptionsModel()) {
@@ -657,6 +664,10 @@ void SendCoinsDialog::importCSV()
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, tr("Import CSV"), tr("Could not open the file:\n%1").arg(filename));
+        return;
+    }
+    if (file.size() > 10 * 1024 * 1024) {
+        QMessageBox::warning(this, tr("Import CSV"), tr("The file is too large to import (maximum 10 MB)."));
         return;
     }
 
@@ -674,6 +685,10 @@ void SendCoinsDialog::importCSV()
     while (!in.atEnd()) {
         QString line = in.readLine();
         ++line_no;
+        if (line_no > 10000) {
+            errors += tr("Stopped reading the file after 10,000 lines.");
+            break;
+        }
         if (line_no == 1 && line.startsWith(QChar(0xFEFF))) {
             line.remove(0, 1); // strip a UTF-8 BOM if present
         }
@@ -704,7 +719,7 @@ void SendCoinsDialog::importCSV()
         QString label = fields.size() > 2 ? fields.mid(2).join(delimiter).trimmed() : QString();
 
         if (!model->validateAddress(address)) {
-            errors += tr("Line %1: invalid address \"%2\"").arg(line_no).arg(address);
+            errors += tr("Line %1: invalid address \"%2\"").arg(line_no).arg(ShortenValue(address));
             continue;
         }
         // With ';' as delimiter, a comma commonly acts as decimal separator
@@ -713,7 +728,7 @@ void SendCoinsDialog::importCSV()
         }
         CAmount amount = 0;
         if (!NusacoinUnits::parse(display_unit, amount_str, &amount) || amount <= 0) {
-            errors += tr("Line %1: invalid amount \"%2\"").arg(line_no).arg(fields.at(1).trimmed());
+            errors += tr("Line %1: invalid amount \"%2\"").arg(line_no).arg(ShortenValue(fields.at(1).trimmed()));
             continue;
         }
 
@@ -724,10 +739,19 @@ void SendCoinsDialog::importCSV()
         }
     }
 
+    // Show at most 20 problems so the message box stays readable
+    auto format_errors = [this](const QStringList &list) -> QString {
+        QStringList shown = list.mid(0, 20);
+        if (list.size() > 20) {
+            shown += tr("... and %1 more").arg(list.size() - 20);
+        }
+        return shown.join("\n");
+    };
+
     if (recipients.isEmpty()) {
         QString text = tr("No recipients were imported from the CSV file.");
         if (!errors.isEmpty()) {
-            text += "\n\n" + errors.join("\n");
+            text += "\n\n" + format_errors(errors);
         }
         QMessageBox::warning(this, tr("Import CSV"), text);
         return;
@@ -739,11 +763,7 @@ void SendCoinsDialog::importCSV()
 
     QString summary = tr("Imported %1 recipient(s) from the CSV file. Please review them before sending.").arg(recipients.size());
     if (!errors.isEmpty()) {
-        QStringList shown = errors.mid(0, 20);
-        if (errors.size() > 20) {
-            shown += tr("... and %1 more").arg(errors.size() - 20);
-        }
-        QMessageBox::warning(this, tr("Import CSV"), summary + "\n\n" + tr("Skipped lines:") + "\n" + shown.join("\n"));
+        QMessageBox::warning(this, tr("Import CSV"), summary + "\n\n" + tr("Skipped lines:") + "\n" + format_errors(errors));
     } else {
         QMessageBox::information(this, tr("Import CSV"), summary);
     }
