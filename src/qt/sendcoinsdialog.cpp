@@ -27,10 +27,13 @@
 #include <wallet/coincontrol.h>
 #include <wallet/fees.h>
 
+#include <QFile>
+#include <QFileDialog>
 #include <QFontMetrics>
 #include <QScrollBar>
 #include <QSettings>
 #include <QTextDocument>
+#include <QTextStream>
 
 static const std::array<int, 9> confTargets = { {2, 4, 6, 12, 24, 48, 144, 504, 1008} };
 int getConfTargetForIndex(int index) {
@@ -79,6 +82,7 @@ SendCoinsDialog::SendCoinsDialog(const PlatformStyle *_platformStyle, QWidget *p
 
     connect(ui->addButton, &QPushButton::clicked, this, &SendCoinsDialog::addEntry);
     connect(ui->clearButton, &QPushButton::clicked, this, &SendCoinsDialog::clear);
+    connect(ui->importCSVButton, &QPushButton::clicked, this, &SendCoinsDialog::importCSV);
 
     // Coin Control
     connect(ui->pushButtonCoinControl, &QPushButton::clicked, this, &SendCoinsDialog::coinControlButtonClicked);
@@ -604,6 +608,145 @@ bool SendCoinsDialog::handlePaymentRequest(const SendCoinsRecipient &rv)
     // are done in paymentserver.cpp.
     pasteEntry(rv);
     return true;
+}
+
+// Split one CSV line into fields, honouring double-quoted fields that may
+// contain the delimiter itself or escaped quotes ("").
+static QStringList SplitCSVLine(const QString &line, QChar delimiter)
+{
+    QStringList fields;
+    QString field;
+    bool in_quotes = false;
+    for (int i = 0; i < line.size(); ++i) {
+        QChar c = line.at(i);
+        if (in_quotes) {
+            if (c == '"') {
+                if (i + 1 < line.size() && line.at(i + 1) == '"') {
+                    field += '"';
+                    ++i;
+                } else {
+                    in_quotes = false;
+                }
+            } else {
+                field += c;
+            }
+        } else if (c == '"') {
+            in_quotes = true;
+        } else if (c == delimiter) {
+            fields += field;
+            field.clear();
+        } else {
+            field += c;
+        }
+    }
+    fields += field;
+    return fields;
+}
+
+void SendCoinsDialog::importCSV()
+{
+    if (!fNewRecipientAllowed || !model || !model->getOptionsModel()) {
+        return;
+    }
+
+    QString filename = QFileDialog::getOpenFileName(this, tr("Import recipients from CSV"), QString(), tr("CSV files (*.csv);;All files (*.*)"));
+    if (filename.isEmpty()) {
+        return;
+    }
+
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, tr("Import CSV"), tr("Could not open the file:\n%1").arg(filename));
+        return;
+    }
+
+    QTextStream in(&file);
+    in.setCodec("UTF-8");
+
+    const int display_unit = model->getOptionsModel()->getDisplayUnit();
+    QList<SendCoinsRecipient> recipients;
+    QStringList errors;
+    QChar delimiter = ',';
+    bool delimiter_detected = false;
+    bool first_line = true;
+    int line_no = 0;
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        ++line_no;
+        if (line_no == 1 && line.startsWith(QChar(0xFEFF))) {
+            line.remove(0, 1); // strip a UTF-8 BOM if present
+        }
+        if (line.trimmed().isEmpty()) {
+            continue;
+        }
+        if (!delimiter_detected) {
+            // Spreadsheet exports in some locales use ';' instead of ','
+            delimiter = line.contains(';') ? QChar(';') : QChar(',');
+            delimiter_detected = true;
+        }
+
+        QStringList fields = SplitCSVLine(line, delimiter);
+        if (first_line) {
+            first_line = false;
+            // Skip a header row such as "address,amount,label"
+            if (fields.first().trimmed().compare("address", Qt::CaseInsensitive) == 0) {
+                continue;
+            }
+        }
+
+        if (fields.size() < 2) {
+            errors += tr("Line %1: expected at least an address and an amount").arg(line_no);
+            continue;
+        }
+        QString address = fields.at(0).trimmed();
+        QString amount_str = fields.at(1).trimmed();
+        QString label = fields.size() > 2 ? fields.mid(2).join(delimiter).trimmed() : QString();
+
+        if (!model->validateAddress(address)) {
+            errors += tr("Line %1: invalid address \"%2\"").arg(line_no).arg(address);
+            continue;
+        }
+        // With ';' as delimiter, a comma commonly acts as decimal separator
+        if (delimiter == ';' && !amount_str.contains('.')) {
+            amount_str.replace(',', '.');
+        }
+        CAmount amount = 0;
+        if (!NusacoinUnits::parse(display_unit, amount_str, &amount) || amount <= 0) {
+            errors += tr("Line %1: invalid amount \"%2\"").arg(line_no).arg(fields.at(1).trimmed());
+            continue;
+        }
+
+        recipients += SendCoinsRecipient(address, label, amount, QString());
+        if (recipients.size() >= 500) {
+            errors += tr("Line %1: too many recipients, only the first 500 were imported").arg(line_no);
+            break;
+        }
+    }
+
+    if (recipients.isEmpty()) {
+        QString text = tr("No recipients were imported from the CSV file.");
+        if (!errors.isEmpty()) {
+            text += "\n\n" + errors.join("\n");
+        }
+        QMessageBox::warning(this, tr("Import CSV"), text);
+        return;
+    }
+
+    for (const SendCoinsRecipient &recipient : recipients) {
+        pasteEntry(recipient);
+    }
+
+    QString summary = tr("Imported %1 recipient(s) from the CSV file. Please review them before sending.").arg(recipients.size());
+    if (!errors.isEmpty()) {
+        QStringList shown = errors.mid(0, 20);
+        if (errors.size() > 20) {
+            shown += tr("... and %1 more").arg(errors.size() - 20);
+        }
+        QMessageBox::warning(this, tr("Import CSV"), summary + "\n\n" + tr("Skipped lines:") + "\n" + shown.join("\n"));
+    } else {
+        QMessageBox::information(this, tr("Import CSV"), summary);
+    }
 }
 
 void SendCoinsDialog::setPrivacy(bool privacy)
