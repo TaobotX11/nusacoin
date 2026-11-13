@@ -2637,6 +2637,15 @@ SigningResult CWallet::SignMessage(const std::string& message, const PKHash& pkh
             return spk_man_pair.second->SignMessage(message, pkhash, str_sig);
         }
     }
+    // A bech32 (P2WPKH) address shares its key hash with the legacy P2PKH
+    // address, but a descriptor wallet holding only a wpkh descriptor is
+    // only IsMine for the P2WPKH script, so try that script as well.
+    CScript witness_script_pub_key = GetScriptForDestination(WitnessV0KeyHash(pkhash));
+    for (const auto& spk_man_pair : m_spk_managers) {
+        if (spk_man_pair.second->CanProvide(witness_script_pub_key, sigdata)) {
+            return spk_man_pair.second->SignMessage(message, pkhash, str_sig);
+        }
+    }
     return SigningResult::PRIVATE_KEY_NOT_AVAILABLE;
 }
 

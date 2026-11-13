@@ -639,8 +639,14 @@ static UniValue signmessage(const JSONRPCRequest& request)
         throw JSONRPCError(RPC_TYPE_ERROR, "Invalid address");
     }
 
-    const PKHash *pkhash = boost::get<PKHash>(&dest);
-    if (!pkhash) {
+    // A bech32 (P2WPKH) address refers to the same key as the legacy address
+    // with the same key hash, so accept it and sign with the shared key id.
+    PKHash pkhash;
+    if (const PKHash* pkh = boost::get<PKHash>(&dest)) {
+        pkhash = *pkh;
+    } else if (const WitnessV0KeyHash* wit = boost::get<WitnessV0KeyHash>(&dest)) {
+        pkhash = PKHash(ToKeyID(*wit));
+    } else {
         throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to key");
     }
 
@@ -648,7 +654,7 @@ static UniValue signmessage(const JSONRPCRequest& request)
 
     std::string signature;
 
-    SigningResult err = pwallet->SignMessage(strMessage, *pkhash, signature);
+    SigningResult err = pwallet->SignMessage(strMessage, pkhash, signature);
     if (err == SigningResult::SIGNING_FAILED) {
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, SigningResultString(err));
     } else if (err != SigningResult::OK){

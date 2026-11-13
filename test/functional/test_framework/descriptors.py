@@ -56,7 +56,7 @@ def descsum_check(s, require=True):
     symbols = descsum_expand(s[:-9]) + [CHECKSUM_CHARSET.find(x) for x in s[-8:]]
     return descsum_polymod(symbols) == 1
 
-    def drop_origins(s):
+def drop_origins(s):
     '''Drop the key origins from a descriptor'''
     desc = re.sub(r'\[.+?\]', '', s)
     if '#' in s:

@@ -10,6 +10,7 @@
 #include <key.h> // For CKey
 #include <sync.h>
 #include <test/setup_common.h>
+#include <test/util.h>
 #include <test/util/str.h>
 #include <uint256.h>
 #include <util/message.h> // For MessageSign(), MessageVerify(), MESSAGE_MAGIC
@@ -943,7 +944,7 @@ BOOST_FIXTURE_TEST_CASE(util_ArgsMerge, ArgsMergeTestingSetup)
 
         desc += "\n";
 
-        out_sha.Write((const unsigned char*)desc.data(), desc.size());
+        out_sha.Write(MakeUCharSpan(desc));
         if (out_file) {
             BOOST_REQUIRE(fwrite(desc.data(), 1, desc.size(), out_file) == desc.size());
         }
@@ -1045,7 +1046,7 @@ BOOST_FIXTURE_TEST_CASE(util_ChainMerge, ChainMergeTestingSetup)
         }
         desc += "\n";
 
-        out_sha.Write((const unsigned char*)desc.data(), desc.size());
+        out_sha.Write(MakeUCharSpan(desc));
         if (out_file) {
             BOOST_REQUIRE(fwrite(desc.data(), 1, desc.size(), out_file) == desc.size());
         }
@@ -1974,7 +1975,8 @@ BOOST_AUTO_TEST_CASE(message_sign)
 {
     const std::array<unsigned char, 32> privkey_bytes = {
         // just some random data
-        // derived address from this private key: 15CRxFdyRpGZLW9w8HnHvVduizdL5jKNbs
+        // derived address from this private key: NQ7Q91SF4NpzgUYXRXSBd94c5jHKi66y5K
+        // (bech32: nu1q9cy7s7nmzah0m6mt2ftmu6x723esjxqk2j63kg)
         0xD9, 0x7F, 0x51, 0x08, 0xF1, 0x1C, 0xDA, 0x6E,
         0xEE, 0xBA, 0xAA, 0x42, 0x0F, 0xEF, 0x07, 0x26,
         0xB1, 0xF8, 0x98, 0x06, 0x0B, 0x98, 0x48, 0x9F,
@@ -1984,7 +1986,7 @@ BOOST_AUTO_TEST_CASE(message_sign)
     const std::string message = "Trust no one";
 
     const std::string expected_signature =
-        "IPojfrX2dfPnH26UegfbGQQLrdK844DlHq5157/P6h57WyuS/Qsl+h/WSVGDF4MUi4rWSswW38oimDYfNNUBUOk=";
+        "IItEl9owimXxruNSiVRlC5eNxEixMqeuKi2p/ykTI8iHaJqoITXx0J1VeVD3mJw6hXFnAEFODWQKqrm/tATc+bg=";
 
     CKey privkey;
     std::string generated_signature;
@@ -2015,47 +2017,67 @@ BOOST_AUTO_TEST_CASE(message_verify)
             "message too"),
         MessageVerificationResult::ERR_INVALID_ADDRESS);
 
+    // P2SH addresses have no single key to recover against.
     BOOST_CHECK_EQUAL(
         MessageVerify(
-            "3B5fQsEXEaV8v6U3ejYc8XaKXAkyQj2MjV",
+            "XLjtLU6gwCvUASE7N6rv5JdPaUo1BTcGBb",
             "signature should be irrelevant",
             "message too"),
         MessageVerificationResult::ERR_ADDRESS_NO_KEY);
 
     BOOST_CHECK_EQUAL(
         MessageVerify(
-            "1KqbBpLy5FARmTPD4VZnDDpYjkUvkr82Pm",
+            "NekZNa9Ehois7RmoMjDfusFF6V8vUfb8Yz",
             "invalid signature, not in base64 encoding",
             "message should be irrelevant"),
         MessageVerificationResult::ERR_MALFORMED_SIGNATURE);
 
     BOOST_CHECK_EQUAL(
         MessageVerify(
-            "1KqbBpLy5FARmTPD4VZnDDpYjkUvkr82Pm",
+            "NekZNa9Ehois7RmoMjDfusFF6V8vUfb8Yz",
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
             "message should be irrelevant"),
         MessageVerificationResult::ERR_PUBKEY_NOT_RECOVERED);
 
     BOOST_CHECK_EQUAL(
         MessageVerify(
-            "15CRxFdyRpGZLW9w8HnHvVduizdL5jKNbs",
-            "IPojfrX2dfPnH26UegfbGQQLrdK844DlHq5157/P6h57WyuS/Qsl+h/WSVGDF4MUi4rWSswW38oimDYfNNUBUOk=",
+            "NQ7Q91SF4NpzgUYXRXSBd94c5jHKi66y5K",
+            "IItEl9owimXxruNSiVRlC5eNxEixMqeuKi2p/ykTI8iHaJqoITXx0J1VeVD3mJw6hXFnAEFODWQKqrm/tATc+bg=",
             "I never signed this"),
         MessageVerificationResult::ERR_NOT_SIGNED);
 
     BOOST_CHECK_EQUAL(
         MessageVerify(
-            "15CRxFdyRpGZLW9w8HnHvVduizdL5jKNbs",
-            "IPojfrX2dfPnH26UegfbGQQLrdK844DlHq5157/P6h57WyuS/Qsl+h/WSVGDF4MUi4rWSswW38oimDYfNNUBUOk=",
+            "NQ7Q91SF4NpzgUYXRXSBd94c5jHKi66y5K",
+            "IItEl9owimXxruNSiVRlC5eNxEixMqeuKi2p/ykTI8iHaJqoITXx0J1VeVD3mJw6hXFnAEFODWQKqrm/tATc+bg=",
             "Trust no one"),
         MessageVerificationResult::OK);
 
+    // Bech32 (P2WPKH) address: the same key as the legacy address below,
+    // signed with the same legacy compact scheme.
     BOOST_CHECK_EQUAL(
         MessageVerify(
-            "11canuhp9X2NocwCq7xNrQYTmUgZAnLK3",
-            "IIcaIENoYW5jZWxsb3Igb24gYnJpbmsgb2Ygc2Vjb25kIGJhaWxvdXQgZm9yIGJhbmtzIAaHRtbCeDZINyavx14=",
-            "Trust me"),
+            "nu1qlskhp0k5r9tv34cpd0hezytqglqsgl36rs9wm9",
+            "H2toW2Y9PIKK1BqErCFWSSLWabzGn3fp2ngZQUZr6hikR3rL1pz0REnBXMB3YLyo7KTMe5efqRMruz32CeYezac=",
+            "Hello Nusacoin"),
         MessageVerificationResult::OK);
+
+    // Same key and signature as the bech32 case, in legacy form: the
+    // signature bytes are identical for both address forms of one key.
+    BOOST_CHECK_EQUAL(
+        MessageVerify(
+            "NiuMuMPf4EFUwyZ8hznZD6uTkRCv6gQV4g",
+            "H2toW2Y9PIKK1BqErCFWSSLWabzGn3fp2ngZQUZr6hikR3rL1pz0REnBXMB3YLyo7KTMe5efqRMruz32CeYezac=",
+            "Hello Nusacoin"),
+        MessageVerificationResult::OK);
+
+    // Bech32 address with a message that was not signed.
+    BOOST_CHECK_EQUAL(
+        MessageVerify(
+            "nu1qlskhp0k5r9tv34cpd0hezytqglqsgl36rs9wm9",
+            "H2toW2Y9PIKK1BqErCFWSSLWabzGn3fp2ngZQUZr6hikR3rL1pz0REnBXMB3YLyo7KTMe5efqRMruz32CeYezac=",
+            "Hello Nusacoin!"),
+        MessageVerificationResult::ERR_NOT_SIGNED);
 }
 
 BOOST_AUTO_TEST_CASE(message_hash)
@@ -2067,8 +2089,8 @@ BOOST_AUTO_TEST_CASE(message_hash)
         std::string(1, (char)unsigned_tx.length()) +
         unsigned_tx;
 
-    const uint256 signature_hash = Hash(unsigned_tx.begin(), unsigned_tx.end());
-    const uint256 message_hash1 = Hash(prefixed_message.begin(), prefixed_message.end());
+    const uint256 signature_hash = Hash(unsigned_tx);
+    const uint256 message_hash1 = Hash(prefixed_message);
     const uint256 message_hash2 = MessageHash(unsigned_tx);
 
     BOOST_CHECK_EQUAL(message_hash1, message_hash2);

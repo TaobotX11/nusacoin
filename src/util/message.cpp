@@ -31,7 +31,9 @@ MessageVerificationResult MessageVerify(
         return MessageVerificationResult::ERR_INVALID_ADDRESS;
     }
 
-    if (boost::get<PKHash>(&destination) == nullptr) {
+    const PKHash* pkhash = boost::get<PKHash>(&destination);
+    const WitnessV0KeyHash* witness_hash = boost::get<WitnessV0KeyHash>(&destination);
+    if (pkhash == nullptr && witness_hash == nullptr) {
         return MessageVerificationResult::ERR_ADDRESS_NO_KEY;
     }
 
@@ -46,7 +48,12 @@ MessageVerificationResult MessageVerify(
         return MessageVerificationResult::ERR_PUBKEY_NOT_RECOVERED;
     }
 
-    if (!(CTxDestination(PKHash(pubkey)) == destination)) {
+    // A P2WPKH address is the hash of the same public key as the
+    // corresponding P2PKH address, so compare the recovered key in the
+    // destination's own form.
+    const CTxDestination recovered_dest = witness_hash ? CTxDestination(WitnessV0KeyHash(pubkey))
+                                                       : CTxDestination(PKHash(pubkey));
+    if (!(recovered_dest == destination)) {
         return MessageVerificationResult::ERR_NOT_SIGNED;
     }
 

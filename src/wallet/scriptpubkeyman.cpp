@@ -2055,6 +2055,11 @@ SigningResult DescriptorScriptPubKeyMan::SignMessage(const std::string& message,
 {
     std::unique_ptr<FlatSigningProvider> keys = GetSigningProvider(GetScriptForDestination(pkhash), true);
     if (!keys) {
+        // The key may live under a P2WPKH script instead, e.g. when signing
+        // from a bech32 address in a wallet that only holds a wpkh descriptor.
+        keys = GetSigningProvider(GetScriptForDestination(WitnessV0KeyHash(pkhash)), true);
+    }
+    if (!keys) {
         return SigningResult::PRIVATE_KEY_NOT_AVAILABLE;
     }
 
