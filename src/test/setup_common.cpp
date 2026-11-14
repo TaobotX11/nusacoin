@@ -45,7 +45,7 @@ std::ostream& operator<<(std::ostream& os, const uint256& num)
 }
 
 BasicTestingSetup::BasicTestingSetup(const std::string& chainName, const std::vector<const char*>& extra_args)
-    : m_path_root{fs::temp_directory_path() / "test_common_" PACKAGE_NAME / g_insecure_rand_ctx_temp_path.rand256().ToString()}
+    : m_path_root{fs::temp_directory_path() / "test_common_" PACKAGE_NAME / g_insecure_rand_ctx.rand256().ToString()}
 {
     const std::vector<const char*> arguments = Cat(
         {
@@ -105,6 +105,10 @@ TestingSetup::TestingSetup(const std::string& chainName, const std::vector<const
     
     RegisterAllCoreRPCCommands(tableRPC);
 
+    // The scheduler is created here (rather than in BasicTestingSetup)
+    // because only the full TestingSetup runs a scheduler thread.
+    m_node.scheduler = MakeUnique<CScheduler>();
+
     // We have to run a scheduler thread to prevent ActivateBestChain
     // from blocking due to queue overrun.
     m_node.scheduler->m_service_thread = std::thread([&] { TraceThread("scheduler", [&] { m_node.scheduler->serviceQueue(); }); });
@@ -112,7 +116,14 @@ TestingSetup::TestingSetup(const std::string& chainName, const std::vector<const
 
     
     pblocktree.reset(new CBlockTreeDB(1 << 20, true));
-    g_chainman.InitializeChainstate();
+    m_node.chainman = &g_chainman;
+    // The chainstate needs a mempool; check_ratio 1 runs a sanity check on
+    // every mempool update, like the old setSanityCheck(1.0) did.
+    m_node.mempool = MakeUnique<CTxMemPool>(nullptr, /* check_ratio */ 1);
+    {
+        LOCK(cs_main);
+        g_chainman.InitializeChainstate(*m_node.mempool);
+    }
     ::ChainstateActive().InitCoinsDB(
         /* cache_size_bytes */ 1 << 23, /* in_memory */ true, /* should_wipe */ false);
     assert(!::ChainstateActive().CanFlushToDisk());
@@ -128,30 +139,24 @@ TestingSetup::TestingSetup(const std::string& chainName, const std::vector<const
     }
 
     // Start script-checking threads. Set g_parallel_script_checks to true so they are used.
-    constexpr int script_check_threads = 2; 
-    for (int i = 0; i < script_check_threads; ++i) {
-        threadGroup.create_thread([i]() { return ThreadScriptCheck(i); });
-    }
+    constexpr int script_check_threads = 2;
+    StartScriptCheckWorkerThreads(script_check_threads);
     g_parallel_script_checks = true;
 
     m_node.banman = MakeUnique<BanMan>(GetDataDir() / "banlist.dat", nullptr, DEFAULT_MISBEHAVING_BANTIME);
     m_node.connman = MakeUnique<CConnman>(0x1337, 0x1337); // Deterministic randomness for tests.
-    m_node.peer_logic = MakeUnique<PeerLogicValidation>(m_node.connman.get(), m_node.banman.get(), *m_node.scheduler);
-
-    m_node.mempool = &::mempool;
-    m_node.mempool->setSanityCheck(1.0);
 }
 
 TestingSetup::~TestingSetup()
 {
+    StopScriptCheckWorkerThreads();
     if (m_node.scheduler) m_node.scheduler->stop();
     GetMainSignals().FlushBackgroundCallbacks();
     GetMainSignals().UnregisterBackgroundSignalScheduler();
-    g_rpc_node = nullptr;
     m_node.connman.reset();
     m_node.banman.reset();
     m_node.args = nullptr;
-    UnloadBlockIndex(m_node.mempool);
+    UnloadBlockIndex(m_node.mempool.get());
     m_node.mempool = nullptr;
     g_chainman.Reset();
     pblocktree.reset();
@@ -200,7 +205,7 @@ TestChain100Setup::CreateAndProcessBlock(const std::vector<CMutableTransaction>&
     while (!CheckProofOfWork(block.GetHash(), block.nBits, chainparams.GetConsensus())) ++block.nNonce;
 
     std::shared_ptr<const CBlock> shared_pblock = std::make_shared<const CBlock>(block);
-    ProcessNewBlock(chainparams, shared_pblock, true, nullptr);
+    g_chainman.ProcessNewBlock(chainparams, shared_pblock, true, nullptr);
 
     CBlock result = block;
     return result;

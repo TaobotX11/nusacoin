@@ -124,8 +124,14 @@ void SignVerifyMessageDialog::on_signMessageButton_SM_clicked()
         ui->statusLabel_SM->setText(tr("The entered address is invalid.") + QString(" ") + tr("Please check the address and try again."));
         return;
     }
-    const PKHash* pkhash = boost::get<PKHash>(&destination);
-    if (!pkhash) {
+    // A bech32 (P2WPKH) address refers to the same key as the legacy address
+    // with the same key hash, so accept it and sign with the shared key id.
+    PKHash pkhash;
+    if (const PKHash* pkh = boost::get<PKHash>(&destination)) {
+        pkhash = *pkh;
+    } else if (const WitnessV0KeyHash* wit = boost::get<WitnessV0KeyHash>(&destination)) {
+        pkhash = PKHash(ToKeyID(*wit));
+    } else {
         ui->addressIn_SM->setValid(false);
         ui->statusLabel_SM->setStyleSheet("QLabel { color: red; }");
         ui->statusLabel_SM->setText(tr("The entered address does not refer to a key.") + QString(" ") + tr("Please check the address and try again."));
@@ -142,7 +148,7 @@ void SignVerifyMessageDialog::on_signMessageButton_SM_clicked()
 
     const std::string& message = ui->messageIn_SM->document()->toPlainText().toStdString();
     std::string signature;
-    SigningResult res = model->wallet().signMessage(message, *pkhash, signature);
+    SigningResult res = model->wallet().signMessage(message, pkhash, signature);
 
     QString error;
     switch (res) {
