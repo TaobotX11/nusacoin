@@ -82,7 +82,7 @@ public:
         {
             for (const auto& address : wallet.getAddresses())
             {
-                if (pk_hash_only && address.dest.type() != typeid(PKHash))
+                if (pk_hash_only && address.dest.type() != typeid(PKHash) && address.dest.type() != typeid(WitnessV0KeyHash))
                     continue;
                 AddressTableEntry::Type addressType = translateTransactionType(
                         QString::fromStdString(address.purpose), address.is_mine);
