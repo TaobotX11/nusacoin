@@ -24,7 +24,11 @@ on:
 jobs:
   build-ubuntu:
     name: Build on Ubuntu (Qt GUI)
-    runs-on: ubuntu-latest
+    # Pinned to 24.04: ubuntu-latest moved to 26.04 (Resolute) in Nov 2026
+    # and its archive no longer ships libdb5.3++-dev, so configure fails
+    # with "libdb_cxx headers missing". Revisit when the BDB dependency
+    # situation on newer Ubuntu is resolved.
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
       - name: Checkout
