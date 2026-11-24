@@ -57,6 +57,8 @@ CoinControlDialog::CoinControlDialog(CCoinControl& coin_control, WalletModel* _m
              copyTransactionHashAction = new QAction(tr("Copy transaction ID"), this);  // we need to enable/disable this
              lockAction = new QAction(tr("Lock unspent"), this);                        // we need to enable/disable this
              unlockAction = new QAction(tr("Unlock unspent"), this);                    // we need to enable/disable this
+             lockAllAddressAction = new QAction(tr("Lock all unspent of this address"), this);   // we need to enable/disable this
+             unlockAllAddressAction = new QAction(tr("Unlock all unspent of this address"), this); // we need to enable/disable this
 
     // context menu
     contextMenu = new QMenu(this);
@@ -68,6 +70,8 @@ CoinControlDialog::CoinControlDialog(CCoinControl& coin_control, WalletModel* _m
     contextMenu->addSeparator();
     contextMenu->addAction(lockAction);
     contextMenu->addAction(unlockAction);
+    contextMenu->addAction(lockAllAddressAction);
+    contextMenu->addAction(unlockAllAddressAction);
 
     // context menu signals
     connect(ui->treeWidget, &QWidget::customContextMenuRequested, this, &CoinControlDialog::showMenu);
@@ -77,6 +81,8 @@ CoinControlDialog::CoinControlDialog(CCoinControl& coin_control, WalletModel* _m
     connect(copyTransactionHashAction, &QAction::triggered, this, &CoinControlDialog::copyTransactionHash);
     connect(lockAction, &QAction::triggered, this, &CoinControlDialog::lockCoin);
     connect(unlockAction, &QAction::triggered, this, &CoinControlDialog::unlockCoin);
+    connect(lockAllAddressAction, &QAction::triggered, this, &CoinControlDialog::lockCoinsForAddress);
+    connect(unlockAllAddressAction, &QAction::triggered, this, &CoinControlDialog::unlockCoinsForAddress);
 
     // clipboard actions
     QAction *clipboardQuantityAction = new QAction(tr("Copy quantity"), this);
@@ -215,6 +221,20 @@ void CoinControlDialog::showMenu(const QPoint &point)
             unlockAction->setEnabled(false);
         }
 
+        // lock/unlock-all actions work on the whole address, so they are also
+        // available on tree-mode parent nodes (which have no single outpoint).
+        // Enable each one only when it would change something.
+        bool anyLocked = false, anyUnlocked = false;
+        for (QTreeWidgetItem* coin : coinsForAddress(addressForItem(item)))
+        {
+            if (model->wallet().isLockedCoin(COutPoint(uint256S(coin->data(COLUMN_ADDRESS, TxHashRole).toString().toStdString()), coin->data(COLUMN_ADDRESS, VOutRole).toUInt())))
+                anyLocked = true;
+            else
+                anyUnlocked = true;
+        }
+        lockAllAddressAction->setEnabled(anyUnlocked);
+        unlockAllAddressAction->setEnabled(anyLocked);
+
         // show context menu
         contextMenu->exec(QCursor::pos());
     }
@@ -270,6 +290,78 @@ void CoinControlDialog::unlockCoin()
     model->wallet().unlockCoin(outpt);
     contextMenuItem->setDisabled(false);
     contextMenuItem->setIcon(COLUMN_CHECKBOX, QIcon());
+    updateLabelLocked();
+}
+
+// address of a tree item: its own address text, or its parent's in tree mode
+// (child rows of a wallet address show no address text of their own)
+QString CoinControlDialog::addressForItem(QTreeWidgetItem* item)
+{
+    if (!item->text(COLUMN_ADDRESS).isEmpty())
+        return item->text(COLUMN_ADDRESS);
+    if (item->parent())
+        return item->parent()->text(COLUMN_ADDRESS);
+    return QString();
+}
+
+// all unspent outputs paying to an address, in list mode and in tree mode
+QList<QTreeWidgetItem*> CoinControlDialog::coinsForAddress(const QString& address)
+{
+    QList<QTreeWidgetItem*> result;
+    for (int i = 0; i < ui->treeWidget->topLevelItemCount(); ++i)
+    {
+        QTreeWidgetItem* top = ui->treeWidget->topLevelItem(i);
+        if (top->childCount() > 0) // tree-mode address node: collect its children
+        {
+            for (int j = 0; j < top->childCount(); ++j)
+            {
+                QTreeWidgetItem* child = top->child(j);
+                if (addressForItem(child) == address)
+                    result.append(child);
+            }
+        }
+        else if (addressForItem(top) == address) // list-mode output row
+        {
+            result.append(top);
+        }
+    }
+    return result;
+}
+
+// context menu action: lock all coins of an address
+void CoinControlDialog::lockCoinsForAddress()
+{
+    const QString address = addressForItem(contextMenuItem);
+    ui->treeWidget->setEnabled(false); // do not update labels for every coin
+    for (QTreeWidgetItem* item : coinsForAddress(address))
+    {
+        if (item->checkState(COLUMN_CHECKBOX) == Qt::Checked)
+            item->setCheckState(COLUMN_CHECKBOX, Qt::Unchecked);
+
+        COutPoint outpt(uint256S(item->data(COLUMN_ADDRESS, TxHashRole).toString().toStdString()), item->data(COLUMN_ADDRESS, VOutRole).toUInt());
+        model->wallet().lockCoin(outpt, /* write_to_db = */ true);
+        item->setDisabled(true);
+        item->setIcon(COLUMN_CHECKBOX, platformStyle->SingleColorIcon(":/icons/lock_closed"));
+    }
+    ui->treeWidget->setEnabled(true);
+    CoinControlDialog::updateLabels(m_coin_control, model, this);
+    updateLabelLocked();
+}
+
+// context menu action: unlock all coins of an address
+void CoinControlDialog::unlockCoinsForAddress()
+{
+    const QString address = addressForItem(contextMenuItem);
+    ui->treeWidget->setEnabled(false); // do not update labels for every coin
+    for (QTreeWidgetItem* item : coinsForAddress(address))
+    {
+        COutPoint outpt(uint256S(item->data(COLUMN_ADDRESS, TxHashRole).toString().toStdString()), item->data(COLUMN_ADDRESS, VOutRole).toUInt());
+        model->wallet().unlockCoin(outpt);
+        item->setDisabled(false);
+        item->setIcon(COLUMN_CHECKBOX, QIcon());
+    }
+    ui->treeWidget->setEnabled(true);
+    CoinControlDialog::updateLabels(m_coin_control, model, this);
     updateLabelLocked();
 }
 
