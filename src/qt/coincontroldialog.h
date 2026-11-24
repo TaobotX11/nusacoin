@@ -67,11 +67,16 @@ private:
     QAction *copyTransactionHashAction;
     QAction *lockAction;
     QAction *unlockAction;
+    QAction *lockAllAddressAction;
+    QAction *unlockAllAddressAction;
 
     const PlatformStyle *platformStyle;
 
     void sortView(int, Qt::SortOrder);
     void updateView();
+
+    static QString addressForItem(QTreeWidgetItem* item);
+    QList<QTreeWidgetItem*> coinsForAddress(const QString& address);
 
     enum
     {
@@ -99,6 +104,8 @@ private Q_SLOTS:
     void copyTransactionHash();
     void lockCoin();
     void unlockCoin();
+    void lockCoinsForAddress();
+    void unlockCoinsForAddress();
     void clipboardQuantity();
     void clipboardAmount();
     void clipboardFee();
