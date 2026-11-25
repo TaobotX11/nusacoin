@@ -1,20 +1,16 @@
 name: Build check
 
-# Compile-check every pull request (and every push to main) so broken
-# code is caught before merge, not after release.
+# Compile-check every pull request so broken code is caught before merge,
+# not after release. (No push trigger: the pull_request build already
+# builds the merge result.)
 on:
+  # No push trigger: the pull_request build already builds the merge
+  # result, so a post-merge build would rebuild the same tree.
   pull_request:
     types: [opened, synchronize, reopened]
     # Skip the build for changes that cannot affect compilation
     # (docs, helper scripts, markdown, PoC-only workflow files).
     # A PR touching both code and these paths still triggers the build.
-    paths-ignore:
-      - 'doc/**'
-      - 'contrib/**'
-      - '**.md'
-      - '.github/workflows/poc-depends-x86_64.yml'
-  push:
-    branches: [main]
     paths-ignore:
       - 'doc/**'
       - 'contrib/**'
